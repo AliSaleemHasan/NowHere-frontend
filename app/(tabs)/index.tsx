@@ -1,16 +1,12 @@
+import LocationRequired from "@/components/location-required";
 import useLocation from "@/hooks/useLocation";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import MapView from "react-native-maps";
 
 export default function Index() {
   const { error, lat, long } = useLocation();
-  if (error)
-    return (
-      <View className="flex items-center justify-center w-full h-full">
-        <Text className="text-red-500 font-bold">Permession Denied</Text>
-      </View>
-    );
+  if (error) return <LocationRequired />;
   if (!lat || !long) {
     return (
       <View className="flex items-center justify-center w-full h-full">
@@ -26,7 +22,7 @@ export default function Index() {
         userInterfaceStyle="dark"
         showsUserLocation
         userLocationUpdateInterval={10000}
-        loadingEnabled
+        userLocationCalloutEnabled={true}
         region={{
           latitude: lat as any,
           longitude: long as any,
