@@ -27,7 +27,7 @@ const TabsLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="Map"
+        name="index"
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
