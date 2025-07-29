@@ -1,19 +1,20 @@
 import { useUserLocation } from "@/context/user-location-context";
-import { StyleSheet, View } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 
 export default function Index() {
-  const { state, fetchLocation } = useUserLocation();
+  const { state } = useUserLocation();
+  const [marker, setMarker] = useState<boolean>(false); // number of markers for now
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 relative">
       <MapView
         style={styles.map}
-        userInterfaceStyle="dark"
         showsUserLocation
         userLocationUpdateInterval={10000}
-        userLocationCalloutEnabled={true}
         region={
           state.coords
             ? {
@@ -24,7 +25,22 @@ export default function Index() {
               }
             : undefined
         }
-      />
+      >
+        {marker && (
+          <Marker
+            coordinate={{
+              latitude: state.coords?.latitude || 0,
+              longitude: state.coords?.longitude || 0,
+            }}
+          ></Marker>
+        )}
+      </MapView>
+      <TouchableOpacity
+        onPress={() => setMarker(true)}
+        className="absolute bottom-5 right-6  bg-white  py-4 px-4 rounded-full"
+      >
+        <FontAwesome size={16} name="camera" />
+      </TouchableOpacity>
     </View>
   );
 }

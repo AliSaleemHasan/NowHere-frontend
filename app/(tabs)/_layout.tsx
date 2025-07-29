@@ -5,31 +5,12 @@ import { StyleSheet } from "react-native";
 
 const TabsLayout = () => {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarItemStyle: {
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarStyle: {
-          borderRadius: 50,
-          marginHorizontal: 20,
-          marginBottom: 36,
-          height: 52,
-          backgroundColor: "#0f0d23",
-          position: "absolute",
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#0f0d23",
-        },
-      }}
-    >
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{
           headerShown: false,
+          tabBarLabel: "Map",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={20} name="map" color={color} />
           ),
