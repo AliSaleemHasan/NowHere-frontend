@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const Favorites = () => {
   return (
@@ -10,5 +10,3 @@ const Favorites = () => {
 };
 
 export default Favorites;
-
-const styles = StyleSheet.create({});

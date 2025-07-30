@@ -19,7 +19,7 @@ function LocationDependentContent() {
   const { state, fetchLocation } = useUserLocation();
   useEffect(() => {
     fetchLocation();
-  }, []);
+  }, [fetchLocation]);
 
   if (state.isLoading) return <Loading></Loading>;
   if (state.error) return <LocationRequired />;
