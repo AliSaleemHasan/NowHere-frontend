@@ -8,10 +8,16 @@ module.exports = defineConfig([
   {
     ignores: ["dist/*"],
   },
+
   {
     plugins: { boundaries },
     settings: {
       "boundaries/elements": [
+        {
+          mode: "full",
+          type: "unknown",
+          pattern: ["*"],
+        },
         {
           mode: "full",
           type: "shared",
@@ -52,10 +58,11 @@ module.exports = defineConfig([
             },
             {
               from: ["feature"],
-              allow: [
-                "shared",
-                ["feature", { featureName: "${from.featureName}" }],
-              ],
+              allow: ["shared"],
+            },
+            {
+              from: ["feature"],
+              disallow: [["feature", { notSame: ["featureName"] }]], // 🔒 disallow cross-feature access
             },
             {
               from: ["app"],
@@ -64,6 +71,10 @@ module.exports = defineConfig([
             {
               from: ["app"],
               allow: [["app", { fileName: "*.css" }]],
+            },
+            {
+              from: ["*"],
+              disallow: ["unknown"],
             },
           ],
         },
