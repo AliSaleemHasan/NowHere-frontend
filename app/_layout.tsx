@@ -7,6 +7,9 @@ import { Stack } from "expo-router";
 import { useEffect } from "react";
 import "./global.css";
 
+export const unstable_settings = {
+  initialRouteName: "(tabs)",
+};
 export default function RootLayout() {
   return (
     <UserLocationProvider>
@@ -28,10 +31,9 @@ function LocationDependentContent() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
-        name="(auth)/login"
+        name="(auth)"
         options={{ headerShown: false, presentation: "modal" }}
       />
-      <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
     </Stack>
   );
 }

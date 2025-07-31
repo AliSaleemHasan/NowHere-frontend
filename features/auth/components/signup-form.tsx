@@ -52,7 +52,7 @@ export const SignupForm = () => {
           linkText="Log in"
           promptText="Have an Account!"
           onPress={() => {
-            router.push("/login");
+            router.replace("/login");
           }}
         />
 
