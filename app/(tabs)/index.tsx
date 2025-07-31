@@ -1,11 +1,13 @@
 import { useUserLocation } from "@/context/user-location-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 export default function Index() {
+  const router = useRouter();
   const { state } = useUserLocation();
   const [marker, setMarker] = useState<string>(); // number of markers for now
 
@@ -74,7 +76,7 @@ export default function Index() {
         )}
       </MapView>
       <TouchableOpacity
-        onPress={handleSubmitImage}
+        onPress={() => router.navigate("/login")}
         className="absolute bottom-5 right-6  bg-white  py-4 px-4 rounded-full"
       >
         <FontAwesome size={16} name="camera" />

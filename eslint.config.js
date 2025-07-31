@@ -62,6 +62,10 @@ module.exports = defineConfig([
             },
             {
               from: ["feature"],
+              allow: [["feature"], { featureName: "{$from.featureName}" }],
+            },
+            {
+              from: ["feature"],
               disallow: [["feature", { notSame: ["featureName"] }]], // 🔒 disallow cross-feature access
             },
             {
