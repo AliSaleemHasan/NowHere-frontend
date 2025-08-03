@@ -4,7 +4,7 @@ import React from "react";
 
 const TabsLayout = () => {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "cyan" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -15,14 +15,24 @@ const TabsLayout = () => {
           ),
         }}
       ></Tabs.Screen>
+
       <Tabs.Screen
-        name="Favorites"
+        name="profile"
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="heart" size={20} color={color} />
+            <FontAwesome name="user" size={20} color={color} />
           ),
         }}
-      ></Tabs.Screen>
+      />
+
+      <Tabs.Screen
+        name="add-snap"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="camera" size={20} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 };
