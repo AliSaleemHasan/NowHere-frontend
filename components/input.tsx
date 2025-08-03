@@ -23,6 +23,7 @@ export function Input<TFieldValues extends FieldValues = FieldValues>(
     <TextInput
       {...textInputProps}
       value={value as string}
+      autoCapitalize="none"
       onChangeText={onChange}
       onBlur={onBlur}
       style={[

@@ -113,6 +113,7 @@ export const SignupForm = () => {
           control={control}
           name="password"
           placeholder="Password.."
+          secureTextEntry
           keyboardType={"visible-password"}
           textContentType="password"
         />
@@ -124,6 +125,7 @@ export const SignupForm = () => {
           name="confirm"
           placeholder="Confirm Password.."
           textContentType="password"
+          secureTextEntry
           keyboardType={"visible-password"}
         />
         {errors.confirm?.message && (

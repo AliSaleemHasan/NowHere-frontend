@@ -52,17 +52,12 @@ export const LoginForm = () => {
       <Text>Welcome To NowHere</Text>
 
       <View className="flex gap-4   h-2/3 w-5/6 ">
-        <Input
-          control={control}
-          name="email"
-          placeholder="Email.."
-          keyboardType={"email-address"}
-        />
+        <Input control={control} name="email" placeholder="Email.." />
         <Input
           placeholder="Password.."
           name="password"
           control={control}
-          keyboardType={"visible-password"}
+          secureTextEntry
         />
         <FromButton
           onSubmit={handleSubmit(onSubmit)}
