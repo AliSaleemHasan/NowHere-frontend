@@ -14,7 +14,7 @@ export function AuthRedirectPrompt({
   return (
     <View className="flex-row items-center justify-between">
       <Text className="text-xs text-gray-500">{promptText}</Text>
-      <TouchableHighlight onPress={onPress}>
+      <TouchableHighlight className="p-1" onPress={onPress}>
         <Text className="text-xs text-gray-600">{linkText}</Text>
       </TouchableHighlight>
     </View>

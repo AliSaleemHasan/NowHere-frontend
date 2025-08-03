@@ -1,5 +1,5 @@
-import { Error, FetchResponse } from "@/types/api";
-import { API_URL, getErrorMessage } from "@/utils";
+import { FetchResponse } from "@/types/api";
+import { API_URL } from "@/utils";
 
 type FetchParams = {
   options: RequestInit;
@@ -21,17 +21,11 @@ export const fetchWithoutAuth = async <T>({
     };
   }
 
-  try {
-    const res = await fetch(`${API_URL}${url}`, { ...options });
-    let response = (await res.json()) as FetchResponse<T>;
-    return response;
-  } catch (err) {
-    return {
-      message: getErrorMessage(err),
-      path: "FRONT_END_UI",
-      success: false,
-    } as Error;
-  }
+  const res = await fetch(`${API_URL}${url}`, { ...options });
+
+  let response = (await res.json()) as FetchResponse<T>;
+  if (!response.success) return Promise.reject(new Error(response.message));
+  return response;
 };
 
 // fetch with authentication

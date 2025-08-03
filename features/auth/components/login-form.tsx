@@ -1,28 +1,19 @@
+import FromButton from "@/components/form-button";
+import FormError from "@/components/form-error";
 import { Input } from "@/components/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Keyboard, SafeAreaView, Text, View } from "react-native";
 import * as z from "zod";
 import { useAuth } from "../context/auth-store";
 import { AuthRedirectPrompt } from "./auth-redirect-prompt";
 import SocialNetworksAuth from "./social-network-auth";
 const LoginSchema = z.object({
   email: z.email(),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[a-z]/, "One lowercase letter is required!")
-    .regex(/[A-Z]/, "Onw uppercase letter is required")
-    .regex(/\d/, "One number required!")
-    .regex(/\W/, "One symbol required!"),
+  password: z.string(),
 });
 
 type LoginFormData = z.infer<typeof LoginSchema>;
@@ -31,9 +22,10 @@ const router = useRouter();
 
 export const LoginForm = () => {
   const login = useAuth((state) => state.login);
+  const mutation = useMutation({ mutationFn: login });
 
   const {
-    formState: { isLoading },
+    formState: { isLoading, errors, isValid },
     handleSubmit,
     control,
   } = useForm<LoginFormData>({
@@ -45,9 +37,15 @@ export const LoginForm = () => {
   });
 
   const onSubmit = async (values: LoginFormData) => {
-    const user = await login({ user: values });
-    if (user) router.replace("/");
+    Keyboard.dismiss();
+    mutation.mutate(
+      { user: values },
+      {
+        onSuccess: () => router.replace("/"),
+      }
+    );
   };
+
   return (
     <SafeAreaView className="rounded-tl-md h-full   gap-4 w-full  items-center justify-center   ">
       <Text className="text-center  text-xl "> Signin </Text>
@@ -66,16 +64,13 @@ export const LoginForm = () => {
           control={control}
           keyboardType={"visible-password"}
         />
-        <TouchableOpacity
-          onPress={handleSubmit(onSubmit)}
-          className="bg-primary   w-full items-center justify-center flex"
-        >
-          {isLoading ? (
-            <ActivityIndicator size={20} color={"primary"} />
-          ) : (
-            <Text className="text-center text-white p-3">Login</Text>
-          )}
-        </TouchableOpacity>
+        <FromButton
+          onSubmit={handleSubmit(onSubmit)}
+          text="Login"
+          isLoading={isLoading}
+        ></FromButton>
+
+        {mutation.error && <FormError message={mutation.error.message} />}
         <Text className="text-gray-600 text-xs font-thin text-center">
           Forgot Password?
         </Text>
