@@ -1,11 +1,11 @@
-import { useAuthContext } from "@/features/auth/context/auth-context";
+import { useAuth } from "@/features/auth/context/auth-store";
 import { Redirect } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 
 export default function AddSnap() {
-  const { loggedIn } = useAuthContext();
-  if (!loggedIn)
+  const { isLoggedIn } = useAuth();
+  if (!isLoggedIn)
     return (
       <Redirect
         href={{ pathname: "/(auth)/login", params: { origin: "/add-snap" } }}

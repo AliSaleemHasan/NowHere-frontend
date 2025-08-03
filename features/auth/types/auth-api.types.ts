@@ -1,3 +1,5 @@
+import { User } from "@/types/api";
+
 export type LoginFormProps = {
   user: {
     email: string;
@@ -6,6 +8,9 @@ export type LoginFormProps = {
 };
 
 export type LoginSuccessData = {
-  accessToken: string;
-  refreshToken: string;
+  user: User;
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
 };

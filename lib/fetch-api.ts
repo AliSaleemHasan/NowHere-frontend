@@ -11,8 +11,16 @@ export const fetchWithoutAuth = async <T>({
   url,
   options,
 }: FetchParams): Promise<FetchResponse<T>> => {
-  if (!options?.headers)
-    options.headers = { "Content-Type": "Application/Json" };
+  if (!options) options = {};
+  const existingHeaders = (options.headers ?? {}) as Record<string, string>;
+
+  if (!existingHeaders["Content-Type"]) {
+    options.headers = {
+      ...existingHeaders,
+      "Content-Type": "application/json",
+    };
+  }
+
   try {
     const res = await fetch(`${API_URL}${url}`, { ...options });
     let response = (await res.json()) as FetchResponse<T>;

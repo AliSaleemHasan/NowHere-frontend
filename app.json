@@ -39,7 +39,6 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-
       "expo-router",
       [
         "expo-splash-screen",
@@ -49,7 +48,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

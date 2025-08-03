@@ -11,3 +11,10 @@ export type Error = {
 };
 
 export type FetchResponse<T> = Error | Success<T>;
+
+export type User = {
+  email: string;
+  bio?: string;
+  firstName: string;
+  lastName: string;
+};

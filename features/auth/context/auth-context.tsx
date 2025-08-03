@@ -48,8 +48,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
       if (!res.success) throw new Error(res.message);
 
-      await setItemAsync(ACCESS_TOKEN_KEY, res.data.accessToken);
-      await setItemAsync(REFRESH_TOKEN_KEY, res.data.refreshToken);
+      await setItemAsync(ACCESS_TOKEN_KEY, res.data.tokens.accessToken);
+      await setItemAsync(REFRESH_TOKEN_KEY, res.data.tokens.refreshToken);
 
       setLoggedIn(true);
       router.replace({ pathname: origin ?? "/" });
