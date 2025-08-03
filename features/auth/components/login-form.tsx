@@ -45,7 +45,8 @@ export const LoginForm = () => {
   });
 
   const onSubmit = async (values: LoginFormData) => {
-    await login({ user: values });
+    const user = await login({ user: values });
+    if (user) router.replace("/");
   };
   return (
     <SafeAreaView className="rounded-tl-md h-full   gap-4 w-full  items-center justify-center   ">
