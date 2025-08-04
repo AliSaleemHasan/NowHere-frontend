@@ -1,3 +1,4 @@
+import { cn } from "@/utils";
 import React from "react";
 import { Control, FieldValues, Path, useController } from "react-hook-form";
 import { TextInput, TextInputProps } from "react-native";
@@ -26,10 +27,7 @@ export function Input<TFieldValues extends FieldValues = FieldValues>(
       autoCapitalize="none"
       onChangeText={onChange}
       onBlur={onBlur}
-      style={[
-        { padding: 12, backgroundColor: "#fff", borderRadius: 8 },
-        textInputProps.style,
-      ]}
+      className={cn(textInputProps.className, "p-4 bg-white  rounded-md")}
     />
   );
 }

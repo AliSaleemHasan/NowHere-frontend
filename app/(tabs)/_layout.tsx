@@ -21,6 +21,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="add-snap"
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
           ),

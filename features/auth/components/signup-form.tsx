@@ -95,12 +95,12 @@ export const SignupForm = () => {
         {errors.email?.message && (
           <FormError message={errors.email?.message}></FormError>
         )}
-        <View className="flex-row gap-3">
+        <View className="flex-row gap-3 w-full ">
           <Input
             control={control}
             name="first_name"
             placeholder="First Name.."
-            className={`flex-1 ${errors.first_name && "border-2 border-red-500"}`}
+            className={`flex-1  ${errors.first_name && "border-2 border-red-500"}`}
           />
           <Input
             control={control}

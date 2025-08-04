@@ -15,6 +15,15 @@ export type FetchResponse<T> = Error | Success<T>;
 export type User = {
   email: string;
   bio?: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+};
+
+//
+//  SNAPS
+//
+
+export type AddSnapRequest = {
+  description: string;
+  snaps: Array<string>;
 };
