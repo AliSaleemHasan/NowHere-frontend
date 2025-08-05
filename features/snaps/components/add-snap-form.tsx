@@ -41,9 +41,7 @@ export default function AddSnapForm() {
   });
 
   const onSubmit = () => {
-    console.log("yeay");
     const payload = PostSnapBody(snaps);
-    console.log(payload);
     addSnapMutation.mutate(payload);
   };
 

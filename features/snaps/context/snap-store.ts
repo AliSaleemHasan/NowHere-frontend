@@ -18,7 +18,7 @@ export const useSnap = create<SnapStoreState>()(
       snaps: [""],
       addDescription: (description: string) => set(() => ({ description })),
       addSnap: (uri: string) =>
-        set((state) => ({ snaps: [uri, ...state.snaps] })),
+        set((state) => ({ snaps: [...state.snaps, uri] })),
       removeSnap: (id: string) =>
         set((state) => ({ snaps: get().snaps.filter((snap) => snap != id) })),
     }),
