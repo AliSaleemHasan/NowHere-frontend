@@ -2,44 +2,36 @@ import FromButton from "@/components/form-button";
 import { Input } from "@/components/input";
 import { fetchWithoutAuth } from "@/lib/fetch-api";
 import { FontAwesome } from "@expo/vector-icons";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
   Keyboard,
+  Text,
   TouchableNativeFeedback,
   TouchableOpacity,
   View,
 } from "react-native";
-import * as z from "zod";
+import { PostSnapBody } from "../api/post-new-snap";
 import { useSnap } from "../context/snap-store";
 
-interface Props {
-  disabled?: boolean;
-}
+// type AddSnapData = z.infer<typeof AddSnapSchema>;
 
-const AddSnapSchema = z.object({
-  description: z.string(),
-  snaps: z.array(z.string()).max(2).min(1),
-});
-
-type AddSnapData = z.infer<typeof AddSnapSchema>;
-
-export default function AddSnapForm(props: Props) {
+export default function AddSnapForm() {
   const addSnap = useSnap((state) => state.addSnap);
-  const { control } = useForm<AddSnapData>({
-    resolver: zodResolver(AddSnapSchema),
+  const snaps = useSnap((state) => state.snaps);
+  const { control, handleSubmit, formState } = useForm({
+    // resolver: zodResolver(AddSnapSchema),
   });
 
-  const addImageMutation = useMutation({
-    mutationFn: (file: FormData) => {
+  const addSnapMutation = useMutation({
+    mutationFn: (files: FormData) => {
       return fetchWithoutAuth({
         url: "snaps",
         options: {
           method: "POST",
-          body: file,
+          body: files,
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -47,6 +39,13 @@ export default function AddSnapForm(props: Props) {
       });
     },
   });
+
+  const onSubmit = () => {
+    console.log("yeay");
+    const payload = PostSnapBody(snaps);
+    console.log(payload);
+    addSnapMutation.mutate(payload);
+  };
 
   const handlePickImage = async () => {
     await ImagePicker.requestCameraPermissionsAsync(); //TODO : make sure to handle if user does not accept the camera permission
@@ -66,8 +65,8 @@ export default function AddSnapForm(props: Props) {
       <View className="absolute z-40 w-full ">
         <TouchableOpacity
           onPress={handlePickImage}
-          disabled={props.disabled}
-          className={`${props.disabled ? "bg-gray-500" : "bg-secondary"} w-32 h-32 rounded-full shadow-sm shadow-primary  items-center justify-center mx-auto translate-y-[-4rem]`}
+          disabled={snaps.length === 2}
+          className={`${snaps.length === 2 ? "bg-gray-500" : "bg-secondary"} w-32 h-32 rounded-full shadow-sm shadow-primary  items-center justify-center mx-auto translate-y-[-4rem]`}
         >
           <FontAwesome name="camera" size={40}></FontAwesome>
         </TouchableOpacity>
@@ -91,7 +90,9 @@ export default function AddSnapForm(props: Props) {
               returnKeyType="next"
             ></Input>
           </View>
-          <FromButton onSubmit={() => {}} text="Add"></FromButton>
+          <FromButton onSubmit={handleSubmit(onSubmit)} text="Add"></FromButton>
+          <Text>{JSON.stringify(addSnapMutation.data)}</Text>
+          <Text>{JSON.stringify(formState.errors)}</Text>
         </View>
       </TouchableNativeFeedback>
     </View>
