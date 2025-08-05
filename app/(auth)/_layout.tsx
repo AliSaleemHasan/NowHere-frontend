@@ -1,21 +1,25 @@
-import { useAuth } from "@/features/auth/context/auth-store";
-import { Redirect, Stack } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { Pressable } from "react-native";
 
 export default function Layout() {
-  const isLoggedIn = useAuth((state) => state.isLoggedIn);
-  if (isLoggedIn) return <Redirect href={"/"}></Redirect>;
+  const router = useRouter();
   return (
-    <Stack>
-      <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen
-          name="login"
-          options={{ headerShown: false }}
-        ></Stack.Screen>
-        <Stack.Screen
-          name="signup"
-          options={{ headerShown: false }}
-        ></Stack.Screen>
-      </Stack.Protected>
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: true,
+
+        headerTitle: "",
+        headerLeft: () => (
+          <Pressable onPress={() => router.replace("/")} className="ml-4 p-3 ">
+            <FontAwesome name="close" size={15} color="black" />
+          </Pressable>
+        ),
+      }}
+    >
+      <Stack.Screen name="login"></Stack.Screen>
+      <Stack.Screen name="signup"></Stack.Screen>
     </Stack>
   );
 }

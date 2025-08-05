@@ -27,6 +27,7 @@ export default function RootLayout() {
 
 function LocationDependentContent() {
   const init = useAuth((state) => state.init);
+  const isLoggedIn = useAuth((state) => state.isLoggedIn);
 
   const { state, fetchLocation } = useUserLocation();
 
@@ -47,6 +48,12 @@ function LocationDependentContent() {
         name="(auth)"
         options={{ headerShown: false, presentation: "modal" }}
       />
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen
+          name="(snaps)"
+          options={{ headerShown: false, presentation: "modal" }}
+        />
+      </Stack.Protected>
     </Stack>
   );
 }
