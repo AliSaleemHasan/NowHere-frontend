@@ -1,59 +1,60 @@
+import Loading from "@/components/loading";
 import { useSnap } from "@/features/snaps/context/snap-store";
+import { handleCameraCapture } from "@/lib/image-picker";
 import { FontAwesome } from "@expo/vector-icons";
-import { useHeaderHeight } from "@react-navigation/elements";
-import * as ImagePicker from "expo-image-picker";
 import { Redirect } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  ImageBackground,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import Gallery from "react-native-awesome-gallery";
-export default function AddSnap() {
+export default function SnapsCapture() {
   // the idea is to make this page as 3 pages/ one for adding images, one for the form itself and the final one is for submitting the form
-
-  const headerHeight = useHeaderHeight();
 
   const snaps = useSnap((state) => state.snaps);
 
   const [index, setIndex] = useState<number>(0);
-  const [cameraStatus, setCameraStatus] = useState<
-    "canceled" | "initial" | "open"
-  >(snaps.length > 0 ? "open" : "initial");
+  const [view, setView] = useState<
+    "idle" | "canceled" | "captured" | "ongoing" | "error"
+  >(snaps.length > 0 ? "captured" : "idle");
 
   const addSnap = useSnap((state) => state.addSnap);
   const deleteSnap = useSnap((state) => state.removeSnap);
 
   const handleCaptureImage = async (): Promise<void> => {
-    const capture = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      allowsMultipleSelection: true,
-      mediaTypes: ["livePhotos"],
-      quality: 1,
-    });
+    setView("ongoing");
+    try {
+      const capture = await handleCameraCapture();
 
-    setCameraStatus(capture.canceled ? "canceled" : "open");
+      if (capture.canceled) {
+        setView("canceled");
+        return;
+      }
 
-    if (capture?.assets?.[0].uri) addSnap(capture.assets[0].uri);
+      const uri = capture?.assets?.[0].uri;
+      if (uri) {
+        addSnap(uri);
+        setView("captured");
+      }
+    } catch {
+      setView("error");
+    }
   };
-  useEffect(() => {
-    if (cameraStatus === "initial") handleCaptureImage();
-  }, [cameraStatus]);
 
-  if (cameraStatus === "canceled" && snaps.length === 0)
+  const handleDeleteSnap = () => {
+    deleteSnap(snaps[index]);
+
+    if (snaps.length === 1) {
+      setView("idle");
+    }
+  };
+
+  useEffect(() => {
+    if (view === "idle") handleCaptureImage();
+  }, [view]);
+
+  //TODO: handle error state globaly
+  if ((view === "canceled" && snaps.length === 0) || view === "error")
     return <Redirect href={"/"} />;
-  else if (cameraStatus === "initial")
-    // it happend before openning the camera
-    return (
-      <View className="h-full  relative bg-black items-center justify-center ">
-        {/* first page : handling image addition */}
-        <ActivityIndicator size={50} color={"white"} />
-      </View>
-    );
-  // camera was open and a picture was taken
+  if (view === "ongoing") return <Loading></Loading>;
   else
     return (
       <View className="flex-1  ">
@@ -73,7 +74,7 @@ export default function AddSnap() {
           className={`flex-row   bg-white backdrop-blur-lg w-full h-[13%]  items-center rounded-lg  justify-between  gap-10`}
         >
           <TouchableOpacity
-            onPress={() => deleteSnap(snaps[index])}
+            onPress={handleDeleteSnap}
             className="flex-1   h-full  items-center justify-center"
           >
             <FontAwesome name="trash" size={25} color={"red"} />
@@ -92,10 +93,3 @@ export default function AddSnap() {
       </View>
     );
 }
-
-//
-
-//  <AvoidKeyboard>
-//       <FormSnapsGallery />
-//       <AddSnapForm />
-//     </AvoidKeyboard>

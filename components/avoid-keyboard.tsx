@@ -4,12 +4,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  TouchableNativeFeedback,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 export default function AvoidKeyboard(props: PropsWithChildren) {
   return (
-    <TouchableNativeFeedback
+    <TouchableWithoutFeedback
       onPress={() => Keyboard.dismiss()}
       accessible={false}
     >
@@ -20,7 +20,7 @@ export default function AvoidKeyboard(props: PropsWithChildren) {
       >
         {props.children}
       </KeyboardAvoidingView>
-    </TouchableNativeFeedback>
+    </TouchableWithoutFeedback>
   );
 }
 
