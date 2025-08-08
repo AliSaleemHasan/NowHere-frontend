@@ -11,7 +11,8 @@ export type Tokens = {
   accessToken: string;
   refreshToken: string;
 };
-export type LoginSuccessData = {
+
+export type AuthSuccess = {
   user: User;
   tokens: Tokens;
 };

@@ -1,12 +1,11 @@
-import { fetchWithoutAuth } from "@/lib/fetch-api";
 import type { User } from "@/types/api";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/utils";
+import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from "@/utils";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type {
+  AuthSuccess,
   LoginFormProps,
-  LoginSuccessData,
   Tokens,
 } from "../types/auth-api.types";
 
@@ -16,8 +15,9 @@ interface AuthState {
   user?: User;
   tokens?: Tokens;
   init: () => Promise<void>;
-  login: (inputs: LoginFormProps) => Promise<LoginSuccessData["user"]>;
+  login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;
   logout: () => Promise<void>;
+  setTokens: (tokens: Tokens) => void;
 }
 
 export const useAuth = create<AuthState>()(
@@ -34,28 +34,36 @@ export const useAuth = create<AuthState>()(
           return;
         }
 
-        const res = await fetchWithoutAuth<User>({
-          url: "auth/validate",
-          options: {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
+        const response = await fetch(`${API_URL}auth/validate`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
 
         set({ isReady: true });
+
+        let res = await response.json();
         if (res.success) {
-          set({ isLoggedIn: true, user: res.data });
+          set({
+            isLoggedIn: true,
+            user: res.data.user,
+            tokens: res.data.tokens,
+          });
         }
       },
 
       login: async (inputs) => {
-        const res = await fetchWithoutAuth<LoginSuccessData>({
-          url: "auth/login",
-          options: {
-            method: "POST",
-            body: JSON.stringify(inputs),
+        const ressponse = await fetch(`${API_URL}auth/login`, {
+          method: "POST",
+          body: JSON.stringify(inputs),
+          headers: {
+            "Content-Type": "application/json",
           },
         });
+
+        let res = await ressponse.json();
         if (!res.success) throw new Error(res.message);
 
         set({ isLoggedIn: true, user: res.data.user, tokens: res.data.tokens });
@@ -63,9 +71,13 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
+        console.log("test inside logout");
         await deleteItemAsync(ACCESS_TOKEN_KEY);
         await deleteItemAsync(REFRESH_TOKEN_KEY);
         set({ isLoggedIn: false, user: undefined });
+      },
+      setTokens: (tokens) => {
+        set(() => ({ tokens }));
       },
     }),
     {

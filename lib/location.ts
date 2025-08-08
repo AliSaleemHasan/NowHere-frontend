@@ -1,3 +1,5 @@
+import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
+import { FetchResponse } from "@/types/api";
 import {
   getCurrentPositionAsync,
   PermissionStatus,
@@ -5,32 +7,42 @@ import {
 } from "expo-location";
 import { Alert, Linking } from "react-native";
 
-export const getLocationPermission = async (): Promise<any> => {
-  let { status, canAskAgain } = await requestForegroundPermissionsAsync();
+export const askLocationPermission = async () => {
+  let { status, granted } = await requestForegroundPermissionsAsync();
 
   if (status !== PermissionStatus.GRANTED) {
-    // ✋ If we can’t ask again, guide user to Settings:
-    if (!canAskAgain) {
-      Alert.alert(
-        "Location Permission",
-        "You’ve denied location access. Please enable it in Settings to continue.",
-        [
-          {
-            text: "Open Settings",
-            onPress: () => Linking.openSettings(),
-          },
-          { text: "Cancel", style: "cancel" },
-        ]
-      );
-    }
-    return { error: "Location permission not granted" };
+    Alert.alert(
+      "Location Permission",
+      "You’ve denied location access. Please enable it in Settings to continue.",
+      [
+        {
+          text: "Open Settings",
+          onPress: () => Linking.openSettings(),
+        },
+        { text: "Cancel", style: "cancel" },
+      ]
+    );
   }
 
-  // 4) Finally, actually fetch the location
+  return granted;
+  // if user does'nt accept, it will not show anything until he accepts by clicking the shown button
+};
+export const getUserLocation = async (): Promise<
+  FetchResponse<SnapLocation>
+> => {
   try {
     const { coords } = await getCurrentPositionAsync();
-    return { coords };
+
+    return {
+      success: true,
+      data: { type: "Point", coordinates: [coords.longitude, coords.latitude] },
+    };
   } catch {
-    return { error: "Could not get current location" };
+    return {
+      message: "Could not get current location",
+      success: false,
+      status: 403,
+      path: "/UI",
+    };
   }
 };

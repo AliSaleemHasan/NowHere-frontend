@@ -10,7 +10,9 @@ import {
 export default function AvoidKeyboard(props: PropsWithChildren) {
   return (
     <TouchableWithoutFeedback
-      onPress={() => Keyboard.dismiss()}
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
       accessible={false}
     >
       <KeyboardAvoidingView

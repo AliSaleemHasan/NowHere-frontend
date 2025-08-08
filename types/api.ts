@@ -1,17 +1,27 @@
+//
+// General
+//
+
+export type HeaderContentType = "json" | "files" | "text" | "html";
+
 export type Success<T> = {
   data: T;
   success: true;
 };
 
-export type Error = {
+export type ResponseError = {
   success: false;
-  status: string;
+  statusCode: number;
   message: string;
+  error: string;
   path: string;
 };
 
-export type FetchResponse<T> = Error | Success<T>;
+export type FetchResponse<T> = ResponseError | Success<T>;
 
+//
+// Users
+//
 export type User = {
   email: string;
   bio?: string;

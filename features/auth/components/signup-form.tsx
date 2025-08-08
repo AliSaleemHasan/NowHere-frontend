@@ -1,7 +1,7 @@
 import FromButton from "@/components/form-button";
 import FormError from "@/components/form-error";
 import { Input } from "@/components/input";
-import { fetchWithoutAuth } from "@/lib/fetch-api";
+import { ApiFetch } from "@/lib/fetch-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -43,7 +43,7 @@ export const SignupForm = () => {
 
   const mutation = useMutation({
     mutationFn: (data: { user: Omit<SignupFormData, "confirm"> }) => {
-      return fetchWithoutAuth({
+      return ApiFetch({
         url: "auth/signup",
         options: {
           method: "POST",

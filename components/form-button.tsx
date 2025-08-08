@@ -1,7 +1,7 @@
 import React from "react";
 import {
   ActivityIndicator,
-  StyleSheet,
+  Keyboard,
   Text,
   TouchableOpacity,
 } from "react-native";
@@ -15,17 +15,18 @@ interface Props {
 export default function FromButton(props: Props) {
   return (
     <TouchableOpacity
-      onPress={props.onSubmit}
+      onPress={props.onSubmit} // run after layout stabilizes
+      onPressIn={() => {
+        Keyboard.dismiss();
+      }}
       disabled={props.disabled}
-      className={`${!props.disabled ? "bg-primary" : "bg-gray-600"}   w-full`}
+      className={`${!props.disabled ? "bg-primary" : "bg-gray-600"}   w-full h-12 items-center justify-center`}
     >
       {props.isLoading ? (
         <ActivityIndicator size={20} color={"primary"} />
       ) : (
-        <Text className="text-center text-white p-3">{props.text}</Text>
+        <Text className="text-center text-white ">{props.text}</Text>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({});

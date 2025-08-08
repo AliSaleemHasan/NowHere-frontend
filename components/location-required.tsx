@@ -1,10 +1,19 @@
-import { useUserLocation } from "@/context/user-location-context";
+import { useLocation } from "@/features/snaps/context/location-store";
+import { askLocationPermission } from "@/lib/location";
+import { useRouter } from "expo-router";
 import React from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 
 const LocationRequired = () => {
-  const { state, fetchLocation } = useUserLocation();
-  console.log(state);
+  const fetchLocation = useLocation((state) => state.featchLocation);
+  const router = useRouter();
+
+  const handleLocationPermission = async () => {
+    const granted = await askLocationPermission();
+    if (granted) {
+      fetchLocation();
+    }
+  };
   return (
     <View className="flex items-center  w-full h-full">
       <View className="flex-[.6]  w-full   ">
@@ -21,7 +30,7 @@ const LocationRequired = () => {
           To continue, please allow location access by tapping the button below.
         </Text>
         <TouchableOpacity
-          onPress={() => fetchLocation()}
+          onPress={handleLocationPermission}
           className="bg-primary p-4  rounderd-full  rounded-md "
         >
           <Text className="text-white text-sm ">Grant Location Access</Text>

@@ -13,7 +13,7 @@ import { AuthRedirectPrompt } from "./auth-redirect-prompt";
 import SocialNetworksAuth from "./social-network-auth";
 const LoginSchema = z.object({
   email: z.email(),
-  password: z.string(),
+  password: z.string().min(1),
 });
 
 type LoginFormData = z.infer<typeof LoginSchema>;
@@ -61,6 +61,7 @@ export const LoginForm = () => {
         />
         <FromButton
           onSubmit={handleSubmit(onSubmit)}
+          disabled={!isValid}
           text="Login"
           isLoading={isLoading}
         ></FromButton>

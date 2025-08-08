@@ -1,12 +1,11 @@
 import Loading from "@/components/loading";
 import LocationRequired from "@/components/location-required";
-import UserLocationProvider, {
-  useUserLocation,
-} from "@/context/user-location-context";
 import { useAuth } from "@/features/auth/context/auth-store";
+import { useLocation } from "@/features/snaps/context/location-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import Toast from "react-native-toast-message";
 import "./global.css";
 
 // Define Tanstack react query Client
@@ -17,11 +16,12 @@ export const unstable_settings = {
 };
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserLocationProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
         <LocationDependentContent />
-      </UserLocationProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+      <Toast />
+    </>
   );
 }
 
@@ -29,21 +29,25 @@ function LocationDependentContent() {
   const init = useAuth((state) => state.init);
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
 
-  const { state, fetchLocation } = useUserLocation();
-
+  const fetchLocation = useLocation((state) => state.featchLocation);
+  const isLocationLoading = useLocation((state) => state.loading);
+  const isLocationError = useLocation((state) => state.error);
   useEffect(() => {
     init();
-  }, []);
+  }, [init]);
+
   useEffect(() => {
     fetchLocation();
   }, [fetchLocation]);
 
-  if (state.isLoading) return <Loading></Loading>;
-  if (state.error) return <LocationRequired />;
+  if (isLocationLoading) return <Loading></Loading>;
+  if (isLocationError) return <LocationRequired />;
 
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Protected guard={!isLocationError && !isLocationLoading}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack.Protected>
       <Stack.Screen
         name="(auth)"
         options={{ headerShown: false, presentation: "modal" }}

@@ -1,4 +1,4 @@
-import BackToHome from "@/components/back-to-home";
+import DiscardFormButton from "@/components/discard-form-button";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
@@ -14,9 +14,9 @@ export default function SnapsLayout() {
           title: "New Snap",
           headerTitleStyle: { fontSize: 14 },
           headerTitleAlign: "center",
-          headerLeft: () => <BackToHome />,
+          headerLeft: () => <DiscardFormButton />,
           headerRight: () => (
-            <Pressable onPressIn={() => router.push("/(snaps)/snap-inputs")}>
+            <Pressable onPressIn={() => router.replace("/(snaps)/snap-inputs")}>
               <Text className="text-lg text-blue-700 ">Next</Text>
             </Pressable>
           ),
@@ -32,7 +32,7 @@ export default function SnapsLayout() {
           headerTitleStyle: { fontSize: 14 },
           headerTitleAlign: "center",
           headerLeft: () => (
-            <Pressable onPressIn={() => router.back()}>
+            <Pressable onPressIn={() => router.replace("/snaps-capture")}>
               <FontAwesome name="backward" size={20} />
             </Pressable>
           ),
