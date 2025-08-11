@@ -12,5 +12,11 @@ export interface CreateSnapBody {
   _userId: string;
   snaps: SnapFile[];
   description: string;
-  locaiton: SnapLocation;
+  location: SnapLocation;
 }
+
+export type CreateSnapResponse = Omit<CreateSnapBody, "snaps"> & {
+  snaps: string[];
+  createdAt: string;
+  updatedAt: string;
+};

@@ -41,7 +41,8 @@ export const getUserLocation = async (): Promise<
     return {
       message: "Could not get current location",
       success: false,
-      status: 403,
+      error: "Location Error",
+      statusCode: 403,
       path: "/UI",
     };
   }

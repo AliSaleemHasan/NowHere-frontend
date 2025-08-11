@@ -39,7 +39,7 @@ const getHeaders = ({
  */
 
 const refresh = async (token: string) => {
-  const response = await fetch(`${API_URL}auth/refresh`, {
+  const response = await fetch(`${API_URL}/auth/refresh`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export const apiFetch = async <T>({
     ...options.headers,
   };
 
-  const response = await fetch(`${API_URL}${url}`, options);
+  const response = await fetch(`${API_URL}/${url}`, options);
   const data = (await response.json()) as FetchResponse<T>;
 
   if (!data.success) {

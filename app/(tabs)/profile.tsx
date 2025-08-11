@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Profile() {
   const logout = useAuth((state) => state.logout);
   const user = useAuth((state) => state.user);
+
   return (
     <SafeAreaView className="flex items-center justify-center h-full w-full bg-secondary p-5">
       <View className="flex-1 w-full flex  gap-4">

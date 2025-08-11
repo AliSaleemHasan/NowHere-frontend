@@ -55,7 +55,7 @@ export const useAuth = create<AuthState>()(
       },
 
       login: async (inputs) => {
-        const ressponse = await fetch(`${API_URL}auth/login`, {
+        const ressponse = await fetch(`${API_URL}/auth/login`, {
           method: "POST",
           body: JSON.stringify(inputs),
           headers: {
