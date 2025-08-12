@@ -89,6 +89,7 @@ export const apiAuthFetch = async <T>({
   const { accessToken, refreshToken } = useAuth.getState().tokens || {};
 
   if (!accessToken || !refreshToken) {
+    useAuth.getState().logout();
     return Promise.reject(
       new Error("User is not authorized to access this resource.")
     );

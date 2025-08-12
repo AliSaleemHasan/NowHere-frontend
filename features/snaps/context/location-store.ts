@@ -53,9 +53,7 @@ export const useLocation = create<UserLocationState>()(
         removeItem,
         setItem,
       })),
-      partialize: (state) => ({
-        location,
-      }),
+      partialize: (state) => ({}),
     }
   )
 );

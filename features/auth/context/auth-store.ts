@@ -71,7 +71,6 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
-        console.log("test inside logout");
         await deleteItemAsync(ACCESS_TOKEN_KEY);
         await deleteItemAsync(REFRESH_TOKEN_KEY);
         set({ isLoggedIn: false, user: undefined });

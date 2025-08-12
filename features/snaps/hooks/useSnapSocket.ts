@@ -27,6 +27,7 @@ export const useSnapSocket = () => {
       );
     });
 
+    console.log(location);
     return () => {
       socket.off("snap-added");
     };
@@ -36,7 +37,7 @@ export const useSnapSocket = () => {
     queryKey: ["snaps"],
     queryFn: () =>
       apiFetch<CreateSnapResponse[]>({
-        url: "snaps",
+        url: `snaps`,
         options: {
           method: "GET",
         },

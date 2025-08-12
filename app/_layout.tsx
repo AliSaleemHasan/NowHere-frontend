@@ -26,19 +26,24 @@ export default function RootLayout() {
 }
 
 function LocationDependentContent() {
-  const init = useAuth((state) => state.init);
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
+
+  const init = useAuth((state) => state.init);
 
   const fetchLocation = useLocation((state) => state.featchLocation);
   const isLocationLoading = useLocation((state) => state.loading);
   const isLocationError = useLocation((state) => state.error);
-  useEffect(() => {
-    init();
-  }, [init]);
 
   useEffect(() => {
     fetchLocation();
   }, [fetchLocation]);
+
+  useEffect(() => {
+    const handleInitAuth = async () => {
+      await init();
+    };
+    handleInitAuth();
+  }, []);
 
   if (isLocationLoading) return <Loading></Loading>;
   if (isLocationError) return <LocationRequired />;

@@ -4,6 +4,7 @@ import { Pressable } from "react-native";
 
 export default function Layout() {
   const router = useRouter();
+
   return (
     <Stack
       screenOptions={{
@@ -12,7 +13,10 @@ export default function Layout() {
 
         headerTitle: "",
         headerLeft: () => (
-          <Pressable onPress={() => router.replace("/")} className="ml-4 p-3 ">
+          <Pressable
+            onPressIn={() => router.replace("/")}
+            className="ml-4 p-3 "
+          >
             <FontAwesome name="close" size={15} color="black" />
           </Pressable>
         ),

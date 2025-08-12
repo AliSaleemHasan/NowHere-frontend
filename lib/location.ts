@@ -2,6 +2,7 @@ import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { FetchResponse } from "@/types/api";
 import {
   getCurrentPositionAsync,
+  LocationAccuracy,
   PermissionStatus,
   requestForegroundPermissionsAsync,
 } from "expo-location";
@@ -31,7 +32,9 @@ export const getUserLocation = async (): Promise<
   FetchResponse<SnapLocation>
 > => {
   try {
-    const { coords } = await getCurrentPositionAsync();
+    const { coords } = await getCurrentPositionAsync({
+      accuracy: LocationAccuracy.Low,
+    });
 
     return {
       success: true,

@@ -1,7 +1,7 @@
 import FromButton from "@/components/form-button";
 import FormError from "@/components/form-error";
 import { Input } from "@/components/input";
-import { ApiFetch } from "@/lib/fetch-api";
+import { apiFetch } from "@/lib/fetch-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -43,7 +43,7 @@ export const SignupForm = () => {
 
   const mutation = useMutation({
     mutationFn: (data: { user: Omit<SignupFormData, "confirm"> }) => {
-      return ApiFetch({
+      return apiFetch({
         url: "auth/signup",
         options: {
           method: "POST",
@@ -114,7 +114,6 @@ export const SignupForm = () => {
           name="password"
           placeholder="Password.."
           secureTextEntry
-          keyboardType={"visible-password"}
           textContentType="password"
         />
         {errors.password?.message && (
@@ -126,7 +125,6 @@ export const SignupForm = () => {
           placeholder="Confirm Password.."
           textContentType="password"
           secureTextEntry
-          keyboardType={"visible-password"}
         />
         {errors.confirm?.message && (
           <FormError message={errors.confirm.message}></FormError>

@@ -6,6 +6,7 @@ import { Pressable, Text } from "react-native";
 
 export default function SnapsLayout() {
   const router = useRouter();
+
   return (
     <Stack>
       <Stack.Screen
