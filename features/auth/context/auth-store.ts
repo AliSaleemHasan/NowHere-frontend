@@ -1,4 +1,4 @@
-import type { User } from "@/types/api";
+import type { UserResponse } from "@/types/api";
 import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from "@/utils";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
@@ -12,7 +12,7 @@ import type {
 interface AuthState {
   isLoggedIn: boolean;
   isReady: boolean;
-  user?: User;
+  user?: UserResponse;
   tokens?: Tokens;
   init: () => Promise<void>;
   login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;

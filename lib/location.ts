@@ -2,7 +2,7 @@ import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { FetchResponse } from "@/types/api";
 import {
   getCurrentPositionAsync,
-  LocationAccuracy,
+  getLastKnownPositionAsync,
   PermissionStatus,
   requestForegroundPermissionsAsync,
 } from "expo-location";
@@ -32,17 +32,20 @@ export const getUserLocation = async (): Promise<
   FetchResponse<SnapLocation>
 > => {
   try {
-    const { coords } = await getCurrentPositionAsync({
-      accuracy: LocationAccuracy.Low,
-    });
+    let location = await getLastKnownPositionAsync({});
+
+    if (!location) location = await getCurrentPositionAsync({});
 
     return {
       success: true,
-      data: { type: "Point", coordinates: [coords.longitude, coords.latitude] },
+      data: {
+        type: "Point",
+        coordinates: [location.coords.longitude, location.coords.latitude],
+      },
     };
-  } catch {
+  } catch (e: any) {
     return {
-      message: "Could not get current location",
+      message: e.Error || e.message || "Could not get current location",
       success: false,
       error: "Location Error",
       statusCode: 403,

@@ -59,6 +59,7 @@ export default function SnapInputs() {
     const payload = PostSnapBody(snaps);
     payload.append("location", JSON.stringify(location));
     payload.append("description", data.description);
+    payload.append("tag", "SOCIAL");
 
     addSnapMutation.mutate(payload);
   };

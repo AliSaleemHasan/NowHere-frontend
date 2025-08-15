@@ -1,4 +1,4 @@
-import { User } from "@/types/api";
+import { UserResponse } from "@/types/api";
 
 export type LoginFormProps = {
   user: {
@@ -13,6 +13,6 @@ export type Tokens = {
 };
 
 export type AuthSuccess = {
-  user: User;
+  user: UserResponse;
   tokens: Tokens;
 };

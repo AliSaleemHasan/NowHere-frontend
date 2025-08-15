@@ -4,25 +4,19 @@
 
 export type HeaderContentType = "json" | "files" | "text" | "html";
 
-export type Success<T> = {
-  data: T;
-  success: true;
+export type FetchResponse<T> = {
+  data?: T;
+  success: boolean;
+  statusCode?: number;
+  message?: string;
+  error?: string;
+  path?: string;
 };
-
-export type ResponseError = {
-  success: false;
-  statusCode: number;
-  message: string;
-  error: string;
-  path: string;
-};
-
-export type FetchResponse<T> = ResponseError | Success<T>;
 
 //
 // Users
 //
-export type User = {
+export type UserResponse = {
   email: string;
   bio?: string;
   first_name: string;

@@ -1,4 +1,5 @@
 import { useAuth } from "@/features/auth/context/auth-store";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +8,7 @@ export default function Profile() {
   const logout = useAuth((state) => state.logout);
   const user = useAuth((state) => state.user);
 
+  const router = useRouter();
   return (
     <SafeAreaView className="flex items-center justify-center h-full w-full bg-secondary p-5">
       <View className="flex-1 w-full flex  gap-4">
@@ -17,6 +19,14 @@ export default function Profile() {
           Your current email is: {user?.email}
         </Text>
       </View>
+      <TouchableOpacity
+        className="bg-alert p-5 rounded-full w-full"
+        onPress={() => {
+          router.replace("/(snaps)/689b45e83678dfbefa184c9c");
+        }}
+      >
+        <Text className="text-white text-center">Logout</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         className="bg-alert p-5 rounded-full w-full"
         onPress={logout}

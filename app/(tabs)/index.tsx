@@ -1,13 +1,14 @@
 import Loading from "@/components/loading";
+import MapMarker from "@/features/snaps/components/map-marker";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapSocket } from "@/features/snaps/hooks/useSnapSocket";
-import { Fragment } from "react";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-maps";
 
 export default function Index() {
   const location = useLocation((state) => state.location);
-
+  const router = useRouter();
   const query = useSnapSocket();
 
   if (query.isLoading) return <Loading></Loading>;
@@ -17,9 +18,10 @@ export default function Index() {
       <MapView
         style={styles.map}
         showsUserLocation
-        userLocationUpdateInterval={10000}
-        onUserLocationChange={(event) => event.nativeEvent.coordinate}
-        region={{
+        showsBuildings
+        showsCompass
+        // onUserLocationChange={(event) => event.nativeEvent.coordinate}
+        initialRegion={{
           longitude: location.coordinates[0],
           latitude: location.coordinates[1],
           latitudeDelta: 0.1,
@@ -27,20 +29,9 @@ export default function Index() {
         }}
       >
         {query.data?.success &&
-          query.data.data?.map((snap, idx) =>
-            snap.location && snap.location.coordinates ? (
-              <Marker
-                key={`${snap._userId}_${idx}`}
-                coordinate={{
-                  latitude: snap.location.coordinates[1],
-                  longitude: snap.location.coordinates[0],
-                }}
-                title={snap._userId}
-              ></Marker>
-            ) : (
-              <Fragment key={`${snap._userId}_${idx}`}></Fragment>
-            )
-          )}
+          query.data.data?.map((snap, idx) => (
+            <MapMarker snap={snap} key={snap._id}></MapMarker>
+          ))}
       </MapView>
     </View>
   );
@@ -48,6 +39,7 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   map: {
+    flex: 1,
     width: "100%",
     height: "100%",
   },

@@ -2,13 +2,29 @@ import DiscardFormButton from "@/components/discard-form-button";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 
 export default function SnapsLayout() {
   const router = useRouter();
 
   return (
     <Stack>
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Snap Detail",
+          presentation: Platform.OS === "ios" ? "transparentModal" : "modal",
+          animation: "slide_from_bottom",
+          gestureDirection: "vertical",
+          ...(Platform.OS === "ios" && {
+            sheetGrabberVisible: true,
+            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: [0.3, 0.75, 1],
+            sheetExpandsWhenScrolledToEdge: true,
+          }),
+        }}
+      />
+
       <Stack.Screen
         name="snaps-capture"
         options={{
