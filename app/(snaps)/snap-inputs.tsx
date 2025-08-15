@@ -1,9 +1,12 @@
+import AvoidKeyboard from "@/components/avoid-keyboard";
 import FromButton from "@/components/form-button";
 import { Input } from "@/components/input";
 import { PostSnapBody } from "@/features/snaps/api/post-new-snap";
+import { TagCheckbox } from "@/features/snaps/components/tags-checkboxes";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnap } from "@/features/snaps/context/snap-store";
 import { apiAuthFetch } from "@/lib/fetch-api";
+import { Tags } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -14,6 +17,7 @@ import Toast from "react-native-toast-message";
 import * as z from "zod";
 const AddSnapSchema = z.object({
   description: z.string().min(1),
+  tag: z.enum(Tags),
 });
 
 type AddSnapData = z.infer<typeof AddSnapSchema>;
@@ -21,6 +25,10 @@ type AddSnapData = z.infer<typeof AddSnapSchema>;
 export default function SnapInputs() {
   const router = useRouter();
   const { handleSubmit, setValue, control, formState } = useForm<AddSnapData>({
+    defaultValues: {
+      tag: Tags.SOCIAL,
+      description: "",
+    },
     resolver: zodResolver(AddSnapSchema),
   });
   const snaps = useSnap((state) => state.snaps);
@@ -59,43 +67,57 @@ export default function SnapInputs() {
     const payload = PostSnapBody(snaps);
     payload.append("location", JSON.stringify(location));
     payload.append("description", data.description);
-    payload.append("tag", "SOCIAL");
+    payload.append("tag", data.tag);
 
     addSnapMutation.mutate(payload);
   };
 
   return (
-    <View className="p-5 gap-3">
-      <View className="flex-row items-center justify-between gap-1">
-        <Text className="text-sm">Please Enter Snap Description</Text>
-        {formState.dirtyFields.description && (
-          <TouchableOpacity
-            className="flex-1"
-            onPress={() => setValue("description", "")}
-          >
-            <Text className="text-sm text-right font-light ">CLEAR</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    <AvoidKeyboard>
+      <View className="p-5 gap-3">
+        <View className="flex-row items-center justify-between gap-1">
+          <Text className="text-sm">Please Enter Snap Description</Text>
+          {formState.dirtyFields.description && (
+            <TouchableOpacity
+              className="flex-1"
+              onPress={() => setValue("description", "")}
+            >
+              <Text className="text-sm text-right font-light ">CLEAR</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        <Input
+          control={control}
+          name="description"
+          className="w-full min-h-24"
+          autoCapitalize="characters"
+          defaultValue=""
+          autoFocus
+          placeholder="Description"
+          numberOfLines={6}
+          multiline
+          returnKeyType="next"
+        ></Input>
 
-      <Input
-        control={control}
-        name="description"
-        className="w-full min-h-24"
-        autoCapitalize="characters"
-        defaultValue=""
-        autoFocus
-        placeholder="Description"
-        numberOfLines={6}
-        multiline
-        returnKeyType="next"
-      ></Input>
-      <FromButton
-        onSubmit={handleSubmit(onSubmit)}
-        text="Done"
-        disabled={!formState.isValid}
-        isLoading={formState.isLoading}
-      ></FromButton>
-    </View>
+        <View className="flex-row flex-wrap gap-2">
+          {Object.values(Tags).map((tag) => (
+            <TagCheckbox
+              key={tag}
+              control={control}
+              name="tag"
+              value={tag}
+              label={tag}
+            />
+          ))}
+        </View>
+
+        <FromButton
+          onSubmit={handleSubmit(onSubmit)}
+          text="Done"
+          disabled={!formState.isValid}
+          isLoading={formState.isLoading}
+        ></FromButton>
+      </View>
+    </AvoidKeyboard>
   );
 }
