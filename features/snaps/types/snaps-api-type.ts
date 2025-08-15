@@ -1,3 +1,5 @@
+import { Tags } from "@/utils";
+
 export interface SnapLocation {
   type: "Point";
   coordinates: [number, number];
@@ -19,6 +21,7 @@ export type CreateSnapResponse = Omit<CreateSnapBody, "snaps"> & {
   snaps: string[];
   createdAt: string;
   updatedAt: string;
+  tag: Tags;
   _id: string;
 };
 

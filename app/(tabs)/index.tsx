@@ -2,13 +2,11 @@ import Loading from "@/components/loading";
 import MapMarker from "@/features/snaps/components/map-marker";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapSocket } from "@/features/snaps/hooks/useSnapSocket";
-import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 
 export default function Index() {
   const location = useLocation((state) => state.location);
-  const router = useRouter();
   const query = useSnapSocket();
 
   if (query.isLoading) return <Loading></Loading>;
