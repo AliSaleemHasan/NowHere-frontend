@@ -10,7 +10,7 @@ export default function Profile() {
 
   const router = useRouter();
   return (
-    <SafeAreaView className="flex items-center justify-center h-full w-full bg-secondary p-5">
+    <SafeAreaView className="flex items-center justify-center h-full w-full bg-secondary p-5 gap-4">
       <View className="flex-1 w-full flex  gap-4">
         <Text className="text-black">
           Welcome Back {user?.first_name} {user?.last_name}
@@ -20,12 +20,10 @@ export default function Profile() {
         </Text>
       </View>
       <TouchableOpacity
-        className="bg-alert p-5 rounded-full w-full"
-        onPress={() => {
-          router.replace("/(snaps)/689b45e83678dfbefa184c9c");
-        }}
+        className="bg-primary p-5 rounded-full w-full"
+        onPress={() => router.push("/(tabs)/profile/settings")}
       >
-        <Text className="text-white text-center">Logout</Text>
+        <Text className="text-white text-center">Go to settings</Text>
       </TouchableOpacity>
       <TouchableOpacity
         className="bg-alert p-5 rounded-full w-full"

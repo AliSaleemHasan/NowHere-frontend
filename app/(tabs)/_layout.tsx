@@ -22,6 +22,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="add-snap"
         options={{
+          tabBarLabel: "Add Snap",
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
@@ -32,6 +33,8 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="profile"
           options={{
+            tabBarLabel: "Profile",
+            headerShown: false,
             tabBarIcon: ({ color }) => (
               <FontAwesome name="user" size={20} color={color} />
             ),

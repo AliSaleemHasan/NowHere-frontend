@@ -14,9 +14,6 @@ export const useSnapSocket = () => {
   const queryClient = useQueryClient();
   const location = useLocation((state) => state.location);
 
-  console.log(
-    `snaps/near/${location.coordinates[0]}/${location.coordinates[1]}${handleArrayQueryParam(params.tags as string, "tags")}`
-  );
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);
