@@ -12,6 +12,7 @@ const TabsLayout = () => {
         options={{
           headerShown: false,
           tabBarLabel: "Map",
+
           tabBarIcon: ({ color }) => (
             <FontAwesome size={20} name="map" color={color} />
           ),

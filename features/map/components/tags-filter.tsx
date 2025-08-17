@@ -1,0 +1,94 @@
+import CustomCheckbox from "@/components/checkbox";
+import FromButton from "@/components/form-button";
+import { Tags } from "@/utils";
+import { FontAwesome } from "@expo/vector-icons";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { PropsWithChildren, useCallback, useRef, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+const TagsFilter = ({ children }: PropsWithChildren) => {
+  const params = useLocalSearchParams();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const [searchTags, setSearchTags] = useState<Tags[]>(
+    (params?.tags as Tags[]) || []
+  );
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
+  const handleTagsFilter = () => {
+    router.setParams({
+      tags: searchTags,
+    });
+    bottomSheetRef.current?.close();
+  };
+  return (
+    <GestureHandlerRootView className="flex-1">
+      {children}
+
+      <TouchableOpacity
+        onPress={() => bottomSheetRef.current?.expand()}
+        className="absolute top-20 right-5 gap-1 bg-white py-6 px-5 rounded-full z-50 items-center"
+      >
+        <FontAwesome size={10}>tags</FontAwesome>
+      </TouchableOpacity>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop} // 👈 add backdrop
+      >
+        <BottomSheetView className="p-4 flex-1  gap-4">
+          <View className="flex-row items-center gap-4">
+            <Text>Show Snaps of type :</Text>
+            {searchTags.length > 0 && (
+              <TouchableOpacity
+                className="flex-1"
+                hitSlop={10}
+                onPress={() => setSearchTags([])}
+              >
+                <Text className=" font-thin text-sm  ">Clear</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <View className="items-center flex-row flex-wrap gap-2">
+            {Object.values(Tags).map((tag, index) => (
+              <CustomCheckbox
+                isSelected={searchTags.includes(tag)}
+                label={tag}
+                key={`${tag}_${index}`}
+                buttonProps={{
+                  onPress: () =>
+                    setSearchTags((tags) =>
+                      searchTags.includes(tag)
+                        ? tags.filter((item) => item !== tag)
+                        : [...tags, tag]
+                    ),
+                }}
+              ></CustomCheckbox>
+            ))}
+          </View>
+          <FromButton text="Search" onSubmit={handleTagsFilter}></FromButton>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
+  );
+};
+
+export default TagsFilter;

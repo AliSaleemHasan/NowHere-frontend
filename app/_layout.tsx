@@ -51,7 +51,12 @@ function LocationDependentContent() {
   return (
     <Stack>
       <Stack.Protected guard={!isLocationError && !isLocationLoading}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Protected>
       <Stack.Screen
         name="(auth)"

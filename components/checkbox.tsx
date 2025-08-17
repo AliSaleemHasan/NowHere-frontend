@@ -1,34 +1,30 @@
 import Checkbox, { CheckboxProps } from "expo-checkbox";
 import React from "react";
-import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 
-interface Props<TFieldValues extends FieldValues> {
-  name: Path<TFieldValues>;
-  text: string;
-  control: Control<TFieldValues>;
+interface Props {
+  isSelected?: boolean;
+  label: string;
+  buttonProps: TouchableOpacityProps;
 }
 
-export default function CustomCheckbox<TFieldValues extends FieldValues>(
-  props: Props<TFieldValues> & CheckboxProps
-) {
-  const { name, text, control, ...checkboxProps } = props;
+export default function CustomCheckbox(props: Props & CheckboxProps) {
+  const { isSelected, label, buttonProps, ...checkboxProps } = props;
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field: { onChange, value } }) => (
-        <View className="flex-row gap-4 px-2 py-3 bg-red-400">
-          <Checkbox
-            {...checkboxProps}
-            value={value}
-            onValueChange={onChange}
-            color={value ? "#4630EB" : undefined}
-          ></Checkbox>
-          <Text>{text}</Text>
-        </View>
-      )}
-    />
+    <TouchableOpacity
+      {...buttonProps}
+      className={`p-2 rounded-lg ${isSelected ? "bg-primary" : "bg-gray-200"}`}
+    >
+      {/* Hidden checkbox just for accessibility */}
+      <Checkbox
+        {...checkboxProps}
+        value={isSelected}
+        className="opacity-0 absolute"
+      />
+      <Text className={` text-xs ${isSelected ? "text-white" : "text-black"}`}>
+        {label}
+      </Text>
+    </TouchableOpacity>
   );
 }
