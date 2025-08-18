@@ -31,7 +31,7 @@ const LocationRequired = () => {
         </Text>
         <TouchableOpacity
           onPress={handleLocationPermission}
-          className="bg-primary p-4  rounderd-full  rounded-md "
+          className=" p-4  rounderd-full  rounded-md "
         >
           <Text className="text-white text-sm ">Grant Location Access</Text>
         </TouchableOpacity>

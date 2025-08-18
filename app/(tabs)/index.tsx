@@ -7,11 +7,29 @@ import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 
 import React from "react";
+import Toast from "react-native-toast-message";
 export default function Index() {
   const location = useLocation((state) => state.location);
   const query = useSnapSocket();
 
   if (query.isLoading) return <Loading></Loading>;
+
+  if (query.error) {
+    Toast.show({
+      type: "error",
+      swipeable: true,
+      position: "bottom",
+      bottomOffset: 100,
+
+      text1: "Something wrong happened when fetching snaps",
+      text2: query.error.message,
+      text1Style: { flexWrap: "wrap" },
+
+      onPress: () => {
+        query.refetch();
+      },
+    });
+  }
 
   return (
     <View className="flex-1 relative">
