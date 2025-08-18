@@ -25,7 +25,7 @@ let userUISettings: {
     description: "The minimmum distance for the previous post of the user",
     in: "Meters",
   },
-  snapDissapperanceTime: {
+  snapDisappearTime: {
     title: "Visibility expiration time (Days)",
     description: "Number of days the snaps will be visible in users locaiton",
     in: "Days",
