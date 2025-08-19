@@ -1,4 +1,4 @@
-import Loading from "@/components/loading";
+import Loading from "@/components/Loading";
 import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
 import { API_URL } from "@/utils";

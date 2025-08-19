@@ -3,10 +3,10 @@
 import * as ImagePicker from "expo-image-picker";
 import { Alert, Linking } from "react-native";
 export const askCameraPermession = async () => {
-  const permissionStatus = await ImagePicker.getCameraPermissionsAsync();
+  const permissionStatus = await ImagePicker.requestCameraPermissionsAsync();
 
   // ask again by prompting
-  if (permissionStatus.status === ImagePicker.PermissionStatus.GRANTED)
+  if (!permissionStatus.granted)
     Alert.alert(
       "Camera Permission",
       "Please make sure to enable camera permission to continue .",
@@ -20,8 +20,7 @@ export const askCameraPermession = async () => {
 export const handleCameraCapture = async () => {
   const cameraPermission = await ImagePicker.getCameraPermissionsAsync();
 
-  if (cameraPermission.status !== ImagePicker.PermissionStatus.GRANTED)
-    await askCameraPermession();
+  if (!cameraPermission.granted) await askCameraPermession();
 
   // TODO: test rejecting permission in both cases (what will happen?)
 

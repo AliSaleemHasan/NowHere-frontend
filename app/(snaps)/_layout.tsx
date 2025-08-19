@@ -1,4 +1,4 @@
-import DiscardFormButton from "@/components/discard-form-button";
+import DiscardFormButton from "@/components/DiscardFormButton";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";

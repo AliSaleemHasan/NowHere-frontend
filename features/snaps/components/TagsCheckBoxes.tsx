@@ -1,4 +1,4 @@
-import CustomCheckbox from "@/components/checkbox";
+import CustomCheckbox from "@/components/Checkbox";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
 type Props<T extends FieldValues> = {

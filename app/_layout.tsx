@@ -1,5 +1,5 @@
-import Loading from "@/components/loading";
-import LocationRequired from "@/components/location-required";
+import Loading from "@/components/Loading";
+import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

@@ -1,5 +1,5 @@
-import Divider from "@/components/divider";
-import SocialNetworkButton from "@/components/social-network-button";
+import Divider from "@/components/Divider";
+import SocialNetworkButton from "@/components/SocialNetworkButton";
 import React from "react";
 import { Text, View } from "react-native";
 

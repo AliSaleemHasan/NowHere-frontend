@@ -21,6 +21,8 @@ export type UserResponse = {
   bio?: string;
   first_name: string;
   last_name: string;
+  _id: string;
+  image?: string;
 };
 
 //

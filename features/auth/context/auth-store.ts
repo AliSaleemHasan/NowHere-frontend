@@ -12,7 +12,7 @@ import type {
 interface AuthState {
   isLoggedIn: boolean;
   isReady: boolean;
-  user?: UserResponse;
+  user?: UserResponse["_id"];
   tokens?: Tokens;
   init: () => Promise<void>;
   login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;
@@ -48,7 +48,7 @@ export const useAuth = create<AuthState>()(
         if (res.success) {
           set({
             isLoggedIn: true,
-            user: res.data.user,
+            user: res.data.user._id,
             tokens: res.data.tokens,
           });
         }
@@ -66,7 +66,11 @@ export const useAuth = create<AuthState>()(
         let res = await ressponse.json();
         if (!res.success) throw new Error(res.message);
 
-        set({ isLoggedIn: true, user: res.data.user, tokens: res.data.tokens });
+        set({
+          isLoggedIn: true,
+          user: res.data.user._id,
+          tokens: res.data.tokens,
+        });
         return res.data.user;
       },
 

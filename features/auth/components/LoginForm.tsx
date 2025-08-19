@@ -1,6 +1,6 @@
-import FromButton from "@/components/form-button";
-import FormError from "@/components/form-error";
-import { Input } from "@/components/input";
+import FromButton from "@/components/FormButton";
+import FormError from "@/components/FormError";
+import { Input } from "@/components/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -9,8 +9,8 @@ import { useForm } from "react-hook-form";
 import { Keyboard, SafeAreaView, Text, View } from "react-native";
 import * as z from "zod";
 import { useAuth } from "../context/auth-store";
-import { AuthRedirectPrompt } from "./auth-redirect-prompt";
-import SocialNetworksAuth from "./social-network-auth";
+import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
+import SocialNetworksAuth from "./SocialNetworkAuth";
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string().min(1),

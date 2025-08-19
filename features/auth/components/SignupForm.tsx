@@ -1,6 +1,6 @@
-import FromButton from "@/components/form-button";
-import FormError from "@/components/form-error";
-import { Input } from "@/components/input";
+import FromButton from "@/components/FormButton";
+import FormError from "@/components/FormError";
+import { Input } from "@/components/Input";
 import { apiFetch } from "@/lib/fetch-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -15,8 +15,8 @@ import {
   View,
 } from "react-native";
 import * as z from "zod";
-import { AuthRedirectPrompt } from "./auth-redirect-prompt";
-import SocialNetworksAuth from "./social-network-auth";
+import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
+import SocialNetworksAuth from "./SocialNetworkAuth";
 const SignUpSchema = z
   .object({
     email: z.email(),

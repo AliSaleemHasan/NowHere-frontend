@@ -1,5 +1,5 @@
-import CustomCheckbox from "@/components/checkbox";
-import FromButton from "@/components/form-button";
+import CustomCheckbox from "@/components/Checkbox";
+import FromButton from "@/components/FormButton";
 import { Tags } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomSheet, {

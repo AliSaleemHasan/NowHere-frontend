@@ -1,8 +1,8 @@
-import AvoidKeyboard from "@/components/avoid-keyboard";
-import FromButton from "@/components/form-button";
-import { Input } from "@/components/input";
+import AvoidKeyboard from "@/components/AvoidKeyboard";
+import FromButton from "@/components/FormButton";
+import { Input } from "@/components/Input";
 import { PostSnapBody } from "@/features/snaps/api/post-new-snap";
-import { TagCheckbox } from "@/features/snaps/components/tags-checkboxes";
+import { TagCheckbox } from "@/features/snaps/components/TagsCheckBoxes";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnap } from "@/features/snaps/context/snap-store";
 import { apiAuthFetch } from "@/lib/fetch-api";

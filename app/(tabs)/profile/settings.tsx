@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import Loading from "@/components/loading";
+import Loading from "@/components/Loading";
 import { UserSetting } from "@/features/users/types/users-api-type";
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { useQuery } from "@tanstack/react-query";

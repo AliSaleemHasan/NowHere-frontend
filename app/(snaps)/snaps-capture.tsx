@@ -1,4 +1,4 @@
-import Loading from "@/components/loading";
+import Loading from "@/components/Loading";
 import { useSnap } from "@/features/snaps/context/snap-store";
 import { handleCameraCapture } from "@/lib/image-picker";
 import { FontAwesome } from "@expo/vector-icons";

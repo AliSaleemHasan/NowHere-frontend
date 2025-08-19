@@ -1,4 +1,4 @@
-import { LoginForm } from "@/features/auth/components/login-form";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import { View } from "react-native";
 
 const Login = () => {

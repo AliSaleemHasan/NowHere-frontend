@@ -1,36 +1,51 @@
+import Loading from "@/components/Loading";
 import { useAuth } from "@/features/auth/context/auth-store";
-import { useRouter } from "expo-router";
+import ProfileImage from "@/features/users/components/ProfileImage";
+import { apiAuthFetch } from "@/lib/fetch-api";
+import { UserResponse } from "@/types/api";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, View } from "react-native";
 
 export default function Profile() {
-  const logout = useAuth((state) => state.logout);
-  const user = useAuth((state) => state.user);
+  const userId = useAuth((state) => state.user);
 
-  const router = useRouter();
+  const userInfo = useQuery({
+    queryKey: ["profile", userId],
+    queryFn: async () =>
+      await apiAuthFetch<UserResponse>({
+        url: `users/id/${userId}`,
+        options: { method: "GET" },
+      }),
+  });
+
+  if (userInfo.isLoading) return <Loading></Loading>;
+
   return (
-    <SafeAreaView className="flex items-center justify-center h-full w-full bg-secondary p-5 gap-4">
-      <View className="flex-1 w-full flex  gap-4">
-        <Text className="text-black">
-          Welcome Back {user?.first_name} {user?.last_name}
+    <View className="flex items-center justify-center h-full w-full  p-5 gap-5">
+      <ProfileImage
+        image={userInfo.data?.data?.image}
+        userId={userId}
+      ></ProfileImage>
+      <View className="flex-1 gap-4">
+        <Text className="font-thin text-sm">
+          Welcome back to NowHere, your information is listed below:
         </Text>
-        <Text className="text-black w-full">
-          Your current email is: {user?.email}
-        </Text>
+
+        <View className="gap-2 w-full">
+          <Text className="text-sm">email</Text>
+          <Text className="text-sm font-thin">
+            {userInfo.data?.data?.email}
+          </Text>
+        </View>
+
+        <View className="gap-2 w-full">
+          <Text className="text-sm">name</Text>
+          <Text className="text-sm font-thin">
+            {userInfo.data?.data?.first_name} {userInfo.data?.data?.last_name}
+          </Text>
+        </View>
       </View>
-      <TouchableOpacity
-        className="bg-primary p-5 rounded-full w-full"
-        onPress={() => router.push("/(tabs)/profile/settings")}
-      >
-        <Text className="text-white text-center">Go to settings</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        className="bg-alert p-5 rounded-full w-full"
-        onPress={logout}
-      >
-        <Text className="text-white text-center">Logout</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }

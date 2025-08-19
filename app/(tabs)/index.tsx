@@ -1,6 +1,6 @@
-import Loading from "@/components/loading";
-import TagsFilter from "@/features/map/components/tags-filter";
-import MapMarker from "@/features/snaps/components/map-marker";
+import Loading from "@/components/Loading";
+import TagsFilter from "@/features/map/components/TagsFilter";
+import MapMarker from "@/features/snaps/components/MapMarker";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapSocket } from "@/features/snaps/hooks/useSnapSocket";
 import { StyleSheet, View } from "react-native";
