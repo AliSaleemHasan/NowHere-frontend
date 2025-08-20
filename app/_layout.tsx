@@ -1,5 +1,4 @@
 import Loading from "@/components/Loading";
-import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -31,6 +30,10 @@ function LocationDependentContent() {
   const init = useAuth((state) => state.init);
 
   const fetchLocation = useLocation((state) => state.featchLocation);
+  const boarding = useLocation((state) => state.boarding);
+
+  console.log(boarding);
+
   const isLocationLoading = useLocation((state) => state.loading);
   const isLocationError = useLocation((state) => state.error);
 
@@ -46,26 +49,33 @@ function LocationDependentContent() {
   }, []);
 
   if (isLocationLoading) return <Loading></Loading>;
-  if (isLocationError) return <LocationRequired />;
 
   return (
     <Stack>
-      <Stack.Protected guard={!isLocationError && !isLocationLoading}>
+      <Stack.Protected guard={boarding}>
         <Stack.Screen
           name="(tabs)"
           options={{
             headerShown: false,
           }}
         />
-      </Stack.Protected>
-      <Stack.Screen
-        name="(auth)"
-        options={{ headerShown: false, presentation: "modal" }}
-      />
-      <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen
-          name="(snaps)"
+          name="(auth)"
           options={{ headerShown: false, presentation: "modal" }}
+        />
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen
+            name="(snaps)"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+        </Stack.Protected>
+      </Stack.Protected>
+      <Stack.Protected guard={!boarding}>
+        <Stack.Screen
+          name="onboarding"
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack.Protected>
     </Stack>

@@ -12,7 +12,9 @@ type UserLocationState = {
   location: SnapLocation;
   error?: string;
   loading?: boolean;
+  boarding: boolean;
   featchLocation: () => Promise<void>;
+  setBoarding: () => void;
   setLocation: (newLocation: LatLng) => void;
 };
 
@@ -20,16 +22,21 @@ export const useLocation = create<UserLocationState>()(
   persist(
     (set, get) => ({
       loading: true,
+      boarding: false,
       location: {
         type: "Point",
         coordinates: [0, 0],
+      },
+      setBoarding: () => {
+        set(() => ({ boarding: true }));
       },
       async featchLocation() {
         set(() => ({ loading: true }));
         try {
           const results = await getUserLocation();
           if (!results.success) set(() => ({ error: results.message }));
-          else set(() => ({ location: results.data, error: "" }));
+          else
+            set(() => ({ location: results.data, error: "", boarding: true }));
         } catch (err) {
           set((state) => ({ error: JSON.stringify(err) })); //TODO: Better Error Handling
         } finally {
@@ -53,7 +60,10 @@ export const useLocation = create<UserLocationState>()(
         removeItem,
         setItem,
       })),
-      partialize: (state) => ({}),
+      partialize: (state) => ({
+        location,
+        boarding: state.boarding,
+      }),
     }
   )
 );

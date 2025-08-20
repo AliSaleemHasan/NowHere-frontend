@@ -3,7 +3,7 @@ import { Image, Text, View } from "react-native";
 
 const Loading = () => {
   return (
-    <View className="flex gap-4 items-center justify-center w-full h-full bg-white">
+    <View className="flex gap-4 items-center justify-center w-full h-full bg-background">
       <Image
         source={require("@/assets/images/icon.png")}
         alt="Logo-Loading"

@@ -71,7 +71,7 @@ export default function SnapsCapture() {
           )}
         ></Gallery>
         <View
-          className={`flex-row   bg-white backdrop-blur-lg w-full h-[13%]  items-center rounded-lg  justify-between  gap-10`}
+          className={`flex-row   bg-background backdrop-blur-lg w-full h-[13%]  items-center rounded-lg  justify-between  gap-10`}
         >
           <TouchableOpacity
             onPress={handleDeleteSnap}

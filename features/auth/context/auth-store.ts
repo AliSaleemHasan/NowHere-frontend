@@ -14,6 +14,7 @@ interface AuthState {
   isReady: boolean;
   user?: UserResponse["_id"];
   tokens?: Tokens;
+
   init: () => Promise<void>;
   login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;
   logout: () => Promise<void>;

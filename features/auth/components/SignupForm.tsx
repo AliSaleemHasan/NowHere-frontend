@@ -100,13 +100,13 @@ export const SignupForm = () => {
             control={control}
             name="first_name"
             placeholder="First Name.."
-            className={`flex-1  ${errors.first_name && "border-2 border-red-500"}`}
+            className={`flex-1  ${errors.first_name && "border-2 border-error"}`}
           />
           <Input
             control={control}
             name="last_name"
             placeholder="Last Name.."
-            className={`flex-1 ${errors.last_name && "border-2 border-red-500"}`}
+            className={`flex-1 ${errors.last_name && "border-2 border-error"}`}
           />
         </View>
         <Input

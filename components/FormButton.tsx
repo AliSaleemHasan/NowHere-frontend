@@ -20,12 +20,12 @@ export default function FromButton(props: Props) {
         Keyboard.dismiss();
       }}
       disabled={props.disabled}
-      className={`${!props.disabled ? "bg-primary" : "bg-gray-600"}   w-full h-12 items-center justify-center`}
+      className={`${!props.disabled ? "bg-primary" : "bg-disabled"}   w-full h-12 items-center justify-center`}
     >
       {props.isLoading ? (
         <ActivityIndicator size={20} color={"primary"} />
       ) : (
-        <Text className="text-center text-white ">{props.text}</Text>
+        <Text className="text-center text-light ">{props.text}</Text>
       )}
     </TouchableOpacity>
   );

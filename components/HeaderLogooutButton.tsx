@@ -1,7 +1,7 @@
 import { useAuth } from "@/features/auth/context/auth-store";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Alert, Pressable, StyleSheet } from "react-native";
+import { Alert, Pressable } from "react-native";
 
 export default function HeaderLogooutButton() {
   const logout = useAuth((state) => state.logout);
@@ -26,5 +26,3 @@ export default function HeaderLogooutButton() {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({});
