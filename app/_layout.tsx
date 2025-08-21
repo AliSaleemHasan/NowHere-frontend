@@ -1,9 +1,9 @@
-import Loading from "@/components/Loading";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import Toast from "react-native-toast-message";
 import "./global.css";
 
@@ -15,12 +15,12 @@ export const unstable_settings = {
 };
 export default function RootLayout() {
   return (
-    <>
+    <KeyboardProvider>
       <QueryClientProvider client={queryClient}>
         <LocationDependentContent />
       </QueryClientProvider>
       <Toast />
-    </>
+    </KeyboardProvider>
   );
 }
 
@@ -29,17 +29,7 @@ function LocationDependentContent() {
 
   const init = useAuth((state) => state.init);
 
-  const fetchLocation = useLocation((state) => state.featchLocation);
   const boarding = useLocation((state) => state.boarding);
-
-  console.log(boarding);
-
-  const isLocationLoading = useLocation((state) => state.loading);
-  const isLocationError = useLocation((state) => state.error);
-
-  useEffect(() => {
-    fetchLocation();
-  }, [fetchLocation]);
 
   useEffect(() => {
     const handleInitAuth = async () => {
@@ -47,8 +37,6 @@ function LocationDependentContent() {
     };
     handleInitAuth();
   }, []);
-
-  if (isLocationLoading) return <Loading></Loading>;
 
   return (
     <Stack>

@@ -4,7 +4,7 @@ import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 
 const TabsLayout = () => {
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
@@ -12,6 +12,10 @@ const TabsLayout = () => {
 
   const isLocationLoading = useLocation((state) => state.loading);
   const isLocationError = useLocation((state) => state.error);
+
+  useEffect(() => {
+    fetchLocation();
+  }, [fetchLocation]);
 
   if (isLocationLoading) return <Loading />;
   if (isLocationError) return <LocationRequired />;
@@ -42,7 +46,7 @@ const TabsLayout = () => {
       />
       <Tabs.Protected guard={isLoggedIn}>
         <Tabs.Screen
-          name="profile/index"
+          name="profile"
           options={{
             tabBarLabel: "Profile",
             headerShown: false,

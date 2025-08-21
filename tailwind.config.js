@@ -16,7 +16,7 @@ module.exports = {
         error: "#ff0000",
         border: "#471396",
         alert: "#B13BFF",
-        disabled: "#e5e7eb",
+        disabled: "#6b7280",
         light: "#ffffff",
         dark: "#0f0d23",
         error: "#ef4444",

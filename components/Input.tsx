@@ -27,7 +27,11 @@ export function Input<TFieldValues extends FieldValues = FieldValues>(
       autoCapitalize="none"
       onChangeText={onChange}
       onBlur={onBlur}
-      className={cn(textInputProps.className, "p-4 bg-background  rounded-md")}
+      placeholderTextColor={"black"}
+      className={cn(
+        textInputProps.className,
+        "text-dark p-4 bg-background   rounded-md"
+      )}
     />
   );
 }

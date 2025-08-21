@@ -1,12 +1,12 @@
+import AvoidKeyboard from "@/components/AvoidKeyboard";
 import { SignupForm } from "@/features/auth/components/SignupForm";
-import { View } from "react-native";
 
-const Login = () => {
+const Signup = () => {
   return (
-    <View className="items-center justify-center ">
+    <AvoidKeyboard>
       <SignupForm />
-    </View>
+    </AvoidKeyboard>
   );
 };
 
-export default Login;
+export default Signup;
