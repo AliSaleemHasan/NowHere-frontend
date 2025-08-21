@@ -26,8 +26,8 @@ export const useSnapSocket = () => {
         [
           "snaps",
           "near",
-          location.coordinates[0],
-          location.coordinates[1],
+          location?.coordinates?.[0] ?? null,
+          location?.coordinates?.[1] ?? null,
           handleArrayQueryParam(params.tags as string, "tags"),
         ],
         (old) => {
@@ -46,8 +46,8 @@ export const useSnapSocket = () => {
     queryKey: [
       "snaps",
       "near",
-      location.coordinates[0],
-      location.coordinates[1],
+      location?.coordinates?.[0] ?? null,
+      location?.coordinates?.[1] ?? null,
       handleArrayQueryParam(params.tags as string, "tags"),
     ],
     queryFn: () =>
