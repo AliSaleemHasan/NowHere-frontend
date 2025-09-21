@@ -1,5 +1,5 @@
 import type { UserResponse } from "@/types/api";
-import { ACCESS_TOKEN_KEY, API_URL, REFRESH_TOKEN_KEY } from "@/utils";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/utils";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -35,13 +35,16 @@ export const useAuth = create<AuthState>()(
           return;
         }
 
-        const response = await fetch(`${API_URL}auth/validate`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_SNAPS_URL}auth/validate`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         set({ isReady: true });
 
@@ -56,13 +59,16 @@ export const useAuth = create<AuthState>()(
       },
 
       login: async (inputs) => {
-        const ressponse = await fetch(`${API_URL}/auth/login`, {
-          method: "POST",
-          body: JSON.stringify(inputs),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const ressponse = await fetch(
+          `${process.env.EXPO_PUBLIC_SNAPS_URL}/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify(inputs),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         let res = await ressponse.json();
         if (!res.success) throw new Error(res.message);

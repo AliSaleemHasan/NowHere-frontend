@@ -1,7 +1,6 @@
 import Loading from "@/components/Loading";
 import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
-import { API_URL } from "@/utils";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
@@ -30,7 +29,11 @@ const SnapDetails = () => {
     <View className="relative h-full">
       <Gallery
         loop
-        data={snap.data?.data?.snaps.map((snap) => `${API_URL}/${snap}`) || []}
+        data={
+          snap.data?.data?.snaps.map(
+            (snap) => `${process.env.EXPO_PUBLIC_SNAPS_URL}/${snap}`
+          ) || []
+        }
         disableVerticalSwipe
         onIndexChange={(index) => {
           setIndex(index);

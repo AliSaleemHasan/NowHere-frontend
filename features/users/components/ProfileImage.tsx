@@ -1,7 +1,6 @@
 import FromButton from "@/components/FormButton";
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { handleCameraCapture } from "@/lib/image-picker";
-import { API_URL } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
@@ -56,7 +55,7 @@ export default function ProfileImage({ userId, image }: Props) {
         <Image
           source={
             image
-              ? { uri: `${API_URL}/${image}` }
+              ? { uri: `${process.env.EXPO_PUBLIC_SNAPS_URL}/${image}` }
               : require("@/assets/images/icon.png")
           }
           className="w-full h-full rounded-full"

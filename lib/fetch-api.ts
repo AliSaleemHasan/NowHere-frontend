@@ -1,11 +1,12 @@
 import { useAuth } from "@/features/auth/context/auth-store";
 import { FetchResponse, HeaderContentType } from "@/types/api";
-import { API_URL } from "@/utils";
+import { APIS, getApiURL } from "@/utils";
 
 type FetchParams = {
   url: string;
   options: RequestInit;
   contentType?: HeaderContentType;
+  api?: APIS;
 };
 
 const getHeaders = ({
@@ -39,13 +40,16 @@ const getHeaders = ({
  */
 
 const refresh = async (token: string) => {
-  const response = await fetch(`${API_URL}/auth/refresh`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(
+    `${process.env.EXPO_PUBLIC_SNAPS_URL}/auth/refresh`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   const data = await response.json();
   if (!data.success) return Promise.reject(data.message);
@@ -60,6 +64,7 @@ export const apiFetch = async <T>({
   url,
   options,
   contentType = "json",
+  api = "snaps",
 }: FetchParams): Promise<FetchResponse<T>> => {
   const headers = getHeaders({ contentType });
 
@@ -68,7 +73,7 @@ export const apiFetch = async <T>({
     ...options.headers,
   };
 
-  const response = await fetch(`${API_URL}/${url}`, options);
+  const response = await fetch(`${getApiURL(api)}/${url}`, options);
   const data = (await response.json()) as FetchResponse<T>;
 
   if (!data.success) {
@@ -85,6 +90,7 @@ export const apiAuthFetch = async <T>({
   url,
   options,
   contentType = "json",
+  api = "snaps",
 }: FetchParams): Promise<FetchResponse<T>> => {
   const { accessToken, refreshToken } = useAuth.getState().tokens || {};
 
@@ -105,7 +111,7 @@ export const apiAuthFetch = async <T>({
   setAuthHeaders(accessToken);
 
   try {
-    return await apiFetch<T>({ url, options });
+    return await apiFetch<T>({ url, options, api });
   } catch (error: any) {
     // Handle token expiry (401)
     if (error?.statusCode === 401) {
@@ -115,7 +121,7 @@ export const apiAuthFetch = async <T>({
           contentType,
           authToken: data.tokens.accessToken,
         });
-        return await apiFetch({ url, options, contentType });
+        return await apiFetch({ url, options, contentType, api });
       } catch (refreshError) {
         useAuth.getState().logout?.();
         return Promise.reject(refreshError);

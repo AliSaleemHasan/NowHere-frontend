@@ -44,6 +44,7 @@ export const SignupForm = () => {
   const mutation = useMutation({
     mutationFn: (data: { user: Omit<SignupFormData, "confirm"> }) => {
       return apiFetch({
+        api: "users",
         url: "auth/signup",
         options: {
           method: "POST",
