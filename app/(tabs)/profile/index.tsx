@@ -14,12 +14,17 @@ export default function Profile() {
     queryKey: ["profile", userId],
     queryFn: async () =>
       await apiAuthFetch<UserResponse>({
+        api: "users",
         url: `users/id/${userId}`,
         options: { method: "GET" },
       }),
+    enabled: !!userId,
   });
 
   if (userInfo.isLoading) return <Loading></Loading>;
+
+  if (userInfo.error)
+    return <Text>Error Message {userInfo.error.message}</Text>;
 
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">
@@ -42,7 +47,7 @@ export default function Profile() {
         <View className="gap-2 w-full">
           <Text className="text-sm">name</Text>
           <Text className="text-sm font-thin">
-            {userInfo.data?.data?.first_name} {userInfo.data?.data?.last_name}
+            {userInfo.data?.data?.firstName} {userInfo.data?.data?.lastName}
           </Text>
         </View>
       </View>

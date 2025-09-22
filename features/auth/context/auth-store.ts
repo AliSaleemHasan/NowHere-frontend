@@ -12,7 +12,7 @@ import type {
 interface AuthState {
   isLoggedIn: boolean;
   isReady: boolean;
-  user?: UserResponse["_id"];
+  user?: UserResponse["Id"];
   tokens?: Tokens;
 
   init: () => Promise<void>;
@@ -30,37 +30,47 @@ export const useAuth = create<AuthState>()(
 
       init: async () => {
         const token = get().tokens;
+
         if (!token?.accessToken) {
-          set({ isReady: true });
+          set({ isReady: true, isLoggedIn: false });
           return;
         }
 
-        const response = await fetch(
-          `${process.env.EXPO_PUBLIC_SNAPS_URL}auth/validate`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+        try {
+          const response = await fetch(
+            `${process.env.EXPO_PUBLIC_USERS_URL}/auth/validate`,
+            {
+              method: "GET",
+
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          set({ isReady: true });
+
+          let res = await response.json();
+
+          if (res.success) {
+            set({
+              isLoggedIn: true,
+              user: res.data.user.Id,
+              tokens: res.data.tokens,
+            });
           }
-        );
-
-        set({ isReady: true });
-
-        let res = await response.json();
-        if (res.success) {
+        } catch (error) {
           set({
             isLoggedIn: true,
-            user: res.data.user._id,
-            tokens: res.data.tokens,
+            user: undefined,
+            tokens: undefined,
           });
         }
       },
 
       login: async (inputs) => {
         const ressponse = await fetch(
-          `${process.env.EXPO_PUBLIC_SNAPS_URL}/auth/login`,
+          `${process.env.EXPO_PUBLIC_USERS_URL}/auth/login`,
           {
             method: "POST",
             body: JSON.stringify(inputs),
@@ -75,7 +85,7 @@ export const useAuth = create<AuthState>()(
 
         set({
           isLoggedIn: true,
-          user: res.data.user._id,
+          user: res.data.user.Id,
           tokens: res.data.tokens,
         });
         return res.data.user;

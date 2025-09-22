@@ -1,16 +1,15 @@
-import Loading from "@/components/Loading";
 import TagsFilter from "@/features/map/components/TagsFilter";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapSocket } from "@/features/snaps/hooks/useSnapSocket";
 import { StyleSheet, View } from "react-native";
 
+import MapMarker from "@/features/snaps/components/MapMarker";
 import React from "react";
+import Map from "react-native-maps";
 import Toast from "react-native-toast-message";
 export default function Index() {
   const location = useLocation((state) => state.location);
   const query = useSnapSocket();
-
-  if (query.isLoading) return <Loading></Loading>;
 
   if (query.error) {
     Toast.show({
@@ -32,11 +31,10 @@ export default function Index() {
   return (
     <View className="flex-1 relative">
       <TagsFilter>
-        {/* <MapView
+        <Map
           style={styles.map}
           showsUserLocation
           showsBuildings
-          provider={undefined}
           showsCompass
           onUserLocationChange={(event) => event.nativeEvent.coordinate}
           initialRegion={{
@@ -50,7 +48,7 @@ export default function Index() {
             query.data.data?.map((snap, idx) => (
               <MapMarker snap={snap} key={snap._id}></MapMarker>
             ))}
-        </MapView> */}
+        </Map>
       </TagsFilter>
     </View>
   );

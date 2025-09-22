@@ -27,8 +27,8 @@ const SignUpSchema = z
       .regex(/[A-Z]/, "Onw uppercase letter is required")
       .regex(/\d/, "One number required!")
       .regex(/\W/, "One symbol required!"),
-    first_name: z.string(),
-    last_name: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
     confirm: z.string(),
   })
   .refine((data) => data.password === data.confirm, {
@@ -53,6 +53,7 @@ export const SignupForm = () => {
       });
     },
   });
+
   const {
     control,
     handleSubmit,
@@ -69,6 +70,7 @@ export const SignupForm = () => {
       { user: data },
       {
         onSuccess: () => router.replace("/(auth)/login"), // TODO: push back to verification email
+        onError: (err) => console.log(err),
       }
     );
   };
@@ -99,15 +101,15 @@ export const SignupForm = () => {
         <View className="flex-row gap-3 w-full ">
           <Input
             control={control}
-            name="first_name"
+            name="firstName"
             placeholder="First Name.."
-            className={`flex-1  ${errors.first_name && "border-2 border-error"}`}
+            className={`flex-1  ${errors.firstName && "border-2 border-error"}`}
           />
           <Input
             control={control}
-            name="last_name"
+            name="lastName"
             placeholder="Last Name.."
-            className={`flex-1 ${errors.last_name && "border-2 border-error"}`}
+            className={`flex-1 ${errors.lastName && "border-2 border-error"}`}
           />
         </View>
         <Input

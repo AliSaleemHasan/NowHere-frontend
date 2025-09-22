@@ -49,7 +49,7 @@ const SnapDetails = () => {
       <View className="gap-3 w-full bg-background/20 backdrop-blur-3xl pb-10 pt-5 px-5">
         <View className="flex-row gap-2 flex-wrap">
           <Text className="text-wrap text-xs italic">
-            {user.data?.data?.first_name} {user.data?.data?.last_name} {" : "}
+            {user.data?.data?.firstName} {user.data?.data?.lastName} {" : "}
             {snap.data?.data?.description}
           </Text>
           <Text className=" text-wrap text-xs text-center"></Text>

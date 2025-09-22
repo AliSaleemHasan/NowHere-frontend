@@ -52,6 +52,7 @@ export const useSnapSocket = () => {
     ],
     queryFn: () =>
       apiFetch<CreateSnapResponse[]>({
+        api: "snaps",
         url: `snaps/near/${location.coordinates[0]}/${location.coordinates[1]}${handleArrayQueryParam(params.tags as string, "tags")}`,
         options: {
           method: "GET",

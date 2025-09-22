@@ -41,7 +41,7 @@ const getHeaders = ({
 
 const refresh = async (token: string) => {
   const response = await fetch(
-    `${process.env.EXPO_PUBLIC_SNAPS_URL}/auth/refresh`,
+    `${process.env.EXPO_PUBLIC_USERS_URL}/auth/refresh`,
     {
       method: "GET",
       headers: {
@@ -92,7 +92,7 @@ export const apiAuthFetch = async <T>({
   contentType = "json",
   api = "snaps",
 }: FetchParams): Promise<FetchResponse<T>> => {
-  const { accessToken, refreshToken } = useAuth.getState().tokens || {};
+  const { accessToken, refreshToken } = (await useAuth.getState().tokens) || {};
 
   if (!accessToken || !refreshToken) {
     useAuth.getState().logout();
@@ -111,11 +111,14 @@ export const apiAuthFetch = async <T>({
   setAuthHeaders(accessToken);
 
   try {
-    return await apiFetch<T>({ url, options, api });
+    const data = await apiFetch<T>({ url, options, api });
+    console.log(data);
+    return data;
   } catch (error: any) {
     // Handle token expiry (401)
     if (error?.statusCode === 401) {
       try {
+        console.log("now refreshing the token...");
         const data = await refresh(refreshToken);
         options.headers = getHeaders({
           contentType,

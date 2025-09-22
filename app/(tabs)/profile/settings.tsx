@@ -33,15 +33,18 @@ let userUISettings: {
 };
 export default function Settings() {
   const userSettingsQuery = useQuery({
-    queryKey: ["settings"],
+    queryKey: ["users/settings"],
     queryFn: () =>
       apiAuthFetch<UserSetting>({
-        url: "settings",
+        api: "users",
+        url: "users/settings",
         options: {
           method: "GET",
         },
       }),
   });
+
+  console.log(userSettingsQuery.error);
 
   if (userSettingsQuery.isLoading) return <Loading></Loading>;
 

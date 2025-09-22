@@ -19,9 +19,9 @@ export type FetchResponse<T> = {
 export type UserResponse = {
   email: string;
   bio?: string;
-  first_name: string;
-  last_name: string;
-  _id: string;
+  firstName: string;
+  lastName: string;
+  Id: string;
   image?: string;
 };
 
