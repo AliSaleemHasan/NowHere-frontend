@@ -44,8 +44,6 @@ export default function Settings() {
       }),
   });
 
-  console.log(userSettingsQuery.error);
-
   if (userSettingsQuery.isLoading) return <Loading></Loading>;
 
   if (userSettingsQuery.error) return <Redirect href={".."}></Redirect>;

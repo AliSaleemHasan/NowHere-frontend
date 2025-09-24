@@ -16,6 +16,7 @@ export type FetchResponse<T> = {
 //
 // Users
 //
+
 export type UserResponse = {
   email: string;
   bio?: string;
@@ -23,6 +24,11 @@ export type UserResponse = {
   lastName: string;
   Id: string;
   image?: string;
+};
+
+export type GetUserResponse = {
+  user: UserResponse;
+  userImage?: string;
 };
 
 //

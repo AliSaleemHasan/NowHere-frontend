@@ -52,11 +52,18 @@ export const useAuth = create<AuthState>()(
 
           let res = await response.json();
 
+          // TODO: handle refresh token
           if (res.success) {
             set({
               isLoggedIn: true,
               user: res.data.user.Id,
               tokens: res.data.tokens,
+            });
+          } else {
+            set({
+              isLoggedIn: false,
+              user: undefined,
+              tokens: undefined,
             });
           }
         } catch (error) {

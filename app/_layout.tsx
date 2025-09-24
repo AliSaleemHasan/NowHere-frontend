@@ -26,7 +26,6 @@ export default function RootLayout() {
 
 function LocationDependentContent() {
   const init = useAuth((state) => state.init);
-
   const boarding = useLocation((state) => state.boarding);
 
   useEffect(() => {

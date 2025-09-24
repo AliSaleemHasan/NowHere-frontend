@@ -112,7 +112,6 @@ export const apiAuthFetch = async <T>({
 
   try {
     const data = await apiFetch<T>({ url, options, api });
-    console.log(data);
     return data;
   } catch (error: any) {
     // Handle token expiry (401)

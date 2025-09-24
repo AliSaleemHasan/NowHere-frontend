@@ -18,6 +18,8 @@ export default function ProfileImage({ userId, image }: Props) {
     mutationFn: async (data: FormData) =>
       await apiAuthFetch({
         url: "users/image",
+        api: "users",
+        contentType: "files",
         options: {
           method: "PUT",
           body: data,
@@ -30,6 +32,7 @@ export default function ProfileImage({ userId, image }: Props) {
     if (capture.canceled || !capture.assets[0]) return;
 
     let photo = capture.assets[0].uri;
+
     const payload = new FormData();
     payload.set("photo", {
       uri: photo,
@@ -41,26 +44,31 @@ export default function ProfileImage({ userId, image }: Props) {
       onSuccess: (data) => {
         queryClient.setQueryData(["profile", userId], data);
       },
-      onError: (err) => Toast.show({ type: "error", text1: err.message }),
+      onError: (err) => {
+        console.log(err);
+        Toast.show({ type: "error", text1: err.message });
+      },
     });
 
     setExpandImage(false);
   };
+
   return (
     <>
       <TouchableOpacity
         onPress={() => setExpandImage((expanded) => !expanded)}
-        className={`${expandImage ? "w-full h-full" : "w-40 h-40 "}   shadow-md shadow-primary relative rounded-full`}
+        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}   shadow-md shadow-primary relative rounded-full`}
       >
+        (
         <Image
           source={
-            image
-              ? { uri: `${process.env.EXPO_PUBLIC_SNAPS_URL}/${image}` }
-              : require("@/assets/images/icon.png")
+            image ? { uri: `${image}` } : require("@/assets/images/icon.png")
           }
+          loadingIndicatorSource={require("@/assets/images/icon.png")}
           className="w-full h-full rounded-full"
-          resizeMode="contain"
+          resizeMode="cover"
         ></Image>
+        )
       </TouchableOpacity>
       {expandImage && (
         <FromButton
