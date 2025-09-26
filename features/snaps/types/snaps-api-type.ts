@@ -25,4 +25,7 @@ export type CreateSnapResponse = Omit<CreateSnapBody, "snaps"> & {
   _id: string;
 };
 
-export type FindSnapResponse = CreateSnapResponse;
+export type FindSnapResponse = {
+  snap: CreateSnapResponse;
+  imageKeys: string[];
+};

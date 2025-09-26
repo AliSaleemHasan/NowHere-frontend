@@ -6,12 +6,19 @@ import React, { useState } from "react";
 import { ImageBackground, Text, View } from "react-native";
 import Gallery from "react-native-awesome-gallery";
 
+const renderItem = React.useCallback(
+  ({ item }: { item: string }) => (
+    <ImageBackground source={{ uri: item }} className="w-full flex-1" />
+  ),
+  []
+);
+
 const SnapDetails = () => {
   const params = useLocalSearchParams();
 
   const [index, setIndex] = useState<number>(0);
   const snap = useSnap(params.id as string);
-  const user = useUser(snap?.data?.data?._userId);
+  const user = useUser(snap?.data?.data?.snap._userId);
 
   if (snap.isLoading || user.isLoading) return <Loading />;
   if (snap.isError || user.isError)
@@ -29,33 +36,24 @@ const SnapDetails = () => {
     <View className="relative h-full">
       <Gallery
         loop
-        data={
-          snap.data?.data?.snaps.map(
-            (snap) => `${process.env.EXPO_PUBLIC_SNAPS_URL}/${snap}`
-          ) || []
-        }
+        data={snap.data?.data?.imageKeys || []}
         disableVerticalSwipe
         onIndexChange={(index) => {
           setIndex(index);
         }}
-        renderItem={({ item }) => (
-          <ImageBackground
-            source={{ uri: item }}
-            className="w-full flex-1"
-          ></ImageBackground>
-        )}
+        renderItem={renderItem}
       ></Gallery>
 
       <View className="gap-3 w-full bg-background/20 backdrop-blur-3xl pb-10 pt-5 px-5">
         <View className="flex-row gap-2 flex-wrap">
           <Text className="text-wrap text-xs italic">
             {user.data?.data?.firstName} {user.data?.data?.lastName} {" : "}
-            {snap.data?.data?.description}
+            {snap.data?.data?.snap.description}
           </Text>
           <Text className=" text-wrap text-xs text-center"></Text>
         </View>
         <Text className=" font-thin text-sm text-center">
-          Showing {index + 1} of {snap.data?.data?.snaps.length}{" "}
+          Showing {index + 1} of {snap.data?.data?.imageKeys.length}{" "}
         </Text>
       </View>
     </View>

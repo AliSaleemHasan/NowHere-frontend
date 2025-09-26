@@ -3,7 +3,7 @@ import { apiAuthFetch } from "@/lib/fetch-api";
 import { handleCameraCapture } from "@/lib/image-picker";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 
 interface Props {
@@ -59,16 +59,14 @@ export default function ProfileImage({ userId, image }: Props) {
         onPress={() => setExpandImage((expanded) => !expanded)}
         className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}   shadow-md shadow-primary relative rounded-full`}
       >
-        (
         <Image
           source={
             image ? { uri: `${image}` } : require("@/assets/images/icon.png")
           }
-          loadingIndicatorSource={require("@/assets/images/icon.png")}
-          className="w-full h-full rounded-full"
-          resizeMode="cover"
+          width={135}
+          height={135}
+          className="rounded-full"
         ></Image>
-        )
       </TouchableOpacity>
       {expandImage && (
         <FromButton
@@ -80,5 +78,3 @@ export default function ProfileImage({ userId, image }: Props) {
     </>
   );
 }
-
-const styles = StyleSheet.create({});

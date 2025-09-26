@@ -10,5 +10,6 @@ export function useSnap(id: string) {
         url: `snaps/${id}`,
         options: { method: "GET" },
       }),
+    enabled: !!id,
   });
 }

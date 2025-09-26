@@ -29,6 +29,7 @@ export const handleCameraCapture = async () => {
     allowsEditing: true,
     allowsMultipleSelection: true,
     mediaTypes: ["images"],
-    quality: 1,
+    quality: 0.4,
+    base64: false,
   });
 };

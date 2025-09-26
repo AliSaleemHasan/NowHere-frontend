@@ -59,19 +59,9 @@ export const useAuth = create<AuthState>()(
               user: res.data.user.Id,
               tokens: res.data.tokens,
             });
-          } else {
-            set({
-              isLoggedIn: false,
-              user: undefined,
-              tokens: undefined,
-            });
-          }
+          } // no need to remove it
         } catch (error) {
-          set({
-            isLoggedIn: true,
-            user: undefined,
-            tokens: undefined,
-          });
+          console.log(error);
         }
       },
 
