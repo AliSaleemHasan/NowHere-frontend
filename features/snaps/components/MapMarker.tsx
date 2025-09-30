@@ -2,10 +2,10 @@ import { TagsColors } from "@/utils";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
 import { Marker } from "react-native-maps";
-import { FindSnapResponse } from "../types/snaps-api-type";
+import { CreateSnapResponse } from "../types/snaps-api-type";
 
 interface Props {
-  snap: FindSnapResponse;
+  snap: CreateSnapResponse;
 }
 const MapMarker = ({ snap }: Props) => {
   const router = useRouter();

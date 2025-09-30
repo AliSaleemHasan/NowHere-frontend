@@ -3,58 +3,108 @@ import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ImageBackground, Text, View } from "react-native";
-import Gallery from "react-native-awesome-gallery";
-
-const renderItem = React.useCallback(
-  ({ item }: { item: string }) => (
-    <ImageBackground source={{ uri: item }} className="w-full flex-1" />
-  ),
-  []
-);
+import {
+  ImageBackground,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import Carousel from "react-native-reanimated-carousel";
 
 const SnapDetails = () => {
   const params = useLocalSearchParams();
+  const { width } = useWindowDimensions();
 
-  const [index, setIndex] = useState<number>(0);
-  const snap = useSnap(params.id as string);
-  const user = useUser(snap?.data?.data?.snap._userId);
+  const CARD_WIDTH = Math.min(width * 0.9, 400);
+  const IMAGE_HEIGHT = CARD_WIDTH * (16 / 10);
 
-  if (snap.isLoading || user.isLoading) return <Loading />;
-  if (snap.isError || user.isError)
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const {
+    data: snapData,
+    isLoading: isSnapLoading,
+    isError: isSnapError,
+    error: snapError,
+  } = useSnap(params.id as string);
+
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    error: userError,
+  } = useUser(snapData?.data?.snap._userId);
+
+  if (isSnapLoading || isUserLoading) return <Loading />;
+
+  if (isSnapError || isUserError) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-3xl font-bold text-error">
-          {snap.error?.message || user.error?.message}
+      <View className="flex-1 items-center justify-center p-4">
+        <Text className="text-3xl font-bold text-error text-center">
+          {snapError?.message || userError?.message}
         </Text>
       </View>
     );
+  }
 
-  // get the user data
+  const snap = snapData?.data;
+  const user = userData?.data?.user;
+  const images = snap?.imageKeys || [];
 
   return (
-    <View className="relative h-full">
-      <Gallery
-        loop
-        data={snap.data?.data?.imageKeys || []}
-        disableVerticalSwipe
-        onIndexChange={(index) => {
-          setIndex(index);
-        }}
-        renderItem={renderItem}
-      ></Gallery>
-
-      <View className="gap-3 w-full bg-background/20 backdrop-blur-3xl pb-10 pt-5 px-5">
-        <View className="flex-row gap-2 flex-wrap">
-          <Text className="text-wrap text-xs italic">
-            {user.data?.data?.firstName} {user.data?.data?.lastName} {" : "}
-            {snap.data?.data?.snap.description}
-          </Text>
-          <Text className=" text-wrap text-xs text-center"></Text>
+    // The main container to center everything
+    <View className="flex-1 items-center bg-white p-4">
+      {/* This is the white card container that holds both the image and the text */}
+      <View
+        style={{ width: CARD_WIDTH }}
+        className="bg-white rounded-lg  overflow-hidden"
+      >
+        {/* Image/Carousel container */}
+        <View style={{ height: IMAGE_HEIGHT, width: "100%" }}>
+          <Carousel
+            // The width of the carousel items is the CARD_WIDTH
+            width={CARD_WIDTH}
+            height={IMAGE_HEIGHT} // Carousel height matches image height
+            autoPlay={false}
+            data={images}
+            loop={images.length > 1}
+            scrollAnimationDuration={500}
+            onSnapToItem={(index) => setActiveIndex(index)}
+            renderItem={({ item }: { item: string }) => (
+              <ImageBackground
+                source={{ uri: item }}
+                style={{ flex: 1, width: "100%" }}
+                resizeMode="cover" // "cover" crops to fill, "contain" shows whole image
+              />
+            )}
+          />
         </View>
-        <Text className=" font-thin text-sm text-center">
-          Showing {index + 1} of {snap.data?.data?.imageKeys.length}{" "}
-        </Text>
+
+        {/* Text/Details section below the image */}
+        <View className="p-4">
+          <Text className="font-bold text-lg mb-1">
+            {`${user?.firstName} ${user?.lastName}`}
+          </Text>
+          <ScrollView style={{ maxHeight: 50 }}>
+            <Text className="text-base text-gray-700">
+              {snap?.snap.description}
+            </Text>
+          </ScrollView>
+
+          {/* Pagination Dots - only show if there are multiple images */}
+          {images.length > 1 && (
+            <View className="flex-row justify-center items-center mt-3">
+              {images.map((_, index) => (
+                <View
+                  key={index}
+                  className={`h-2 w-2 rounded-full mx-1 ${
+                    activeIndex === index ? "bg-black" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );

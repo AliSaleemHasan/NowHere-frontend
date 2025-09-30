@@ -28,6 +28,7 @@ export const handleCameraCapture = async () => {
   return await ImagePicker.launchCameraAsync({
     allowsEditing: true,
     allowsMultipleSelection: true,
+    aspect: [16, 10],
     mediaTypes: ["images"],
     quality: 0.4,
     base64: false,

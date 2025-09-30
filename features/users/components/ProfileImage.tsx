@@ -45,7 +45,6 @@ export default function ProfileImage({ userId, image }: Props) {
         queryClient.setQueryData(["profile", userId], data);
       },
       onError: (err) => {
-        console.log(err);
         Toast.show({ type: "error", text1: err.message });
       },
     });
@@ -57,15 +56,14 @@ export default function ProfileImage({ userId, image }: Props) {
     <>
       <TouchableOpacity
         onPress={() => setExpandImage((expanded) => !expanded)}
-        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}   shadow-md shadow-primary relative rounded-full`}
+        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}  bg-transparent  shadow-sm shadow-primary  rounded-full relative`}
       >
         <Image
           source={
             image ? { uri: `${image}` } : require("@/assets/images/icon.png")
           }
-          width={135}
-          height={135}
-          className="rounded-full"
+          resizeMode="contain"
+          className="w-full h-full rounded-full"
         ></Image>
       </TouchableOpacity>
       {expandImage && (

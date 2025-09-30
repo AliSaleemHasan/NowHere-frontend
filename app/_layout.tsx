@@ -28,6 +28,8 @@ function LocationDependentContent() {
   const init = useAuth((state) => state.init);
   const boarding = useLocation((state) => state.boarding);
 
+  const isLoggedIn = useAuth((state) => state.isLoggedIn);
+
   useEffect(() => {
     const handleInitAuth = async () => {
       await init();
@@ -38,6 +40,13 @@ function LocationDependentContent() {
   return (
     <Stack>
       <Stack.Protected guard={boarding}>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen
+            name="(snaps)"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+        </Stack.Protected>
+
         <Stack.Screen
           name="(tabs)"
           options={{
@@ -46,10 +55,6 @@ function LocationDependentContent() {
         />
         <Stack.Screen
           name="(auth)"
-          options={{ headerShown: false, presentation: "modal" }}
-        />
-        <Stack.Screen
-          name="(snaps)"
           options={{ headerShown: false, presentation: "modal" }}
         />
       </Stack.Protected>
