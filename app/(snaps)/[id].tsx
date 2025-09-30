@@ -1,15 +1,10 @@
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import Loading from "@/components/Loading";
 import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import {
-  ImageBackground,
-  ScrollView,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { ScrollView, Text, View, useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const SnapDetails = () => {
@@ -71,11 +66,7 @@ const SnapDetails = () => {
             scrollAnimationDuration={500}
             onSnapToItem={(index) => setActiveIndex(index)}
             renderItem={({ item }: { item: string }) => (
-              <ImageBackground
-                source={{ uri: item }}
-                style={{ flex: 1, width: "100%" }}
-                resizeMode="cover" // "cover" crops to fill, "contain" shows whole image
-              />
+              <ImageWithSkeleton uri={item} className={"w-full flex-1"} />
             )}
           />
         </View>
