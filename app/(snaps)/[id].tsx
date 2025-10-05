@@ -2,6 +2,7 @@ import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import Loading from "@/components/Loading";
 import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
+import { TagsColors } from "@/utils";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, View, useWindowDimensions } from "react-native";
@@ -73,9 +74,20 @@ const SnapDetails = () => {
 
         {/* Text/Details section below the image */}
         <View className="p-4">
-          <Text className="font-bold text-lg mb-1">
-            {`${user?.firstName} ${user?.lastName}`}
-          </Text>
+          <View className="flex items-center justify-between flex-row">
+            <Text className="font-bold text-lg mb-1">
+              {`${user?.firstName} ${user?.lastName}`}
+            </Text>
+
+            <Text
+              className="font-bold text-sm mb-1 px-2 rounded-full text-white "
+              style={{
+                backgroundColor: TagsColors[snap?.snap.tag || "SOCIAL"],
+              }}
+            >
+              {`${snap?.snap.tag}`}
+            </Text>
+          </View>
           <ScrollView style={{ maxHeight: 50 }}>
             <Text className="text-base text-gray-700">
               {snap?.snap.description}

@@ -14,7 +14,7 @@ export default function CustomCheckbox(props: Props & CheckboxProps) {
   return (
     <TouchableOpacity
       {...buttonProps}
-      className={`p-2 rounded-lg ${isSelected ? "bg-primary" : "bg-disabled"}`}
+      className={`p-2 rounded-lg ${isSelected ? "bg-primary" : "bg-gray-400"}`}
     >
       {/* Hidden checkbox just for accessibility */}
       <Checkbox
