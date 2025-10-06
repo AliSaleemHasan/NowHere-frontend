@@ -1,25 +1,27 @@
-import { TagsColors } from "@/utils";
+import { Tags, TagsColors } from "@/utils";
 import { useRouter } from "expo-router";
 import React, { memo } from "react";
 import { Marker } from "react-native-maps";
-import { CreateSnapResponse } from "../types/snaps-api-type";
 
 interface Props {
-  snap: CreateSnapResponse;
+  _id: string;
+  tag: Tags;
+  lat: number;
+  lng: number;
 }
-const MapMarker = ({ snap }: Props) => {
+const MapMarker = ({ _id, tag, lat, lng }: Props) => {
   const router = useRouter();
   return (
     <Marker
       tracksViewChanges={false}
-      pinColor={TagsColors[snap.tag]}
+      pinColor={TagsColors[tag]}
       onPress={() => {
-        router.push(`/(snaps)/${snap._id}`);
+        router.push(`/(snaps)/${_id}`);
       }}
-      title={snap.tag}
+      title={tag}
       coordinate={{
-        latitude: snap.location.coordinates[1],
-        longitude: snap.location.coordinates[0],
+        latitude: lat,
+        longitude: lng,
       }}
     ></Marker>
   );

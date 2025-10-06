@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/fetch-api";
 import { socket } from "@/lib/socket";
 import { FetchResponse } from "@/types/api";
 import { handleArrayQueryParam } from "@/utils/handle-array-query-param";
+import { useIsFocused } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
@@ -10,6 +11,7 @@ import { CreateSnapResponse } from "../types/snaps-api-type";
 
 export const useSnapSocket = () => {
   const params = useLocalSearchParams();
+  const isFocused = useIsFocused();
 
   const queryClient = useQueryClient();
   const location = useLocation((state) => state.location);
@@ -39,6 +41,7 @@ export const useSnapSocket = () => {
 
     return () => {
       socket.off("snap-added");
+      socket.off("connect");
     };
   }, [location]);
 
@@ -46,10 +49,14 @@ export const useSnapSocket = () => {
     queryKey: [
       "snaps",
       "near",
-      location?.coordinates?.[0] ?? null,
-      location?.coordinates?.[1] ?? null,
+      location?.coordinates?.[0],
+      location?.coordinates?.[1],
       handleArrayQueryParam(params.tags as string, "tags"),
     ],
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+
+    enabled: !!location.coordinates?.length && isFocused,
     queryFn: () =>
       apiFetch<CreateSnapResponse[]>({
         api: "snaps",

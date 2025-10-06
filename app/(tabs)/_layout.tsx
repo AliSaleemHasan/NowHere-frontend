@@ -21,7 +21,7 @@ const TabsLayout = () => {
   if (isLocationError) return <LocationRequired />;
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "white" }}>
       <Tabs.Screen
         name="index"
         options={{

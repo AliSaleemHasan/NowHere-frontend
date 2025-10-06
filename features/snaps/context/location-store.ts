@@ -4,7 +4,6 @@ import {
   deleteItemAsync as removeItem,
   setItemAsync as setItem,
 } from "expo-secure-store";
-import { LatLng } from "react-native-maps";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { SnapLocation } from "../types/snaps-api-type";
@@ -15,7 +14,7 @@ type UserLocationState = {
   boarding: boolean;
   featchLocation: () => Promise<void>;
   setBoarding: () => void;
-  setLocation: (newLocation: LatLng) => void;
+  setLocation: (newLocation: SnapLocation) => void;
 };
 
 export const useLocation = create<UserLocationState>()(
@@ -47,10 +46,7 @@ export const useLocation = create<UserLocationState>()(
         newLocation // TODO: make sure to emit userLocation event
       ) =>
         set(() => ({
-          location: {
-            coordinates: [newLocation.longitude, newLocation.latitude],
-            type: "Point",
-          },
+          location: newLocation,
         })),
     }),
     {
