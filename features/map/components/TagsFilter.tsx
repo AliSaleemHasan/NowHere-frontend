@@ -1,5 +1,6 @@
 import CustomCheckbox from "@/components/Checkbox";
 import FromButton from "@/components/FormButton";
+import { useAuth } from "@/features/auth/context/auth-store";
 import { Tags } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomSheet, {
@@ -16,6 +17,7 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
   const params = useLocalSearchParams();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
+  const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const [searchTags, setSearchTags] = useState<Tags[]>(
     (params?.tags as Tags[]) || []
   );
@@ -86,21 +88,23 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
               ></CustomCheckbox>
             ))}
           </View>
-          <View className="flex-row gap-3 font-bold">
-            <TouchableOpacity
-              onPress={() => {
-                router.setParams({
-                  seen: !params.seen || params.seen === "0" ? "1" : "0",
-                });
-              }}
-            >
-              <Text
-                className={`underline ${params.seen === "1" && "color-alert"}`}
+          {isLoggedIn && (
+            <View className="flex-row gap-3 font-bold">
+              <TouchableOpacity
+                onPress={() => {
+                  router.setParams({
+                    seen: !params.seen || params.seen === "0" ? "1" : "0",
+                  });
+                }}
               >
-                Show Seen Snaps
-              </Text>
-            </TouchableOpacity>
-          </View>
+                <Text
+                  className={`underline ${params.seen === "1" && "color-alert"}`}
+                >
+                  Show Seen Snaps
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <FromButton text="Search" onSubmit={handleTagsFilter}></FromButton>
         </BottomSheetView>
       </BottomSheet>

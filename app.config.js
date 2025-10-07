@@ -16,6 +16,8 @@ export default {
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "We need your location to show relevant features.",
+        NSLocationAlwaysAndWhenInUseUsageDescription:
+          "We need your location even in the background.",
       },
       bundleIdentifier: "com.anonymous.Nowhere",
     },
@@ -31,9 +33,9 @@ export default {
       },
       edgeToEdgeEnabled: true,
       permissions: [
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.RECORD_AUDIO",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "RECORD_AUDIO",
       ],
       package: "com.anonymous.Nowhere",
     },
