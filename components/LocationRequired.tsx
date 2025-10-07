@@ -1,6 +1,5 @@
 import { useLocation } from "@/features/snaps/context/location-store";
 import { askLocationPermission } from "@/lib/location";
-import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -8,16 +7,16 @@ interface Props {
   withErrorImage?: boolean;
 }
 const LocationRequired = (props: Props) => {
-  const router = useRouter();
   const fetchLocation = useLocation((state) => state.featchLocation);
+  const setBoarding = useLocation((state) => state.setBoarding);
 
   const handleLocationPermission = async () => {
     const granted = await askLocationPermission();
-    console.log(granted);
 
     fetchLocation();
-    router.replace("/");
+    if (!props.withErrorImage) setBoarding();
   };
+
   return (
     <View className="flex items-center justify-center flex-1 ">
       {props.withErrorImage && (
