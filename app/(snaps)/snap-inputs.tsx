@@ -115,7 +115,7 @@ export default function SnapInputs() {
           onSubmit={handleSubmit(onSubmit)}
           text="Done"
           disabled={!formState.isValid}
-          isLoading={formState.isLoading}
+          isLoading={formState.isLoading || formState.isSubmitting}
         ></FromButton>
       </View>
     </AvoidKeyboard>

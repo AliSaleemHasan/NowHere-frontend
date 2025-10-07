@@ -5,7 +5,7 @@ import { apiFetch } from "@/lib/fetch-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import {
   Keyboard,
@@ -57,7 +57,7 @@ export const SignupForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isLoading },
+    formState: { errors, isValid, isLoading, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(SignUpSchema),
     mode: "onChange",
@@ -74,10 +74,6 @@ export const SignupForm = () => {
       }
     );
   };
-
-  useEffect(() => {
-    mutation.error;
-  }, [mutation.error]);
 
   return (
     <KeyboardAvoidingView
@@ -135,7 +131,7 @@ export const SignupForm = () => {
         <FromButton
           onSubmit={handleSubmit(onSubmit)}
           text="Signup"
-          isLoading={isLoading}
+          isLoading={isLoading || isSubmitting}
           disabled={!isValid}
         ></FromButton>
         {mutation.isError && (

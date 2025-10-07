@@ -11,7 +11,7 @@ export enum Tags {
 
 export const TagsColors: { [key in keyof typeof Tags]: string } = {
   FINDINGS: "red",
-  HIDDEN_GEM: "cayan",
+  HIDDEN_GEM: "cyan",
   INTERESTING: "skyblue",
   LOST: "purple",
   PROOMOTION: "green",

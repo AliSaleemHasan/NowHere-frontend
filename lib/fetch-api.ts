@@ -74,13 +74,22 @@ export const apiFetch = async <T>({
   };
 
   const response = await fetch(`${getApiURL(api)}/${url}`, options);
+
   const data = (await response.json()) as FetchResponse<T>;
 
-  if (!data.success) {
-    return Promise.reject(data);
-  }
+  if (!data.success) return Promise.reject(data);
 
   return data;
+};
+
+// might be authenticated - might not , depends on user credential if they are found
+export const apiHypridFetch = async <T>(
+  options: FetchParams
+): Promise<FetchResponse<T>> => {
+  const isLoggedIn = await useAuth.getState().isLoggedIn;
+
+  if (isLoggedIn) return apiAuthFetch(options);
+  return apiFetch(options);
 };
 
 /**

@@ -18,16 +18,15 @@ const TabsLayout = () => {
   }, [fetchLocation]);
 
   if (isLocationLoading) return <Loading />;
-  if (isLocationError) return <LocationRequired />;
+  if (isLocationError) return <LocationRequired withErrorImage />;
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "white" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
       <Tabs.Screen
         name="index"
         options={{
           headerShown: false,
           tabBarLabel: "Map",
-
           tabBarIcon: ({ color }) => (
             <FontAwesome size={20} name="map" color={color} />
           ),

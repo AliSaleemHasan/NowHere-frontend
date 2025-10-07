@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 export function useUser(userId?: string) {
   return useQuery({
     queryKey: ["user", userId],
+    throwOnError: true,
     queryFn: () =>
       apiFetch<{ user: UserResponse }>({
         api: "users",

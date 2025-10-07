@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/fetch-api";
+import { apiHypridFetch } from "@/lib/fetch-api";
 import { socket } from "@/lib/socket";
 import { FetchResponse } from "@/types/api";
 import { handleArrayQueryParam } from "@/utils/handle-array-query-param";
@@ -30,6 +30,8 @@ export const useSnapSocket = () => {
           "near",
           location?.coordinates?.[0] ?? null,
           location?.coordinates?.[1] ?? null,
+          params.seen,
+
           handleArrayQueryParam(params.tags as string, "tags"),
         ],
         (old) => {
@@ -49,18 +51,19 @@ export const useSnapSocket = () => {
     queryKey: [
       "snaps",
       "near",
+      params.seen,
       location?.coordinates?.[0],
       location?.coordinates?.[1],
       handleArrayQueryParam(params.tags as string, "tags"),
     ],
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-
+    throwOnError: true,
     enabled: !!location.coordinates?.length && isFocused,
     queryFn: () =>
-      apiFetch<CreateSnapResponse[]>({
+      apiHypridFetch<CreateSnapResponse[]>({
         api: "snaps",
-        url: `snaps/near/${location.coordinates[0]}/${location.coordinates[1]}${handleArrayQueryParam(params.tags as string, "tags")}`,
+        url: `snaps/${params.seen === "1" ? "seen" : "near"}/${location.coordinates[0]}/${location.coordinates[1]}${handleArrayQueryParam(params.tags as string, "tags")}`,
         options: {
           method: "GET",
         },

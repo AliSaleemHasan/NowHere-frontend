@@ -2,10 +2,12 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Loading from "@/components/Loading";
+import NowHereError from "@/components/Nowhere-Error";
 import { UserSetting } from "@/features/users/types/users-api-type";
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { useQuery } from "@tanstack/react-query";
-import { Redirect } from "expo-router";
+
+export const ErrorBoundary = NowHereError;
 
 let userUISettings: {
   [k in keyof UserSetting]: {
@@ -34,6 +36,7 @@ let userUISettings: {
 export default function Settings() {
   const userSettingsQuery = useQuery({
     queryKey: ["users/settings"],
+    throwOnError: true,
     queryFn: () =>
       apiAuthFetch<UserSetting>({
         api: "users",
@@ -45,8 +48,6 @@ export default function Settings() {
   });
 
   if (userSettingsQuery.isLoading) return <Loading></Loading>;
-
-  if (userSettingsQuery.error) return <Redirect href={".."}></Redirect>;
 
   return (
     <View className="p-3 gap-2 flex-1 divide-y-2">

@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import NowHereError from "@/components/Nowhere-Error";
 import { useAuth } from "@/features/auth/context/auth-store";
 import ProfileImage from "@/features/users/components/ProfileImage";
 import { apiAuthFetch } from "@/lib/fetch-api";
@@ -7,11 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Text, View } from "react-native";
 
+export const ErrorBoundary = NowHereError;
+
 export default function Profile() {
   const userId = useAuth((state) => state.user);
 
   const userInfo = useQuery({
     queryKey: ["profile", userId],
+    throwOnError: true,
     queryFn: async () =>
       await apiAuthFetch<GetUserResponse>({
         api: "users",
@@ -22,9 +26,6 @@ export default function Profile() {
   });
 
   if (userInfo.isLoading) return <Loading></Loading>;
-
-  if (userInfo.error)
-    return <Text>Error Message {userInfo.error.message}</Text>;
 
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">

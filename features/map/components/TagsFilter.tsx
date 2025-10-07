@@ -42,12 +42,14 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
     <GestureHandlerRootView className="flex-1">
       {children}
 
-      <TouchableOpacity
-        onPress={() => bottomSheetRef.current?.expand()}
-        className="absolute top-20 right-5 gap-1 bg-white py-6 px-5 rounded-full z-50 items-center"
-      >
-        <FontAwesome size={10}>tags</FontAwesome>
-      </TouchableOpacity>
+      <View className="absolute top-20 right-5 flex gap-4">
+        <TouchableOpacity
+          onPress={() => bottomSheetRef.current?.expand()}
+          className=" gap-1 bg-white py-6 px-5 rounded-full z-50 items-center"
+        >
+          <FontAwesome size={10}>tags</FontAwesome>
+        </TouchableOpacity>
+      </View>
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
@@ -83,6 +85,21 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
                 }}
               ></CustomCheckbox>
             ))}
+          </View>
+          <View className="flex-row gap-3 font-bold">
+            <TouchableOpacity
+              onPress={() => {
+                router.setParams({
+                  seen: !params.seen || params.seen === "0" ? "1" : "0",
+                });
+              }}
+            >
+              <Text
+                className={`underline ${params.seen === "1" && "color-alert"}`}
+              >
+                Show Seen Snaps
+              </Text>
+            </TouchableOpacity>
           </View>
           <FromButton text="Search" onSubmit={handleTagsFilter}></FromButton>
         </BottomSheetView>

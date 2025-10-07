@@ -64,7 +64,7 @@ export default {
           image: "./assets/images/splash-icon.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#000000",
+          backgroundColor: "#fff",
         },
       ],
       "expo-secure-store",

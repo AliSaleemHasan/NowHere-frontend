@@ -25,7 +25,7 @@ export const LoginForm = () => {
   const mutation = useMutation({ mutationFn: login });
 
   const {
-    formState: { isLoading, errors, isValid },
+    formState: { isLoading, errors, isValid, isSubmitting },
     handleSubmit,
     control,
   } = useForm<LoginFormData>({
@@ -63,7 +63,7 @@ export const LoginForm = () => {
           onSubmit={handleSubmit(onSubmit)}
           disabled={!isValid}
           text="Login"
-          isLoading={isLoading}
+          isLoading={isLoading || isSubmitting}
         ></FromButton>
 
         {mutation.error && <FormError message={mutation.error.message} />}
