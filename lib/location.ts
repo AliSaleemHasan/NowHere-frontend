@@ -44,6 +44,7 @@ export const getUserLocation = async (): Promise<
       },
     };
   } catch (e: any) {
+    console.log(e);
     return {
       message: e.Error || e.message || "Could not get current location",
       success: false,

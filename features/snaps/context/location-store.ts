@@ -33,11 +33,17 @@ export const useLocation = create<UserLocationState>()(
         set(() => ({ loading: true }));
         try {
           const results = await getUserLocation();
-          if (!results.success) set(() => ({ error: results.message }));
+          if (!results.success)
+            set(() => ({ error: results.message, loading: false }));
           else
-            set(() => ({ location: results.data, error: "", boarding: true }));
+            set(() => ({
+              location: results.data,
+              error: "",
+              boarding: true,
+              loading: false,
+            }));
         } catch (err) {
-          set((state) => ({ error: JSON.stringify(err) })); //TODO: Better Error Handling
+          set((state) => ({ error: JSON.stringify(err), loading: false })); //TODO: Better Error Handling
         } finally {
           set(() => ({ loading: false }));
         }

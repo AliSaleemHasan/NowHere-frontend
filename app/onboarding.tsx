@@ -36,7 +36,7 @@ export default function onBoarding() {
           title="How It Works"
           imageSource={require("@/assets/images/onboarding/location-required.png")}
         >
-          {<LocationRequired />}
+          <LocationRequired />
         </ModalPage>
       </Modal>
     </View>

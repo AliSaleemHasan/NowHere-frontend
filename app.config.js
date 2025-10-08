@@ -10,7 +10,7 @@ export default {
     newArchEnabled: true,
     ios: {
       config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
+        googleMapsApiKey: process.env.GOOGLE_API_KEY,
       },
       supportsTablet: true,
       infoPlist: {
@@ -24,7 +24,7 @@ export default {
     android: {
       config: {
         googleMaps: {
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
+          apiKey: process.env.GOOGLE_API_KEY,
         },
       },
       adaptiveIcon: {
@@ -77,7 +77,7 @@ export default {
     extra: {
       router: {},
       eas: {
-        projectId: "71daf189-c0b9-4ec1-af30-e9f7de875427",
+        projectId: "caa3627b-b7cc-4c30-8ece-c3edf02a7917",
       },
     },
   },

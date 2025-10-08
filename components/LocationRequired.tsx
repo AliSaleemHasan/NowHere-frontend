@@ -13,8 +13,7 @@ const LocationRequired = (props: Props) => {
   const handleLocationPermission = async () => {
     const granted = await askLocationPermission();
 
-    fetchLocation();
-    if (!props.withErrorImage) setBoarding();
+    await fetchLocation();
   };
 
   return (
