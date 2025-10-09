@@ -1,5 +1,4 @@
 import type { UserResponse } from "@/types/api";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/utils";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -89,8 +88,10 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: async () => {
-        await deleteItemAsync(ACCESS_TOKEN_KEY);
-        await deleteItemAsync(REFRESH_TOKEN_KEY);
+        await deleteItemAsync(String(process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY));
+        await deleteItemAsync(
+          String(process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY)
+        );
         set({ isLoggedIn: false, user: undefined });
       },
       setTokens: (tokens) => {

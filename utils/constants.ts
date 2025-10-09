@@ -1,7 +1,5 @@
 import { UserSetting } from "@/features/users/types/users-api-type";
 
-export const REFRESH_TOKEN_KEY = "OAPSEMAPCAWECOPN";
-export const ACCESS_TOKEN_KEY = "APWIEFNFJNCPOC";
 export enum Tags {
   PROOMOTION = "PROOMOTION",
   INTERESTING = "INTERESTING",
