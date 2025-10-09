@@ -100,7 +100,7 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
                 <Text
                   className={`underline ${params.seen === "1" && "color-alert"}`}
                 >
-                  Show Seen Snaps
+                  Do not show seen snaps
                 </Text>
               </TouchableOpacity>
             </View>

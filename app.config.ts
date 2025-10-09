@@ -3,9 +3,9 @@ import { version } from "./package.json";
 
 // Replace these with your EAS project ID and project slug.
 // You can find them at https://expo.dev/accounts/[account]/projects/[project].
-const EAS_PROJECT_ID = "caa3627b-b7cc-4c30-8ece-c3edf02a7917";
+const EAS_PROJECT_ID = "0dbce725-6544-4921-ad27-59c9cff113f8";
 const PROJECT_SLUG = "nowhere";
-const OWNER = "ali_hasan";
+const OWNER = "alisaleemhasan";
 
 // App production config
 const APP_NAME = "App Name";
@@ -81,6 +81,21 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
     plugins: [
       [
+        "expo-build-properties",
+        {
+          android: {
+            usesCleartextTraffic: true,
+          },
+          ios: {
+            infoPlist: {
+              NSAppTransportSecurity: {
+                NSAllowsArbitraryLoads: true,
+              },
+            },
+          },
+        },
+      ],
+      [
         "expo-location",
         {
           locationAlwaysAndWhenInUsePermission:
@@ -101,7 +116,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           image: "./assets/images/splash-icon.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#fff",
+          backgroundColor: "#ffffff",
         },
       ],
       "expo-secure-store",
@@ -136,7 +151,7 @@ export const getDynamicAppConfig = (
       bundleIdentifier: `${BUNDLE_IDENTIFIER}.preview`,
       packageName: `${PACKAGE_NAME}.preview`,
       icon: "./assets/images/icon.png",
-      adaptiveIcon: "./assets/images/Android-Prev.png",
+      adaptiveIcon: "./assets/images/icon.png",
       scheme: `${SCHEME}-prev`,
     };
   }
