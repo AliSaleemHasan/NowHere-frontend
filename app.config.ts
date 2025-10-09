@@ -8,7 +8,7 @@ const PROJECT_SLUG = "nowhere";
 const OWNER = "alisaleemhasan";
 
 // App production config
-const APP_NAME = "App Name";
+const APP_NAME = "NowHere";
 const BUNDLE_IDENTIFIER = "com.company.appname";
 const PACKAGE_NAME = "com.company.appname";
 const ICON = "./assets/images/icon.png";
