@@ -1,4 +1,3 @@
-import Loading from "@/components/Loading";
 import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
@@ -15,10 +14,16 @@ const TabsLayout = () => {
 
   useEffect(() => {
     fetchLocation();
-  }, [fetchLocation]);
+  }, []);
 
-  if (isLocationLoading) return <Loading />;
   if (isLocationError) return <LocationRequired withErrorImage />;
+
+  // if (isLocationLoading)
+  //   return (
+  //     <Loading
+  //       cause={`Location is loading ${isLocationError && "with this error" + isLocationError} `}
+  //     />
+  //   );
 
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>

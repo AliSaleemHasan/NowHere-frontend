@@ -1,5 +1,6 @@
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import Loading from "@/components/Loading";
+import NowHereError from "@/components/Nowhere-Error";
 import { useSnap } from "@/features/snaps/api/useSnap";
 import { useUser } from "@/features/users/api/useUser";
 import { TagsColors } from "@/utils";
@@ -7,6 +8,8 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, View, useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+
+export const ErrorBoundary = NowHereError;
 
 const SnapDetails = () => {
   const params = useLocalSearchParams();
@@ -17,31 +20,15 @@ const SnapDetails = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const {
-    data: snapData,
-    isLoading: isSnapLoading,
-    isError: isSnapError,
-    error: snapError,
-  } = useSnap(params.id as string);
+  const { data: snapData, isLoading: isSnapLoading } = useSnap(
+    params.id as string
+  );
 
-  const {
-    data: userData,
-    isLoading: isUserLoading,
-    isError: isUserError,
-    error: userError,
-  } = useUser(snapData?.data?.snap._userId);
+  const { data: userData, isLoading: isUserLoading } = useUser(
+    snapData?.data?.snap._userId
+  );
 
   if (isSnapLoading || isUserLoading) return <Loading />;
-
-  if (isSnapError || isUserError) {
-    return (
-      <View className="flex-1 items-center justify-center p-4">
-        <Text className="text-3xl font-bold text-error text-center">
-          {snapError?.message || userError?.message}
-        </Text>
-      </View>
-    );
-  }
 
   const snap = snapData?.data;
   const user = userData?.data?.user;

@@ -8,14 +8,23 @@ interface Props {
 }
 const LocationRequired = (props: Props) => {
   const fetchLocation = useLocation((state) => state.featchLocation);
-  const setBoarding = useLocation((state) => state.setBoarding);
+
+  const locationError = useLocation((state) => state.error);
 
   const handleLocationPermission = async () => {
     const granted = await askLocationPermission();
 
+    if (!granted) return;
     await fetchLocation();
   };
 
+  if (locationError) {
+    return (
+      <View className=" flex-1 items-center justify-center">
+        <Text className="text-red-200">{locationError}</Text>
+      </View>
+    );
+  }
   return (
     <View className="flex items-center justify-center flex-1 ">
       {props.withErrorImage && (

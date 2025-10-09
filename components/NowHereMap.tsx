@@ -2,13 +2,12 @@ import TagsFilter from "@/features/map/components/TagsFilter";
 import MapMarker from "@/features/snaps/components/MapMarker";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapSocket } from "@/features/snaps/hooks/useSnapSocket";
-import React, { useRef } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import Map from "react-native-maps";
 
 const NowHereMap = () => {
   const query = useSnapSocket();
-  const mapRef = useRef<Map>(null);
   const location = useLocation((state) => state.location);
   const setLocation = useLocation((state) => state.setLocation);
 
@@ -19,7 +18,6 @@ const NowHereMap = () => {
         showsUserLocation
         showsBuildings
         showsCompass
-        ref={mapRef}
         initialRegion={{
           latitude: location.coordinates[1],
           longitude: location?.coordinates[0],

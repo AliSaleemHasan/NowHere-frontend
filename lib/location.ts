@@ -1,8 +1,7 @@
 import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { FetchResponse } from "@/types/api";
+import * as Location from "expo-location";
 import {
-  getCurrentPositionAsync,
-  getLastKnownPositionAsync,
   PermissionStatus,
   requestForegroundPermissionsAsync,
 } from "expo-location";
@@ -32,9 +31,36 @@ export const getUserLocation = async (): Promise<
   FetchResponse<SnapLocation>
 > => {
   try {
-    let location = await getLastKnownPositionAsync({});
+    if (!(await Location.hasServicesEnabledAsync())) {
+      return {
+        success: false,
+        error: "LocationServicesDisabled",
+        message: "Enable device location",
+        statusCode: 412,
+        path: "/UI",
+      };
+    }
 
-    if (!location) location = await getCurrentPositionAsync({});
+    const perm = await Location.getForegroundPermissionsAsync();
+    if (perm.status !== Location.PermissionStatus.GRANTED) {
+      return {
+        success: false,
+        error: "PermissionDenied",
+        message: "Foreground permission not granted",
+        statusCode: 403,
+        path: "/UI",
+      };
+    }
+
+    let location = await Location.getLastKnownPositionAsync();
+    if (!location) {
+      location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 5000,
+      });
+    }
+
+    if (!location?.coords) throw new Error("No location");
 
     return {
       success: true,
@@ -44,12 +70,12 @@ export const getUserLocation = async (): Promise<
       },
     };
   } catch (e: any) {
-    console.log(e);
+    console.error("getUserLocation error:", e);
     return {
-      message: e.Error || e.message || "Could not get current location",
       success: false,
-      error: "Location Error",
-      statusCode: 403,
+      error: "LocationError",
+      message: e?.message || "Could not get current location",
+      statusCode: 500,
       path: "/UI",
     };
   }

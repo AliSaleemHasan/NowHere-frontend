@@ -5,34 +5,11 @@ import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
 import { UserSetting } from "@/features/users/types/users-api-type";
 import { apiAuthFetch } from "@/lib/fetch-api";
+import { userUISettings } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 
 export const ErrorBoundary = NowHereError;
 
-let userUISettings: {
-  [k in keyof UserSetting]: {
-    title: string;
-    description: string;
-    in: string;
-  };
-} = {
-  max_distance: {
-    title: "User Max Visibility Distance ",
-    description:
-      "The distance were that user cannot say snaps after depending on location",
-    in: "Meters",
-  },
-  new_snap_distance: {
-    title: "Allowed range to post new snap ",
-    description: "The minimmum distance for the previous post of the user",
-    in: "Meters",
-  },
-  snapDisappearTime: {
-    title: "Visibility expiration time (Days)",
-    description: "Number of days the snaps will be visible in users locaiton",
-    in: "Days",
-  },
-};
 export default function Settings() {
   const userSettingsQuery = useQuery({
     queryKey: ["users/settings"],

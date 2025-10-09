@@ -1,3 +1,5 @@
+import { UserSetting } from "@/features/users/types/users-api-type";
+
 export const REFRESH_TOKEN_KEY = "OAPSEMAPCAWECOPN";
 export const ACCESS_TOKEN_KEY = "APWIEFNFJNCPOC";
 export enum Tags {
@@ -40,4 +42,29 @@ export const getApiURL = (api?: APIS) => {
       break;
   }
   return api_url;
+};
+
+export const userUISettings: {
+  [k in keyof UserSetting]: {
+    title: string;
+    description: string;
+    in: string;
+  };
+} = {
+  max_distance: {
+    title: "User Max Visibility Distance ",
+    description:
+      "The distance were that user cannot say snaps after depending on location",
+    in: "Meters",
+  },
+  new_snap_distance: {
+    title: "Allowed range to post new snap ",
+    description: "The minimmum distance for the previous post of the user",
+    in: "Meters",
+  },
+  snapDisappearTime: {
+    title: "Visibility expiration time (Days)",
+    description: "Number of days the snaps will be visible in users locaiton",
+    in: "Days",
+  },
 };

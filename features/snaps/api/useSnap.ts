@@ -6,6 +6,7 @@ export function useSnap(id: string) {
   return useQuery({
     queryKey: ["snap", id],
     throwOnError: true,
+
     queryFn: () =>
       apiAuthFetch<FindSnapResponse>({
         url: `snaps/${id}`,

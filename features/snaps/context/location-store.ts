@@ -20,7 +20,7 @@ type UserLocationState = {
 export const useLocation = create<UserLocationState>()(
   persist(
     (set, get) => ({
-      loading: true,
+      loading: false,
       boarding: false,
       location: {
         type: "Point",
@@ -33,14 +33,15 @@ export const useLocation = create<UserLocationState>()(
         set(() => ({ loading: true }));
         try {
           const results = await getUserLocation();
+
           if (!results.success)
             set(() => ({ error: results.message, loading: false }));
           else
             set(() => ({
               location: results.data,
               error: "",
-              boarding: true,
               loading: false,
+              boarding: true,
             }));
         } catch (err) {
           set((state) => ({ error: JSON.stringify(err), loading: false })); //TODO: Better Error Handling
@@ -63,7 +64,7 @@ export const useLocation = create<UserLocationState>()(
         setItem,
       })),
       partialize: (state) => ({
-        location,
+        location: state.location,
         boarding: state.boarding,
       }),
     }
