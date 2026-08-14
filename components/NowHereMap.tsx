@@ -9,7 +9,6 @@ import Map from "react-native-maps";
 const NowHereMap = () => {
   const query = useSnapSocket();
   const location = useLocation((state) => state.location);
-  const setLocation = useLocation((state) => state.setLocation);
 
   return (
     <TagsFilter>
@@ -25,17 +24,7 @@ const NowHereMap = () => {
           longitudeDelta: 0.3,
         }}
         userInterfaceStyle="dark"
-        userLocationUpdateInterval={1000} // every 10 seconds
-        onUserLocationChange={(event) => {
-          if (event.nativeEvent.coordinate)
-            setLocation({
-              type: "Point",
-              coordinates: [
-                event.nativeEvent.coordinate?.longitude,
-                event.nativeEvent.coordinate?.latitude,
-              ],
-            });
-        }}
+        followsUserLocation
       >
         {query.data?.success &&
           query.data.data?.map((snap, idx) => (

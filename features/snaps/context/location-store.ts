@@ -1,9 +1,5 @@
 import { getUserLocation } from "@/lib/location";
-import {
-  getItemAsync as getItem,
-  deleteItemAsync as removeItem,
-  setItemAsync as setItem,
-} from "expo-secure-store";
+import { mmkvStorage } from "@/lib/storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { SnapLocation } from "../types/snaps-api-type";
@@ -58,11 +54,7 @@ export const useLocation = create<UserLocationState>()(
     }),
     {
       name: "location",
-      storage: createJSONStorage(() => ({
-        getItem,
-        removeItem,
-        setItem,
-      })),
+      storage: createJSONStorage(() => mmkvStorage),
       partialize: (state) => ({
         location: state.location,
         boarding: state.boarding,

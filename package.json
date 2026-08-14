@@ -49,6 +49,8 @@
     "react-native-gesture-handler": "~2.24.0",
     "react-native-keyboard-controller": "^1.18.5",
     "react-native-maps": "1.20.1",
+    "react-native-mmkv": "^4.3.2",
+    "react-native-nitro-modules": "^0.36.5",
     "react-native-permissions": "^5.4.2",
     "react-native-reanimated": "~3.17.4",
     "react-native-reanimated-carousel": "^4.0.3",
