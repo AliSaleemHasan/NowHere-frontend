@@ -16,6 +16,11 @@ interface AuthState {
   setTokens: (tokens: Tokens) => void;
 }
 
+const ACCESS_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY || "access_token";
+const REFRESH_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY || "refresh_token";
+
 export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
@@ -33,10 +38,10 @@ export const useAuth = create<AuthState>()(
         }),
 
       logout: async () => {
-        await deleteItemAsync(String(process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY));
-        await deleteItemAsync(
-          String(process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY),
-        );
+        await Promise.all([
+          deleteItemAsync(ACCESS_TOKEN_KEY),
+          deleteItemAsync(REFRESH_TOKEN_KEY),
+        ]);
         set({ isLoggedIn: false, user: undefined, tokens: undefined });
       },
       setTokens: (tokens) => {
