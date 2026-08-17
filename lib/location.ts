@@ -2,6 +2,7 @@ import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { FetchResponse } from "@/types/api";
 import {
   getCurrentPositionAsync,
+  getForegroundPermissionsAsync,
   getLastKnownPositionAsync,
   PermissionStatus,
   requestForegroundPermissionsAsync,
@@ -21,7 +22,7 @@ export const askLocationPermission = async () => {
           onPress: () => Linking.openSettings(),
         },
         { text: "Cancel", style: "cancel" },
-      ]
+      ],
     );
   }
 
@@ -32,6 +33,16 @@ export const getUserLocation = async (): Promise<
   FetchResponse<SnapLocation>
 > => {
   try {
+    const { status } = await getForegroundPermissionsAsync();
+
+    if (status !== PermissionStatus.GRANTED) {
+      return {
+        success: false,
+        message: "Location permission is required.",
+        error: "PERMISSION_DENIED",
+        statusCode: 403,
+      };
+    }
     let location = await getLastKnownPositionAsync({});
 
     if (!location) location = await getCurrentPositionAsync({});

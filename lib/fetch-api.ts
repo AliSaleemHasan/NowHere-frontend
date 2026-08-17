@@ -41,14 +41,14 @@ const getHeaders = ({
 
 const refresh = async (token: string) => {
   const response = await fetch(
-    `${process.env.EXPO_PUBLIC_USERS_URL}/auth/refresh`,
+    `${process.env.EXPO_PUBLIC_AUTH_URL}/auth/refresh`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   const data = await response.json();
@@ -75,16 +75,32 @@ export const apiFetch = async <T>({
 
   const response = await fetch(`${getApiURL(api)}/${url}`, options);
 
-  const data = (await response.json()) as FetchResponse<T>;
+  let data: any;
+  const rawText = await response.text();
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    data = response.ok
+      ? { success: true, data: rawText }
+      : { success: false, message: rawText || response.statusText };
+  }
 
-  if (!data.success) return Promise.reject(data);
+  if (!response.ok || (data && data.success === false)) {
+    const errorMsg = Array.isArray(data?.message)
+      ? data.message.join(", ")
+      : data?.message || data?.error || response.statusText || "Request failed";
+    const error: any = new Error(errorMsg);
+    error.statusCode = response.status || data?.statusCode;
+    error.data = data;
+    return Promise.reject(error);
+  }
 
-  return data;
+  return data as FetchResponse<T>;
 };
 
 // might be authenticated - might not , depends on user credential if they are found
 export const apiHypridFetch = async <T>(
-  options: FetchParams
+  options: FetchParams,
 ): Promise<FetchResponse<T>> => {
   const isLoggedIn = await useAuth.getState().isLoggedIn;
 
@@ -106,7 +122,7 @@ export const apiAuthFetch = async <T>({
   if (!accessToken || !refreshToken) {
     useAuth.getState().logout();
     return Promise.reject(
-      new Error("User is not authorized to access this resource.")
+      new Error("User is not authorized to access this resource."),
     );
   }
 

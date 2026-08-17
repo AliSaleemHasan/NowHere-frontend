@@ -9,7 +9,8 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (inputs: LoginFormProps) => loginApi(inputs),
     onSuccess: (data) => {
-      setAuth(data.user.Id, data.tokens);
+      const userId = (data.user as any)?.id || data.user?.Id;
+      setAuth(userId, data.tokens);
     },
   });
 };

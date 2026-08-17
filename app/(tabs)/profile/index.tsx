@@ -15,7 +15,7 @@ export default function Profile() {
 
   const userInfo = useQuery({
     queryKey: ["profile", userId],
-    throwOnError: true,
+    throwOnError: false,
     queryFn: async () =>
       await apiAuthFetch<GetUserResponse>({
         api: "users",
@@ -25,7 +25,27 @@ export default function Profile() {
     enabled: !!userId,
   });
 
-  if (userInfo.isLoading) return <Loading></Loading>;
+  if (!userId) {
+    return (
+      <View className="flex-1 items-center justify-center p-5">
+        <Text className="text-sm text-gray-500">
+          User session not found. Please log out and sign in again.
+        </Text>
+      </View>
+    );
+  }
+
+  if (userInfo.isLoading) return <Loading />;
+
+  if (userInfo.isError) {
+    return (
+      <View className="flex-1 items-center justify-center p-5">
+        <Text className="text-sm text-error">
+          {userInfo.error?.message || "Failed to load profile"}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">

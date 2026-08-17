@@ -51,7 +51,7 @@ export const useSnapSocket = () => {
     queryKey: ["snaps", "near", params.seen, lng, lat, tagsParam],
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    throwOnError: true,
+    throwOnError: false,
     enabled: !!(lng || lat) && isFocused,
     queryFn: () =>
       apiHypridFetch<CreateSnapResponse[]>({

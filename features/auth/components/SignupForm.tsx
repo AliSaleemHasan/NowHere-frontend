@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import * as z from "zod";
+import Toast from "react-native-toast-message";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
 const SignUpSchema = z
@@ -42,15 +43,21 @@ export const SignupForm = () => {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: (data: { user: Omit<SignupFormData, "confirm"> }) => {
-      return apiFetch({
-        api: "users",
+    mutationFn: async (data: { user: Omit<SignupFormData, "confirm"> }) => {
+      const response = await apiFetch<{ success: boolean; message?: string }>({
+        api: "auth",
         url: "auth/signup",
         options: {
           method: "POST",
           body: JSON.stringify(data),
         },
       });
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to sign up");
+      }
+
+      return response;
     },
   });
 
@@ -69,8 +76,14 @@ export const SignupForm = () => {
     mutation.mutate(
       { user: data },
       {
-        onSuccess: () => router.replace("/(auth)/login"), // TODO: push back to verification email
-        onError: (err) => console.log(err),
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Account created successfully",
+            text2: "Please sign in with your credentials",
+          });
+          router.replace("/login");
+        },
       }
     );
   };

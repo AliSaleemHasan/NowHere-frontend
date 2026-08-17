@@ -1,9 +1,9 @@
 import { useAuth } from "@/features/auth/context/auth-store";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
-import { useEffect } from "react";
+import { preventAutoHideAsync } from "expo-splash-screen";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import Toast from "react-native-toast-message";
 import "./global.css";
@@ -17,15 +17,8 @@ export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 export default function RootLayout() {
-  const hasHydrated = useAuth((state) => state._hasHydrated);
-
-  useEffect(() => {
-    if (hasHydrated) {
-      hideAsync();
-    }
-  }, [hasHydrated]);
-
-  if (!hasHydrated) {
+  const { isReady } = useAuthSession();
+  if (!isReady) {
     return null;
   }
   return (

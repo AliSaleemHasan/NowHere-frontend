@@ -2,10 +2,10 @@ import { apiFetch } from "@/lib/fetch-api";
 import type { AuthSuccess, LoginFormProps } from "../types/auth-api.types";
 
 export const loginApi = async (
-  inputs: LoginFormProps
+  inputs: LoginFormProps,
 ): Promise<AuthSuccess> => {
-  const response = await apiFetch<AuthSuccess>({
-    api: "users",
+  const response = await apiFetch<any>({
+    api: "auth",
     url: "auth/login",
     options: {
       method: "POST",
@@ -13,18 +13,20 @@ export const loginApi = async (
     },
   });
 
-  if (!response.data) {
-    throw new Error(response.message || "Failed to log in");
+  const authData = response?.data || response;
+
+  if (!authData?.tokens || !authData?.user) {
+    throw new Error(response?.message || "Failed to log in");
   }
 
-  return response.data;
+  return authData as AuthSuccess;
 };
 
 export const validateTokenApi = async (
-  accessToken: string
-): Promise<AuthSuccess> => {
-  const response = await apiFetch<AuthSuccess>({
-    api: "users",
+  accessToken: string,
+): Promise<any> => {
+  const response = await apiFetch<any>({
+    api: "auth",
     url: "auth/validate",
     options: {
       method: "GET",
@@ -34,9 +36,5 @@ export const validateTokenApi = async (
     },
   });
 
-  if (!response.data) {
-    throw new Error(response.message || "Invalid token");
-  }
-
-  return response.data;
+  return response;
 };

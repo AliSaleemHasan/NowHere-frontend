@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Keyboard, SafeAreaView, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import * as z from "zod";
 import { useLogin } from "../hooks/use-login";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
@@ -39,7 +40,17 @@ export const LoginForm = () => {
     mutation.mutate(
       { user: values },
       {
-        onSuccess: () => router.replace("/"),
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Signed in successfully",
+          });
+          if (router.canDismiss()) {
+            router.dismissAll();
+          } else {
+            router.replace("/(tabs)");
+          }
+        },
       }
     );
   };

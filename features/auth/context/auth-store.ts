@@ -11,7 +11,7 @@ interface AuthState {
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 
-  setAuth: (user: UserResponse["Id"], tokens: Tokens) => void;
+  setAuth: (user: UserResponse["Id"] | undefined, tokens: Tokens) => void;
   logout: () => Promise<void>;
   setTokens: (tokens: Tokens) => void;
 }
@@ -61,6 +61,13 @@ export const useAuth = create<AuthState>()(
         tokens: state.tokens,
       }),
       onRehydrateStorage: () => (state) => {
+        if (!state?.tokens?.accessToken) {
+          useAuth.setState({
+            isLoggedIn: false,
+            tokens: undefined,
+            user: undefined,
+          });
+        }
         state?.setHasHydrated(true);
       },
     },
