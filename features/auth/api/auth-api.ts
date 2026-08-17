@@ -21,7 +21,7 @@ export const loginApi = async (
 };
 
 export const validateTokenApi = async (
-  token: string
+  accessToken: string
 ): Promise<AuthSuccess> => {
   const response = await apiFetch<AuthSuccess>({
     api: "users",
@@ -29,7 +29,7 @@ export const validateTokenApi = async (
     options: {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     },
   });
