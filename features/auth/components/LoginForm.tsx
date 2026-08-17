@@ -8,7 +8,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Keyboard, SafeAreaView, Text, View } from "react-native";
 import * as z from "zod";
-import { useAuth } from "../context/auth-store";
+import { useLogin } from "../hooks/use-login";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
 const LoginSchema = z.object({
@@ -18,11 +18,9 @@ const LoginSchema = z.object({
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 
-const router = useRouter();
-
 export const LoginForm = () => {
-  const login = useAuth((state) => state.login);
-  const mutation = useMutation({ mutationFn: login });
+  const router = useRouter();
+  const mutation = useLogin();
 
   const {
     formState: { isLoading, errors, isValid, isSubmitting },
