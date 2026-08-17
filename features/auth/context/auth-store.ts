@@ -13,6 +13,8 @@ interface AuthState {
   isReady: boolean;
   user?: UserResponse["Id"];
   tokens?: Tokens;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 
   init: () => Promise<void>;
   login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;
@@ -23,6 +25,9 @@ interface AuthState {
 export const useAuth = create<AuthState>()(
   persist(
     (set, get) => ({
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
+      tokens: undefined,
       isLoggedIn: false,
       isReady: false,
       user: undefined,
@@ -45,7 +50,7 @@ export const useAuth = create<AuthState>()(
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
-            }
+            },
           );
           set({ isReady: true });
 
@@ -73,7 +78,7 @@ export const useAuth = create<AuthState>()(
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         let res = await ressponse.json();
@@ -90,7 +95,7 @@ export const useAuth = create<AuthState>()(
       logout: async () => {
         await deleteItemAsync(String(process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY));
         await deleteItemAsync(
-          String(process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY)
+          String(process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY),
         );
         set({ isLoggedIn: false, user: undefined });
       },
@@ -110,6 +115,9 @@ export const useAuth = create<AuthState>()(
         user: state.user,
         tokens: state.tokens,
       }),
-    }
-  )
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    },
+  ),
 );
