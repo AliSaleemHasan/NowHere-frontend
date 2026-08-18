@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/fetch-api";
+import { apiAuthFetch, apiFetch } from "@/lib/fetch-api";
 import type { AuthSuccess, LoginFormProps } from "../types/auth-api.types";
 
 export const loginApi = async (
@@ -22,10 +22,8 @@ export const loginApi = async (
   return authData as AuthSuccess;
 };
 
-export const validateTokenApi = async (
-  accessToken: string,
-): Promise<any> => {
-  const response = await apiFetch<any>({
+export const validateTokenApi = async (accessToken: string): Promise<any> => {
+  const response = await apiAuthFetch<any>({
     api: "auth",
     url: "auth/validate",
     options: {
