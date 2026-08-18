@@ -40,15 +40,19 @@ const NowHereMap = () => {
         followsUserLocation
       >
         {query.data?.success &&
-          query.data.data?.map((snap) => (
-            <MapMarker
-              _id={snap._id}
-              lat={snap.location.coordinates[1]}
-              lng={snap.location.coordinates[0]}
-              tag={snap.tag}
-              key={snap._id}
-            />
-          ))}
+          query.data.data?.map((snap) => {
+            const snapId = snap.id || snap._id;
+            return (
+              <MapMarker
+                id={snapId}
+                _id={snapId}
+                lat={snap.location.coordinates[1]}
+                lng={snap.location.coordinates[0]}
+                tag={snap.tag}
+                key={snapId}
+              />
+            );
+          })}
       </Map>
     </TagsFilter>
   );

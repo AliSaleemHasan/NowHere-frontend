@@ -8,7 +8,7 @@ export const useAuthSession = () => {
   const tokens = useAuth((state) => state.tokens);
   const logout = useAuth((state) => state.logout);
   const hydrate = useAuth((state) => state.hydrate);
-  
+
   const [isValidating, setIsValidating] = useState(true);
 
   // 1. Tell the store to hydrate from disk on mount
@@ -28,17 +28,27 @@ export const useAuthSession = () => {
         }
 
         // Validate token against backend
-        await validateTokenApi(tokens.accessToken);
-        
-        // If successful, mark the user as logged in
-        useAuth.setState({ isLoggedIn: true });
-        
+        const validation = await validateTokenApi(tokens.accessToken);
+
+        // If successful, mark the user as logged in and preserve userId
+        const validatedUserId = validation.data?.userId;
+        useAuth.setState((state) => ({
+          isLoggedIn: true,
+          user: validatedUserId || state.user,
+          userId: validatedUserId || state.user,
+        }));
       } catch (err: any) {
-        if (err?.statusCode === 401 || err?.message?.toLowerCase().includes("unauthorized")) {
+        if (
+          err?.statusCode === 401 ||
+          err?.message?.toLowerCase().includes("unauthorized")
+        ) {
           console.warn("Session expired or invalid, logging out:", err);
           await logout();
         } else {
-          console.warn("Could not reach auth server, keeping offline session:", err);
+          console.warn(
+            "Could not reach auth server, keeping offline session:",
+            err,
+          );
           useAuth.setState({ isLoggedIn: true });
         }
       } finally {

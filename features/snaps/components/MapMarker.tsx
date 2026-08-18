@@ -4,19 +4,23 @@ import React, { memo } from "react";
 import { Marker } from "react-native-maps";
 
 interface Props {
-  _id: string;
+  id?: string;
+  _id?: string;
   tag: Tags;
   lat: number;
   lng: number;
 }
-const MapMarker = ({ _id, tag, lat, lng }: Props) => {
+const MapMarker = ({ id, _id, tag, lat, lng }: Props) => {
+  const markerId = id || _id;
   const router = useRouter();
   return (
     <Marker
       tracksViewChanges={false}
       pinColor={TagsColors[tag]}
       onPress={() => {
-        router.push(`/(snaps)/${_id}`);
+        if (markerId) {
+          router.push(`/(snaps)/${markerId}`);
+        }
       }}
       title={tag}
       coordinate={{

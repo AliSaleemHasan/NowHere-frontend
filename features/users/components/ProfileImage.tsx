@@ -43,6 +43,9 @@ export default function ProfileImage({ userId, image }: Props) {
     updateImageMutation.mutate(payload, {
       onSuccess: (data) => {
         queryClient.setQueryData(["profile", userId], data);
+        queryClient.invalidateQueries({ queryKey: ["profile", userId] });
+        queryClient.invalidateQueries({ queryKey: ["user", userId] });
+        Toast.show({ type: "success", text1: "Profile image updated" });
       },
       onError: (err) => {
         Toast.show({ type: "error", text1: err.message });

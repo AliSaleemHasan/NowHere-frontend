@@ -1,7 +1,7 @@
 import FromButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
-import { apiFetch } from "@/lib/fetch-api";
+import { signupApi } from "../api/auth-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -37,27 +37,21 @@ const SignUpSchema = z
     path: ["confirm"],
   });
 
-type SignupFormData = z.Infer<typeof SignUpSchema>;
+type SignupFormData = z.infer<typeof SignUpSchema>;
 
 export const SignupForm = () => {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: async (data: { user: Omit<SignupFormData, "confirm"> }) => {
-      const response = await apiFetch<{ success: boolean; message?: string }>({
-        api: "auth",
-        url: "auth/signup",
-        options: {
-          method: "POST",
-          body: JSON.stringify(data),
-        },
+    mutationFn: (data: Omit<SignupFormData, "confirm">) => {
+      const username = `${data.firstName} ${data.lastName}`.trim() || data.email;
+      return signupApi({
+        email: data.email,
+        password: data.password,
+        username,
+        firstName: data.firstName,
+        lastName: data.lastName,
       });
-
-      if (!response.success) {
-        throw new Error(response.message || "Failed to sign up");
-      }
-
-      return response;
     },
   });
 
@@ -73,19 +67,16 @@ export const SignupForm = () => {
   const onSubmit = (values: SignupFormData) => {
     const { confirm, ...data } = values;
     Keyboard.dismiss();
-    mutation.mutate(
-      { user: data },
-      {
-        onSuccess: () => {
-          Toast.show({
-            type: "success",
-            text1: "Account created successfully",
-            text2: "Please sign in with your credentials",
-          });
-          router.replace("/login");
-        },
-      }
-    );
+    mutation.mutate(data, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Account created successfully",
+          text2: "Please sign in with your credentials",
+        });
+        router.replace("/login");
+      },
+    });
   };
 
   return (

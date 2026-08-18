@@ -10,6 +10,7 @@ export interface SnapFile {
   name: string;
   type: string;
 }
+
 export interface CreateSnapBody {
   _userId: string;
   snaps: SnapFile[];
@@ -18,14 +19,16 @@ export interface CreateSnapBody {
 }
 
 export type CreateSnapResponse = Omit<CreateSnapBody, "snaps"> & {
+  id: string;
+  _id?: string;
   snaps: string[];
   createdAt: string;
   updatedAt: string;
   tag: Tags;
-  _id: string;
 };
 
 export type FindSnapResponse = {
   snap: CreateSnapResponse;
   imageKeys: string[];
 };
+

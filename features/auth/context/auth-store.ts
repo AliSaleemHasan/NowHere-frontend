@@ -5,19 +5,24 @@ import type { Tokens } from "../types/auth-api.types";
 
 interface AuthState {
   isLoggedIn: boolean;
-  user?: UserResponse["Id"];
+  user?: UserResponse["id"];
   tokens?: Tokens;
   _hasHydrated: boolean;
-  
+
   setHasHydrated: (state: boolean) => void;
-  setAuth: (user: UserResponse["Id"] | undefined, tokens: Tokens) => Promise<void>;
+  setAuth: (
+    user: UserResponse["id"] | undefined,
+    tokens: Tokens,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   setTokens: (tokens: Tokens) => Promise<void>;
   hydrate: () => Promise<void>;
 }
 
-export const ACCESS_TOKEN_KEY = process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY || "access_token";
-export const REFRESH_TOKEN_KEY = process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY || "refresh_token";
+export const ACCESS_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY || "access_token";
+export const REFRESH_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY || "refresh_token";
 
 // Helper extracted to follow the DRY principle
 const saveTokensToStorage = async (tokens: Tokens) => {
@@ -42,7 +47,7 @@ export const useAuth = create<AuthState>((set) => ({
       ]);
 
       if (accessToken && refreshToken) {
-        set({ 
+        set({
           tokens: { accessToken, refreshToken },
         });
       }
@@ -55,6 +60,7 @@ export const useAuth = create<AuthState>((set) => ({
 
   setAuth: async (user, tokens) => {
     await saveTokensToStorage(tokens);
+    // I have to check if the user is logged in
     set({
       isLoggedIn: true,
       user,

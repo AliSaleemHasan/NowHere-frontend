@@ -30,17 +30,24 @@ export const useLocation = create<UserLocationState>()(
         try {
           const results = await getUserLocation();
 
-          if (!results.success)
-            set(() => ({ error: results.message, loading: false }));
-          else
+          if (!results.success || !results.data) {
+            set(() => ({
+              error: results.message || "Failed to get location",
+              loading: false,
+            }));
+          } else {
             set(() => ({
               location: results.data,
               error: "",
               loading: false,
               boarding: true,
             }));
+          }
         } catch (err) {
-          set((state) => ({ error: JSON.stringify(err), loading: false })); //TODO: Better Error Handling
+          set(() => ({
+            error: err instanceof Error ? err.message : JSON.stringify(err),
+            loading: false,
+          }));
         } finally {
           set(() => ({ loading: false }));
         }

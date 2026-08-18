@@ -47,10 +47,14 @@ export default function Profile() {
     );
   }
 
+  const rawData = userInfo.data?.data as any;
+  const user = rawData?.user || rawData;
+  const profileImageUrl = user?.image || user?.userImage || rawData?.userImage;
+
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">
       <ProfileImage
-        image={userInfo.data?.data?.userImage}
+        image={profileImageUrl}
         userId={userId}
       ></ProfileImage>
       <View className="flex-1 gap-4">
@@ -61,15 +65,15 @@ export default function Profile() {
         <View className="gap-2 w-full">
           <Text className="text-sm">email</Text>
           <Text className="text-sm font-thin">
-            {userInfo.data?.data?.user?.email}
+            {user?.email}
           </Text>
         </View>
 
         <View className="gap-2 w-full">
           <Text className="text-sm">name</Text>
           <Text className="text-sm font-thin">
-            {userInfo.data?.data?.user?.firstName}{" "}
-            {userInfo.data?.data?.user?.lastName}
+            {user?.firstName}{" "}
+            {user?.lastName}
           </Text>
         </View>
       </View>

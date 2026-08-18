@@ -37,22 +37,19 @@ export const LoginForm = () => {
 
   const onSubmit = async (values: LoginFormData) => {
     Keyboard.dismiss();
-    mutation.mutate(
-      { user: values },
-      {
-        onSuccess: () => {
-          Toast.show({
-            type: "success",
-            text1: "Signed in successfully",
-          });
-          if (router.canDismiss()) {
-            router.dismissAll();
-          } else {
-            router.replace("/(tabs)");
-          }
-        },
-      }
-    );
+    mutation.mutate(values, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Signed in successfully",
+        });
+        if (router.canDismiss()) {
+          router.dismissAll();
+        } else {
+          router.replace("/(tabs)");
+        }
+      },
+    });
   };
 
   return (
