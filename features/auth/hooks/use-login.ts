@@ -7,10 +7,11 @@ export const useLogin = () => {
   const setAuth = useAuth((state) => state.setAuth);
 
   return useMutation({
-    mutationFn: (inputs: LoginFormProps) => loginApi(inputs),
-    onSuccess: (data) => {
-      const userId = data.user?.id;
-      setAuth(userId, data.tokens);
+    mutationFn: async (inputs: LoginFormProps) => {
+      const data = await loginApi(inputs);
+      // Await setAuth so isLoggedIn is true before onSuccess navigation fires
+      await setAuth(data.user?.id, data.tokens);
+      return data;
     },
   });
 };

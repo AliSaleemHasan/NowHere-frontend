@@ -37,12 +37,20 @@ export const loginApi = async (
 export const signupApi = async (
   inputs: SignupRequest,
 ): Promise<AuthSuccessData> => {
+  const payload: SignupRequest = {
+    email: inputs.email,
+    password: inputs.password,
+    firstName: inputs.firstName,
+    lastName: inputs.lastName,
+    ...(inputs.username ? { username: inputs.username } : {}),
+  };
+
   const response = await apiFetch<AuthSuccessData>({
     api: "auth",
     url: "auth/signup",
     options: {
       method: "POST",
-      body: JSON.stringify(inputs),
+      body: JSON.stringify(payload),
     },
   });
 

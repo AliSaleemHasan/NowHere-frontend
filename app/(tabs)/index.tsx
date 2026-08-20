@@ -2,17 +2,14 @@ import { View } from "react-native";
 
 import NowHereError from "@/components/Nowhere-Error";
 import NowHereMap from "@/components/NowHereMap";
-import { useIsFocused } from "@react-navigation/native";
 import React from "react";
 
 export const ErrorBoundary = NowHereError;
 
 export default function Index() {
-  const isFocused = useIsFocused();
-
   return (
     <View className="flex-1 relative">
-      {isFocused ? <NowHereMap /> : <></>}
+      <NowHereMap />
     </View>
   );
 }

@@ -13,9 +13,9 @@ export type LoginFormProps = LoginRequest | {
 export type SignupRequest = {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
   username?: string;
-  firstName?: string;
-  lastName?: string;
 };
 
 export type Tokens = {

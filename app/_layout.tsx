@@ -51,10 +51,12 @@ function LocationDependentContent() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="(auth)"
-          options={{ headerShown: false, presentation: "modal" }}
-        />
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen
+            name="(auth)"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+        </Stack.Protected>
       </Stack.Protected>
       <Stack.Protected guard={!boarding}>
         <Stack.Screen

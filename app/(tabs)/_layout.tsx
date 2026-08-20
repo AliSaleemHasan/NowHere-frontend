@@ -2,14 +2,15 @@ import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { Pressable } from "react-native";
 
 const TabsLayout = () => {
+  const router = useRouter();
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const fetchLocation = useLocation((state) => state.featchLocation);
 
-  const isLocationLoading = useLocation((state) => state.loading);
   const isLocationError = useLocation((state) => state.error);
 
   useEffect(() => {
@@ -46,6 +47,19 @@ const TabsLayout = () => {
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
           ),
+          tabBarButton: (props) => {
+            const { ref: _ref, ...rest } = props as any;
+            return (
+              <Pressable
+                {...rest}
+                onPress={() => {
+                  router.push(
+                    isLoggedIn ? "/(snaps)/snaps-capture" : "/(auth)/login",
+                  );
+                }}
+              />
+            );
+          },
         }}
       />
       <Tabs.Protected guard={isLoggedIn}>

@@ -43,11 +43,7 @@ export const LoginForm = () => {
           type: "success",
           text1: "Signed in successfully",
         });
-        if (router.canDismiss()) {
-          router.dismissAll();
-        } else {
-          router.replace("/(tabs)");
-        }
+        router.replace("/");
       },
     });
   };
