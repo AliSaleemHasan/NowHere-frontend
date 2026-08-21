@@ -62,7 +62,7 @@ module.exports = defineConfig([
             },
             {
               from: ["feature"],
-              allow: [["feature"], { featureName: "{$from.featureName}" }],
+              allow: [["feature", { featureName: "${from.featureName}" }]],
             },
             {
               from: ["feature"],
