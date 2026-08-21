@@ -13,24 +13,24 @@ export const askCameraPermession = async () => {
       [
         { text: "Open Settings", onPress: () => Linking.openSettings() },
         { text: "Cancel", style: "destructive" },
-      ]
+      ],
     );
 };
 
-export const handleCameraCapture = async () => {
+export const handleCameraCapture = async (
+  options?: ImagePicker.ImagePickerOptions,
+) => {
   const cameraPermission = await ImagePicker.getCameraPermissionsAsync();
 
   if (!cameraPermission.granted) await askCameraPermession();
 
-  // TODO: test rejecting permission in both cases (what will happen?)
-
-  // asumming of getting the permission
+  // quality: 1 activates Expo's RawImageExporter, skipping the slow native bitmap decompression & re-encoding loop
   return await ImagePicker.launchCameraAsync({
-    allowsEditing: true,
-    allowsMultipleSelection: true,
-    aspect: [16, 10],
+    allowsEditing: false,
     mediaTypes: ["images"],
-    quality: 0.4,
+    quality: 1,
+    exif: false,
     base64: false,
+    ...options,
   });
 };

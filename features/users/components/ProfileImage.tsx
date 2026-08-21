@@ -28,7 +28,10 @@ export default function ProfileImage({ userId, image }: Props) {
   });
 
   const handleChangeImage = async () => {
-    const capture = await handleCameraCapture();
+    const capture = await handleCameraCapture({
+      aspect: [1, 1],
+      quality: 0.7,
+    });
     if (capture.canceled || !capture.assets[0]) return;
 
     let photo = capture.assets[0].uri;
