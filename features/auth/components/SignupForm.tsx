@@ -1,7 +1,7 @@
 import FromButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
-import { apiFetch } from "@/lib/fetch-api";
+import { useAuth } from "../context/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -14,7 +14,9 @@ import {
   Text,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import * as z from "zod";
+import { signupApi } from "../api/auth-api";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
 const SignUpSchema = z
@@ -27,8 +29,8 @@ const SignUpSchema = z
       .regex(/[A-Z]/, "Onw uppercase letter is required")
       .regex(/\d/, "One number required!")
       .regex(/\W/, "One symbol required!"),
-    firstName: z.string(),
-    lastName: z.string(),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
     confirm: z.string(),
   })
   .refine((data) => data.password === data.confirm, {
@@ -36,21 +38,26 @@ const SignUpSchema = z
     path: ["confirm"],
   });
 
-type SignupFormData = z.Infer<typeof SignUpSchema>;
+type SignupFormData = z.infer<typeof SignUpSchema>;
 
 export const SignupForm = () => {
   const router = useRouter();
+  const setAuth = useAuth((state) => state.setAuth);
 
   const mutation = useMutation({
-    mutationFn: (data: { user: Omit<SignupFormData, "confirm"> }) => {
-      return apiFetch({
-        api: "users",
-        url: "auth/signup",
-        options: {
-          method: "POST",
-          body: JSON.stringify(data),
-        },
+    mutationFn: async (data: Omit<SignupFormData, "confirm">) => {
+      const username =
+        `${data.firstName} ${data.lastName}`.trim() || data.email;
+      const result = await signupApi({
+        email: data.email,
+        password: data.password,
+        username,
+        firstName: data.firstName,
+        lastName: data.lastName,
       });
+      // Auto-login: persist tokens before onSuccess fires so isLoggedIn is true when we navigate
+      await setAuth(result.user?.id, result.tokens);
+      return result;
     },
   });
 
@@ -66,13 +73,16 @@ export const SignupForm = () => {
   const onSubmit = (values: SignupFormData) => {
     const { confirm, ...data } = values;
     Keyboard.dismiss();
-    mutation.mutate(
-      { user: data },
-      {
-        onSuccess: () => router.replace("/(auth)/login"), // TODO: push back to verification email
-        onError: (err) => console.log(err),
-      }
-    );
+    mutation.mutate(data, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Welcome to NowHere!",
+          text2: "Your account has been created.",
+        });
+        router.replace("/");
+      },
+    });
   };
 
   return (

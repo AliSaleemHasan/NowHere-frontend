@@ -10,7 +10,7 @@ export default function Layout() {
       screenOptions={{
         headerShown: true,
         headerTransparent: true,
-
+        contentStyle: { backgroundColor: "white" },
         headerTitle: "",
         headerLeft: () => (
           <Pressable

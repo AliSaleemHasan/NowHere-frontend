@@ -18,13 +18,6 @@ const LocationRequired = (props: Props) => {
     await fetchLocation();
   };
 
-  if (locationError) {
-    return (
-      <View className=" flex-1 items-center justify-center">
-        <Text className="text-red-200">{locationError}</Text>
-      </View>
-    );
-  }
   return (
     <View className="flex items-center justify-center flex-1 ">
       {props.withErrorImage && (

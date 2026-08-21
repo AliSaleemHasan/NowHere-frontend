@@ -1,9 +1,5 @@
+import { mmkvStorage } from "@/lib/storage";
 import { AddSnapRequest } from "@/types/api";
-import {
-  getItemAsync as getItem,
-  deleteItemAsync as removeItem,
-  setItemAsync as setItem,
-} from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 type SnapStoreState = AddSnapRequest & {
@@ -26,11 +22,7 @@ export const useSnap = create<SnapStoreState>()(
     }),
     {
       name: "snaps",
-      storage: createJSONStorage(() => ({
-        getItem,
-        setItem,
-        removeItem,
-      })),
+      storage: createJSONStorage(() => mmkvStorage),
     }
   )
 );

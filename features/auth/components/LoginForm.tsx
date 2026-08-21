@@ -7,8 +7,9 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Keyboard, SafeAreaView, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import * as z from "zod";
-import { useAuth } from "../context/auth-store";
+import { useLogin } from "../hooks/use-login";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
 const LoginSchema = z.object({
@@ -18,11 +19,9 @@ const LoginSchema = z.object({
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 
-const router = useRouter();
-
 export const LoginForm = () => {
-  const login = useAuth((state) => state.login);
-  const mutation = useMutation({ mutationFn: login });
+  const router = useRouter();
+  const mutation = useLogin();
 
   const {
     formState: { isLoading, errors, isValid, isSubmitting },
@@ -38,12 +37,15 @@ export const LoginForm = () => {
 
   const onSubmit = async (values: LoginFormData) => {
     Keyboard.dismiss();
-    mutation.mutate(
-      { user: values },
-      {
-        onSuccess: () => router.replace("/"),
-      }
-    );
+    mutation.mutate(values, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Signed in successfully",
+        });
+        router.replace("/");
+      },
+    });
   };
 
   return (

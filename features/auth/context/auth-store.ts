@@ -1,115 +1,83 @@
 import type { UserResponse } from "@/types/api";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import type {
-  AuthSuccess,
-  LoginFormProps,
-  Tokens,
-} from "../types/auth-api.types";
+import type { Tokens } from "../types/auth-api.types";
 
 interface AuthState {
   isLoggedIn: boolean;
-  isReady: boolean;
-  user?: UserResponse["Id"];
+  user?: UserResponse["id"];
   tokens?: Tokens;
+  _hasHydrated: boolean;
 
-  init: () => Promise<void>;
-  login: (inputs: LoginFormProps) => Promise<AuthSuccess["user"]>;
+  setHasHydrated: (state: boolean) => void;
+  setAuth: (
+    user: UserResponse["id"] | undefined,
+    tokens: Tokens,
+  ) => Promise<void>;
   logout: () => Promise<void>;
-  setTokens: (tokens: Tokens) => void;
+  setTokens: (tokens: Tokens) => Promise<void>;
+  hydrate: () => Promise<void>;
 }
 
-export const useAuth = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      isLoggedIn: false,
-      isReady: false,
-      user: undefined,
+export const ACCESS_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY || "access_token";
+export const REFRESH_TOKEN_KEY =
+  process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY || "refresh_token";
 
-      init: async () => {
-        const token = get().tokens;
+// Helper extracted to follow the DRY principle
+const saveTokensToStorage = async (tokens: Tokens) => {
+  await Promise.all([
+    setItemAsync(ACCESS_TOKEN_KEY, tokens.accessToken),
+    setItemAsync(REFRESH_TOKEN_KEY, tokens.refreshToken),
+  ]);
+};
 
-        if (!token?.accessToken) {
-          set({ isReady: true, isLoggedIn: false });
-          return;
-        }
+export const useAuth = create<AuthState>((set) => ({
+  _hasHydrated: false,
+  setHasHydrated: (state) => set({ _hasHydrated: state }),
+  tokens: undefined,
+  isLoggedIn: false,
+  user: undefined,
 
-        try {
-          const response = await fetch(
-            `${process.env.EXPO_PUBLIC_USERS_URL}/auth/validate`,
-            {
-              method: "GET",
+  hydrate: async () => {
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        getItemAsync(ACCESS_TOKEN_KEY),
+        getItemAsync(REFRESH_TOKEN_KEY),
+      ]);
 
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          set({ isReady: true });
-
-          let res = await response.json();
-
-          // TODO: handle refresh token
-          if (res.success) {
-            set({
-              isLoggedIn: true,
-              user: res.data.user.Id,
-              tokens: res.data.tokens,
-            });
-          } // no need to remove it
-        } catch (error) {
-          console.log(error);
-        }
-      },
-
-      login: async (inputs) => {
-        const ressponse = await fetch(
-          `${process.env.EXPO_PUBLIC_USERS_URL}/auth/login`,
-          {
-            method: "POST",
-            body: JSON.stringify(inputs),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        let res = await ressponse.json();
-        if (!res.success) throw new Error(res.message);
-
+      if (accessToken && refreshToken) {
         set({
-          isLoggedIn: true,
-          user: res.data.user.Id,
-          tokens: res.data.tokens,
+          tokens: { accessToken, refreshToken },
         });
-        return res.data.user;
-      },
-
-      logout: async () => {
-        await deleteItemAsync(String(process.env.EXPO_PUBLIC_ACCESS_TOKEN_KEY));
-        await deleteItemAsync(
-          String(process.env.EXPO_PUBLIC_REFRESH_TOKEN_KEY)
-        );
-        set({ isLoggedIn: false, user: undefined });
-      },
-      setTokens: (tokens) => {
-        set(() => ({ tokens }));
-      },
-    }),
-    {
-      name: "auth-store",
-      storage: createJSONStorage(() => ({
-        getItem: getItemAsync,
-        setItem: (key, value) => setItemAsync(key, value),
-        removeItem: (key) => deleteItemAsync(key),
-      })),
-      partialize: (state) => ({
-        isLoggedIn: state.isLoggedIn,
-        user: state.user,
-        tokens: state.tokens,
-      }),
+      }
+    } catch (error) {
+      console.error("Failed to load tokens from storage", error);
+    } finally {
+      set({ _hasHydrated: true });
     }
-  )
-);
+  },
+
+  setAuth: async (user, tokens) => {
+    await saveTokensToStorage(tokens);
+    // I have to check if the user is logged in
+    set({
+      isLoggedIn: true,
+      user,
+      tokens,
+    });
+  },
+
+  logout: async () => {
+    await Promise.all([
+      deleteItemAsync(ACCESS_TOKEN_KEY),
+      deleteItemAsync(REFRESH_TOKEN_KEY),
+    ]);
+    set({ isLoggedIn: false, user: undefined, tokens: undefined });
+  },
+
+  setTokens: async (tokens) => {
+    await saveTokensToStorage(tokens);
+    set({ tokens });
+  },
+}));

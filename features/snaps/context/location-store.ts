@@ -1,9 +1,5 @@
 import { getUserLocation } from "@/lib/location";
-import {
-  getItemAsync as getItem,
-  deleteItemAsync as removeItem,
-  setItemAsync as setItem,
-} from "expo-secure-store";
+import { mmkvStorage } from "@/lib/storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { SnapLocation } from "../types/snaps-api-type";
@@ -34,17 +30,24 @@ export const useLocation = create<UserLocationState>()(
         try {
           const results = await getUserLocation();
 
-          if (!results.success)
-            set(() => ({ error: results.message, loading: false }));
-          else
+          if (!results.success || !results.data) {
+            set(() => ({
+              error: results.message || "Failed to get location",
+              loading: false,
+            }));
+          } else {
             set(() => ({
               location: results.data,
               error: "",
               loading: false,
               boarding: true,
             }));
+          }
         } catch (err) {
-          set((state) => ({ error: JSON.stringify(err), loading: false })); //TODO: Better Error Handling
+          set(() => ({
+            error: err instanceof Error ? err.message : JSON.stringify(err),
+            loading: false,
+          }));
         } finally {
           set(() => ({ loading: false }));
         }
@@ -58,11 +61,7 @@ export const useLocation = create<UserLocationState>()(
     }),
     {
       name: "location",
-      storage: createJSONStorage(() => ({
-        getItem,
-        removeItem,
-        setItem,
-      })),
+      storage: createJSONStorage(() => mmkvStorage),
       partialize: (state) => ({
         location: state.location,
         boarding: state.boarding,

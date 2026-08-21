@@ -22,15 +22,15 @@ export function Input<TFieldValues extends FieldValues = FieldValues>(
 
   return (
     <TextInput
+      placeholderTextColor={"#9ca3af"}
       {...textInputProps}
       value={value as string}
-      autoCapitalize="none"
+      autoCapitalize={textInputProps.autoCapitalize ?? "none"}
       onChangeText={onChange}
       onBlur={onBlur}
-      placeholderTextColor={"black"}
       className={cn(
-        textInputProps.className,
-        "text-dark p-4 bg-background   rounded-md"
+        "text-dark p-4 bg-background border border-gray-300 rounded-md",
+        textInputProps.className
       )}
     />
   );

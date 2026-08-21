@@ -18,7 +18,7 @@ export const TagsColors: { [key in keyof typeof Tags]: string } = {
   SOCIAL: "black",
 };
 
-export type APIS = "users" | "snaps" | "storage";
+export type APIS = "users" | "snaps" | "storage" | "auth";
 
 export const getApiURL = (api?: APIS) => {
   let api_url: string | undefined = "";
@@ -34,6 +34,9 @@ export const getApiURL = (api?: APIS) => {
 
     case "storage":
       api_url = process.env.EXPO_PUBLIC_STORAGE_URL;
+      break;
+    case "auth":
+      api_url = process.env.EXPO_PUBLIC_AUTH_URL;
       break;
     default:
       api_url = process.env.EXPO_PUBLIC_SNAPS_URL;

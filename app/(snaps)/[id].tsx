@@ -24,15 +24,19 @@ const SnapDetails = () => {
     params.id as string
   );
 
-  const { data: userData, isLoading: isUserLoading } = useUser(
-    snapData?.data?.snap._userId
-  );
+  const snapPayload = snapData?.data;
+  const snap = snapPayload?.snap || (snapPayload as any);
+  const snapCreatorId = snap?._userId || snap?.userId;
+
+  const { data: userData, isLoading: isUserLoading } = useUser(snapCreatorId);
 
   if (isSnapLoading || isUserLoading) return <Loading />;
 
-  const snap = snapData?.data;
-  const user = userData?.data?.user;
-  const images = snap?.imageKeys || [];
+  const user = userData?.data ? ((userData.data as any).user || userData.data) : undefined;
+  const images = snapPayload?.imageKeys || snap?.snaps || [];
+
+  const snapTag = (snap?.tag || snap?.snap?.tag || "SOCIAL") as keyof typeof TagsColors;
+  const snapDescription = snap?.description || snap?.snap?.description || "";
 
   return (
     // The main container to center everything
@@ -40,7 +44,7 @@ const SnapDetails = () => {
       {/* This is the white card container that holds both the image and the text */}
       <View
         style={{ width: CARD_WIDTH }}
-        className="bg-white rounded-lg  overflow-hidden"
+        className="bg-white rounded-lg overflow-hidden"
       >
         {/* Image/Carousel container */}
         <View style={{ height: IMAGE_HEIGHT, width: "100%" }}>
@@ -63,28 +67,28 @@ const SnapDetails = () => {
         <View className="p-4">
           <View className="flex items-center justify-between flex-row">
             <Text className="font-bold text-lg mb-1">
-              {`${user?.firstName} ${user?.lastName}`}
+              {`${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Anonymous"}
             </Text>
 
             <Text
               className="font-bold text-sm mb-1 px-2 rounded-full text-white "
               style={{
-                backgroundColor: TagsColors[snap?.snap.tag || "SOCIAL"],
+                backgroundColor: TagsColors[snapTag] || "black",
               }}
             >
-              {`${snap?.snap.tag}`}
+              {snapTag}
             </Text>
           </View>
           <ScrollView style={{ maxHeight: 50 }}>
             <Text className="text-base text-gray-700">
-              {snap?.snap.description}
+              {snapDescription}
             </Text>
           </ScrollView>
 
           {/* Pagination Dots - only show if there are multiple images */}
           {images.length > 1 && (
             <View className="flex-row justify-center items-center mt-3">
-              {images.map((_, index) => (
+              {images.map((_: string, index: number) => (
                 <View
                   key={index}
                   className={`h-2 w-2 rounded-full mx-1 ${
@@ -101,3 +105,4 @@ const SnapDetails = () => {
 };
 
 export default SnapDetails;
+

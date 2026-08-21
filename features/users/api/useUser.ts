@@ -7,7 +7,7 @@ export function useUser(userId?: string) {
     queryKey: ["user", userId],
     throwOnError: true,
     queryFn: () =>
-      apiFetch<{ user: UserResponse }>({
+      apiFetch<UserResponse>({
         api: "users",
         url: `users/id/${userId}`,
         options: { method: "GET" },
