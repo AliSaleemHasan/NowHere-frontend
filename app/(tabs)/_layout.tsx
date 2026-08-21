@@ -1,6 +1,8 @@
 import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
+import { useSnap } from "@/features/snaps/context/snap-store";
+import { handleCameraCapture } from "@/lib/image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
@@ -41,25 +43,29 @@ const TabsLayout = () => {
 
       <Tabs.Screen
         name="add-snap"
+        listeners={{
+          tabPress: async (e) => {
+            // Prevent React Navigation from switching to blank add-snap tab screen
+            e.preventDefault();
+
+            if (!isLoggedIn) {
+              router.push("/(auth)/login");
+              return;
+            }
+
+            const capture = await handleCameraCapture();
+            if (!capture.canceled && capture.assets?.[0]?.uri) {
+              useSnap.getState().addSnap(capture.assets[0].uri);
+              router.push("/(snaps)/snaps-capture");
+            }
+          },
+        }}
         options={{
           tabBarLabel: "Add Snap",
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
           ),
-          tabBarButton: (props) => {
-            const { ref: _ref, ...rest } = props as any;
-            return (
-              <Pressable
-                {...rest}
-                onPress={() => {
-                  router.push(
-                    isLoggedIn ? "/(snaps)/snaps-capture" : "/(auth)/login",
-                  );
-                }}
-              />
-            );
-          },
         }}
       />
       <Tabs.Protected guard={isLoggedIn}>
