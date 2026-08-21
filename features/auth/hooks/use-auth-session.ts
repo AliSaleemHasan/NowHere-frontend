@@ -11,12 +11,10 @@ export const useAuthSession = () => {
 
   const [isValidating, setIsValidating] = useState(true);
 
-  // 1. Tell the store to hydrate from disk on mount
   useEffect(() => {
     hydrate();
   }, []);
 
-  // 2. Once hydrated, validate the session
   useEffect(() => {
     if (!hasHydrated) return;
 
@@ -27,16 +25,9 @@ export const useAuthSession = () => {
           return;
         }
 
-        // Validate token against backend
         const validation = await validateTokenApi(tokens.accessToken);
 
-        // If successful, mark the user as logged in and preserve userId
-        const validatedUserId = validation.data?.userId;
-        useAuth.setState((state) => ({
-          isLoggedIn: true,
-          user: validatedUserId || state.user,
-          userId: validatedUserId || state.user,
-        }));
+        useAuth.setState({ isLoggedIn: true });
       } catch (err: any) {
         if (
           err?.statusCode === 401 ||

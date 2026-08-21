@@ -1,7 +1,7 @@
 import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
-import { useAuth } from "@/features/auth/context/auth-store";
 import ProfileImage from "@/features/users/components/ProfileImage";
+import { useUserStore } from "@/features/users/context/user-store";
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { GetUserResponse } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
@@ -11,7 +11,8 @@ import { Text, View } from "react-native";
 export const ErrorBoundary = NowHereError;
 
 export default function Profile() {
-  const userId = useAuth((state) => state.user);
+  const storedUser = useUserStore((state) => state.user);
+  const userId = storedUser?.id;
 
   const userInfo = useQuery({
     queryKey: ["profile", userId],
@@ -23,6 +24,7 @@ export default function Profile() {
         options: { method: "GET" },
       }),
     enabled: !!userId,
+    initialData: storedUser ? { success: true, data: storedUser } : undefined,
   });
 
   if (!userId) {
@@ -53,10 +55,7 @@ export default function Profile() {
 
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">
-      <ProfileImage
-        image={profileImageUrl}
-        userId={userId}
-      ></ProfileImage>
+      <ProfileImage image={profileImageUrl} userId={userId}></ProfileImage>
       <View className="flex-1 gap-4">
         <Text className="font-thin text-sm">
           Welcome back to NowHere, your information is listed below:
@@ -64,16 +63,13 @@ export default function Profile() {
 
         <View className="gap-2 w-full">
           <Text className="text-sm">email</Text>
-          <Text className="text-sm font-thin">
-            {user?.email}
-          </Text>
+          <Text className="text-sm font-thin">{user?.email}</Text>
         </View>
 
         <View className="gap-2 w-full">
           <Text className="text-sm">name</Text>
           <Text className="text-sm font-thin">
-            {user?.firstName}{" "}
-            {user?.lastName}
+            {user?.firstName} {user?.lastName}
           </Text>
         </View>
       </View>

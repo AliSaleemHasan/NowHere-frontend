@@ -1,3 +1,4 @@
+import { useUserStore } from "@/features/users/context/user-store";
 import { useMutation } from "@tanstack/react-query";
 import { loginApi } from "../api/auth-api";
 import { useAuth } from "../context/auth-store";
@@ -9,10 +10,9 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (inputs: LoginFormProps) => {
       const data = await loginApi(inputs);
-      // Await setAuth so isLoggedIn is true before onSuccess navigation fires
-      await setAuth(data.user?.id, data.tokens);
+      await setAuth(data.tokens);
+      useUserStore.getState().setUser(data.user);
       return data;
     },
   });
 };
-

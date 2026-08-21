@@ -1,6 +1,7 @@
 import FromButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
+import { useUserStore } from "@/features/users/context/user-store";
 import { useAuth } from "../context/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -55,8 +56,9 @@ export const SignupForm = () => {
         firstName: data.firstName,
         lastName: data.lastName,
       });
-      // Auto-login: persist tokens before onSuccess fires so isLoggedIn is true when we navigate
-      await setAuth(result.user?.id, result.tokens);
+      // Auto-login: persist tokens securely and user profile to MMKV
+      await setAuth(result.tokens);
+      useUserStore.getState().setUser(result.user);
       return result;
     },
   });

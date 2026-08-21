@@ -1,19 +1,15 @@
-import type { UserResponse } from "@/types/api";
+import { useUserStore } from "@/features/users/context/user-store";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
 import type { Tokens } from "../types/auth-api.types";
 
 interface AuthState {
   isLoggedIn: boolean;
-  user?: UserResponse["id"];
   tokens?: Tokens;
   _hasHydrated: boolean;
 
   setHasHydrated: (state: boolean) => void;
-  setAuth: (
-    user: UserResponse["id"] | undefined,
-    tokens: Tokens,
-  ) => Promise<void>;
+  setAuth: (tokens: Tokens) => Promise<void>;
   logout: () => Promise<void>;
   setTokens: (tokens: Tokens) => Promise<void>;
   hydrate: () => Promise<void>;
@@ -37,7 +33,6 @@ export const useAuth = create<AuthState>((set) => ({
   setHasHydrated: (state) => set({ _hasHydrated: state }),
   tokens: undefined,
   isLoggedIn: false,
-  user: undefined,
 
   hydrate: async () => {
     try {
@@ -58,12 +53,10 @@ export const useAuth = create<AuthState>((set) => ({
     }
   },
 
-  setAuth: async (user, tokens) => {
+  setAuth: async (tokens) => {
     await saveTokensToStorage(tokens);
-    // I have to check if the user is logged in
     set({
       isLoggedIn: true,
-      user,
       tokens,
     });
   },
@@ -73,7 +66,8 @@ export const useAuth = create<AuthState>((set) => ({
       deleteItemAsync(ACCESS_TOKEN_KEY),
       deleteItemAsync(REFRESH_TOKEN_KEY),
     ]);
-    set({ isLoggedIn: false, user: undefined, tokens: undefined });
+    useUserStore.getState().clearUser();
+    set({ isLoggedIn: false, tokens: undefined });
   },
 
   setTokens: async (tokens) => {
@@ -81,3 +75,4 @@ export const useAuth = create<AuthState>((set) => ({
     set({ tokens });
   },
 }));
+
