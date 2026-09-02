@@ -1,5 +1,5 @@
 export type UserSetting = {
-  max_distance: number;
-  new_snap_distance: number;
+  maxDistance: number;
+  newSnapDistance: number;
   snapDisappearTime: number;
 };

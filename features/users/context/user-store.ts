@@ -22,3 +22,7 @@ export const useUserStore = create<UserState>()(
     },
   ),
 );
+
+export const setUser = (user: UserResponse) =>
+  useUserStore.getState().setUser(user);
+export const clearUser = () => useUserStore.getState().clearUser();

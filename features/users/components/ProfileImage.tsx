@@ -1,23 +1,25 @@
+import AppCamera from "@/components/camera/AppCamera";
 import FromButton from "@/components/FormButton";
 import { apiAuthFetch } from "@/lib/fetch-api";
-import { handleCameraCapture } from "@/lib/image-picker";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { Image, Modal, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 
 interface Props {
   userId?: string;
   image?: string;
 }
+
 export default function ProfileImage({ userId, image }: Props) {
   const queryClient = useQueryClient();
   const [expandImage, setExpandImage] = useState<boolean>(false);
+  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
 
   const updateImageMutation = useMutation({
     mutationFn: async (data: FormData) =>
       await apiAuthFetch({
-        url: "users/image",
+        url: "image",
         api: "users",
         contentType: "files",
         options: {
@@ -27,20 +29,15 @@ export default function ProfileImage({ userId, image }: Props) {
       }),
   });
 
-  const handleChangeImage = async () => {
-    const capture = await handleCameraCapture({
-      aspect: [1, 1],
-      quality: 0.7,
-    });
-    if (capture.canceled || !capture.assets[0]) return;
-
-    let photo = capture.assets[0].uri;
+  const handleUploadPhoto = async (photoUri: string) => {
+    setIsCameraOpen(false);
+    setExpandImage(false);
 
     const payload = new FormData();
     payload.set("photo", {
-      uri: photo,
-      name: photo.split("/").pop() || crypto.randomUUID(),
-      type: `image/${photo.split(".").pop()}`,
+      uri: photoUri,
+      name: photoUri.split("/").pop() || crypto.randomUUID(),
+      type: `image/${photoUri.split(".").pop() || "jpg"}`,
     } as any);
 
     updateImageMutation.mutate(payload, {
@@ -54,15 +51,13 @@ export default function ProfileImage({ userId, image }: Props) {
         Toast.show({ type: "error", text1: err.message });
       },
     });
-
-    setExpandImage(false);
   };
 
   return (
     <>
       <TouchableOpacity
         onPress={() => setExpandImage((expanded) => !expanded)}
-        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}  bg-transparent  shadow-sm shadow-primary  rounded-full relative`}
+        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}  bg-transparent shadow-sm shadow-primary rounded-full relative`}
       >
         <Image
           source={
@@ -70,15 +65,27 @@ export default function ProfileImage({ userId, image }: Props) {
           }
           resizeMode="contain"
           className="w-full h-full rounded-full"
-        ></Image>
+        />
       </TouchableOpacity>
       {expandImage && (
         <FromButton
           text="Upload New.."
-          onSubmit={handleChangeImage}
+          onSubmit={() => setIsCameraOpen(true)}
           isLoading={updateImageMutation.isPending}
         />
       )}
+
+      <Modal
+        visible={isCameraOpen}
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        <AppCamera
+          onCapture={handleUploadPhoto}
+          onClose={() => setIsCameraOpen(false)}
+          initialFacing="front"
+        />
+      </Modal>
     </>
   );
 }

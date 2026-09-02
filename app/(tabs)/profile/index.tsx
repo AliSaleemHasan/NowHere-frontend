@@ -20,11 +20,19 @@ export default function Profile() {
     queryFn: async () =>
       await apiAuthFetch<GetUserResponse>({
         api: "users",
-        url: `users/id/${userId}`,
+        url: `id/${userId}`,
         options: { method: "GET" },
       }),
     enabled: !!userId,
-    initialData: storedUser ? { success: true, data: storedUser } : undefined,
+    initialData: storedUser
+      ? {
+          success: true,
+          data: {
+            user: storedUser,
+            userImage: storedUser.image || storedUser.userImage,
+          },
+        }
+      : undefined,
   });
 
   if (!userId) {
@@ -49,13 +57,14 @@ export default function Profile() {
     );
   }
 
-  const rawData = userInfo.data?.data as any;
-  const user = rawData?.user || rawData;
-  const profileImageUrl = user?.image || user?.userImage || rawData?.userImage;
+  const profileData = userInfo.data?.data;
+  const user = profileData?.user ?? storedUser;
+  const profileImageUrl =
+    profileData?.userImage || user?.image || user?.userImage;
 
   return (
     <View className="flex items-center justify-center h-full w-full  p-5 gap-5">
-      <ProfileImage image={profileImageUrl} userId={userId}></ProfileImage>
+      <ProfileImage image={profileImageUrl} userId={userId} />
       <View className="flex-1 gap-4">
         <Text className="font-thin text-sm">
           Welcome back to NowHere, your information is listed below:

@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/fetch-api";
+import { apiAuthFetch } from "@/lib/fetch-api";
 import { UserResponse } from "@/types/api";
 import { useQuery } from "@tanstack/react-query";
 
@@ -7,9 +7,9 @@ export function useUser(userId?: string) {
     queryKey: ["user", userId],
     throwOnError: true,
     queryFn: () =>
-      apiFetch<UserResponse>({
+      apiAuthFetch<UserResponse>({
         api: "users",
-        url: `users/id/${userId}`,
+        url: `id/${userId}`,
         options: { method: "GET" },
       }),
     enabled: !!userId,

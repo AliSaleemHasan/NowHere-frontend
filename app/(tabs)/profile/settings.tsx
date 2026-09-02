@@ -17,7 +17,7 @@ export default function Settings() {
     queryFn: () =>
       apiAuthFetch<UserSetting>({
         api: "users",
-        url: "users/settings",
+        url: "settings",
         options: {
           method: "GET",
         },
