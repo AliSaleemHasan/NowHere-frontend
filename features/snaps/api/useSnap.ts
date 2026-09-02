@@ -9,7 +9,7 @@ export function useSnap(id: string) {
 
     queryFn: () =>
       apiAuthFetch<FindSnapResponse>({
-        url: `snaps/${id}`,
+        url: `${id}`,
         options: { method: "GET" },
       }),
     enabled: !!id,

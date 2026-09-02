@@ -1,11 +1,13 @@
 import AvoidKeyboard from "@/components/AvoidKeyboard";
 import FromButton from "@/components/FormButton";
 import { Input } from "@/components/Input";
-import { PostSnapBody } from "@/features/snaps/api/post-new-snap";
+import {
+  createSnapWithDirectUpload,
+  CreateSnapInput,
+} from "@/features/snaps/api/post-new-snap";
 import { TagCheckbox } from "@/features/snaps/components/TagsCheckBoxes";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnap } from "@/features/snaps/context/snap-store";
-import { apiAuthFetch } from "@/lib/fetch-api";
 import { Tags } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -34,14 +36,10 @@ export default function SnapInputs() {
   const snaps = useSnap((state) => state.snaps);
   const location = useLocation((state) => state.location);
   const clearSnaps = useSnap((state) => state.clearSnaps);
-  // Mutation to post snaps
+
+  // Scalable direct-to-storage mutation
   const addSnapMutation = useMutation({
-    mutationFn: (files: FormData) =>
-      apiAuthFetch({
-        url: "snaps",
-        options: { method: "POST", body: files },
-        contentType: "files",
-      }),
+    mutationFn: (input: CreateSnapInput) => createSnapWithDirectUpload(input),
     onSuccess: () => {
       Toast.show({
         type: "success",
@@ -64,12 +62,12 @@ export default function SnapInputs() {
   });
 
   const onSubmit = (data: AddSnapData) => {
-    const payload = PostSnapBody(snaps);
-    payload.append("location", JSON.stringify(location));
-    payload.append("description", data.description);
-    payload.append("tag", data.tag);
-
-    addSnapMutation.mutate(payload);
+    addSnapMutation.mutate({
+      snaps,
+      location,
+      description: data.description,
+      tag: data.tag,
+    });
   };
 
   return (

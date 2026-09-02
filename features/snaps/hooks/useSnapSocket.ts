@@ -1,4 +1,4 @@
-import { apiHypridFetch } from "@/lib/fetch-api";
+import { apiHybridFetch } from "@/lib/fetch-api";
 import { socket } from "@/lib/socket";
 import { FetchResponse } from "@/types/api";
 import { handleArrayQueryParam } from "@/utils/handle-array-query-param";
@@ -54,9 +54,9 @@ export const useSnapSocket = () => {
     throwOnError: false,
     enabled: !!(lng || lat) && isFocused,
     queryFn: () =>
-      apiHypridFetch<CreateSnapResponse[]>({
+      apiHybridFetch<CreateSnapResponse[]>({
         api: "snaps",
-        url: `snaps/${params.seen === "1" ? "seen" : "near"}/${lng}/${lat}${tagsParam}`,
+        url: `${params.seen === "1" ? "seen" : "near"}/${lng}/${lat}${tagsParam}`,
         options: {
           method: "GET",
         },
