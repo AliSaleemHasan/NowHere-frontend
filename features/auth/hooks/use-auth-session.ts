@@ -1,11 +1,13 @@
+import { setUser } from "@/features/users/context/user-store";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import { validateTokenApi } from "../api/auth-api";
+import { getMeApi } from "../api/auth-api";
 import { useAuth } from "../context/auth-store";
 
 export const useAuthSession = () => {
   const hasHydrated = useAuth((state) => state._hasHydrated);
   const tokens = useAuth((state) => state.tokens);
+  const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const logout = useAuth((state) => state.logout);
   const hydrate = useAuth((state) => state.hydrate);
 
@@ -13,20 +15,23 @@ export const useAuthSession = () => {
 
   useEffect(() => {
     hydrate();
-  }, []);
+  }, [hydrate]);
 
   useEffect(() => {
     if (!hasHydrated) return;
 
     const verifySession = async () => {
+      if (!isLoggedIn || !tokens?.accessToken) {
+        setIsValidating(false);
+        await SplashScreen.hideAsync();
+        return;
+      }
+
       try {
-        if (!tokens?.accessToken) {
-          await logout();
-          return;
+        const response = await getMeApi(tokens.accessToken);
+        if (response?.data) {
+          setUser(response.data);
         }
-
-        const validation = await validateTokenApi(tokens.accessToken);
-
         useAuth.setState({ isLoggedIn: true });
       } catch (err: any) {
         if (
@@ -53,3 +58,4 @@ export const useAuthSession = () => {
 
   return { isReady: hasHydrated && !isValidating };
 };
+

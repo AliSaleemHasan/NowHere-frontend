@@ -2,7 +2,6 @@ import FromButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -12,9 +11,10 @@ import * as z from "zod";
 import { useLogin } from "../hooks/use-login";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
+
 const LoginSchema = z.object({
   email: z.email(),
-  password: z.string().min(1),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormData = z.infer<typeof LoginSchema>;
@@ -33,6 +33,7 @@ export const LoginForm = () => {
       password: "",
     },
     resolver: zodResolver(LoginSchema),
+    mode: "onChange",
   });
 
   const onSubmit = async (values: LoginFormData) => {
@@ -42,8 +43,16 @@ export const LoginForm = () => {
         Toast.show({
           type: "success",
           text1: "Signed in successfully",
+          text2: "Welcome back!",
         });
         router.replace("/");
+      },
+      onError: (err: any) => {
+        Toast.show({
+          type: "error",
+          text1: "Sign in failed",
+          text2: err?.message || "Please check your email and password.",
+        });
       },
     });
   };
@@ -68,7 +77,12 @@ export const LoginForm = () => {
           isLoading={isLoading || isSubmitting}
         ></FromButton>
 
-        {mutation.error && <FormError message={mutation.error.message} />}
+        {mutation.error && (
+          <FormError
+            message={mutation.error.message}
+            errors={(mutation.error as any)?.problemDetails?.errors}
+          />
+        )}
         <Text className="text-gray-600 text-xs font-thin text-center">
           Forgot Password?
         </Text>

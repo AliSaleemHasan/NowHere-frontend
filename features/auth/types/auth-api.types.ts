@@ -5,11 +5,6 @@ export type LoginRequest = {
   password: string;
 };
 
-// Kept for backward compatibility
-export type LoginFormProps = LoginRequest | {
-  user: LoginRequest;
-};
-
 export type SignupRequest = {
   email: string;
   password: string;
@@ -30,8 +25,5 @@ export type AuthSuccessData = {
 
 export type AuthSuccess = AuthSuccessData;
 
-export type ValidateTokenData = {
-  valid: boolean;
-  userId: string;
-};
+export type ValidateTokenData = UserResponse;
 

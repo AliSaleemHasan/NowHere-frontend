@@ -44,10 +44,15 @@ export const useAuth = create<AuthState>((set) => ({
       if (accessToken && refreshToken) {
         set({
           tokens: { accessToken, refreshToken },
+          isLoggedIn: true,
         });
       }
     } catch (error) {
       console.error("Failed to load tokens from storage", error);
+      set({
+        tokens: undefined,
+        isLoggedIn: false,
+      });
     } finally {
       set({ _hasHydrated: true });
     }
@@ -75,4 +80,3 @@ export const useAuth = create<AuthState>((set) => ({
     set({ tokens });
   },
 }));
-

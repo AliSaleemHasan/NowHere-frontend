@@ -1,10 +1,7 @@
 import FromButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
-import { useUserStore } from "@/features/users/context/user-store";
-import { useAuth } from "../context/auth-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -17,19 +14,20 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
-import { signupApi } from "../api/auth-api";
+import { useSignup } from "../hooks/use-signup";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 import SocialNetworksAuth from "./SocialNetworkAuth";
+
 const SignUpSchema = z
   .object({
     email: z.email(),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[a-z]/, "One lowercase letter is required!")
-      .regex(/[A-Z]/, "Onw uppercase letter is required")
-      .regex(/\d/, "One number required!")
-      .regex(/\W/, "One symbol required!"),
+      .min(6, "Password must be at least 6 characters")
+      .regex(/[a-z]/, "One lowercase letter is required")
+      .regex(/[A-Z]/, "One uppercase letter is required")
+      .regex(/\d/, "One number is required")
+      .regex(/\W/, "One symbol is required"),
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
     confirm: z.string(),
@@ -43,25 +41,7 @@ type SignupFormData = z.infer<typeof SignUpSchema>;
 
 export const SignupForm = () => {
   const router = useRouter();
-  const setAuth = useAuth((state) => state.setAuth);
-
-  const mutation = useMutation({
-    mutationFn: async (data: Omit<SignupFormData, "confirm">) => {
-      const username =
-        `${data.firstName} ${data.lastName}`.trim() || data.email;
-      const result = await signupApi({
-        email: data.email,
-        password: data.password,
-        username,
-        firstName: data.firstName,
-        lastName: data.lastName,
-      });
-      // Auto-login: persist tokens securely and user profile to MMKV
-      await setAuth(result.tokens);
-      useUserStore.getState().setUser(result.user);
-      return result;
-    },
-  });
+  const mutation = useSignup();
 
   const {
     control,
@@ -74,17 +54,30 @@ export const SignupForm = () => {
 
   const onSubmit = (values: SignupFormData) => {
     const { confirm, ...data } = values;
+    const username =
+      `${data.firstName} ${data.lastName}`.trim() || data.email;
     Keyboard.dismiss();
-    mutation.mutate(data, {
-      onSuccess: () => {
-        Toast.show({
-          type: "success",
-          text1: "Welcome to NowHere!",
-          text2: "Your account has been created.",
-        });
-        router.replace("/");
+
+    mutation.mutate(
+      { ...data, username },
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Welcome to NowHere!",
+            text2: "Your account has been created.",
+          });
+          router.replace("/");
+        },
+        onError: (err: any) => {
+          Toast.show({
+            type: "error",
+            text1: "Sign up failed",
+            text2: err?.message || "Please check the form and try again.",
+          });
+        },
       },
-    });
+    );
   };
 
   return (
@@ -147,7 +140,10 @@ export const SignupForm = () => {
           disabled={!isValid}
         ></FromButton>
         {mutation.isError && (
-          <FormError message={mutation.error.message}></FormError>
+          <FormError
+            message={mutation.error.message}
+            errors={(mutation.error as any)?.problemDetails?.errors}
+          />
         )}
 
         <AuthRedirectPrompt
