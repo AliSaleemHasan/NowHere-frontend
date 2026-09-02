@@ -1,12 +1,9 @@
 import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useLocation } from "@/features/snaps/context/location-store";
-import { useSnap } from "@/features/snaps/context/snap-store";
-import { handleCameraCapture } from "@/lib/image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Pressable } from "react-native";
 
 const TabsLayout = () => {
   const router = useRouter();
@@ -44,8 +41,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="add-snap"
         listeners={{
-          tabPress: async (e) => {
-            // Prevent React Navigation from switching to blank add-snap tab screen
+          tabPress: (e) => {
             e.preventDefault();
 
             if (!isLoggedIn) {
@@ -53,11 +49,7 @@ const TabsLayout = () => {
               return;
             }
 
-            const capture = await handleCameraCapture();
-            if (!capture.canceled && capture.assets?.[0]?.uri) {
-              useSnap.getState().addSnap(capture.assets[0].uri);
-              router.push("/(snaps)/snaps-capture");
-            }
+            router.push("/(snaps)/snaps-capture");
           },
         }}
         options={{

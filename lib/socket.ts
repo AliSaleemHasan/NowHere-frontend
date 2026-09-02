@@ -1,6 +1,6 @@
 // socket.ts
 import { io, Socket } from "socket.io-client";
-const socketUrl = process.env.EXPO_PUBLIC_SNAPS_URL || "";
+const socketUrl = process.env.EXPO_PUBLIC_SNAPS_SOCKET_URL || "";
 
 export const socket: Socket = io(socketUrl, {
   transports: ["websocket", "polling"],

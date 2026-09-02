@@ -30,19 +30,11 @@ export default function SnapsLayout() {
       <Stack.Screen
         name="snaps-capture"
         options={{
-          title: "New Snap",
-          headerTitleStyle: { fontSize: 14 },
-          headerTitleAlign: "center",
-          headerLeft: () => <DiscardFormButton />,
-          headerRight: () => (
-            <Pressable onPressIn={() => router.replace("/(snaps)/snap-inputs")}>
-              <Text className="text-lg text-blue-700 ">Next</Text>
-            </Pressable>
-          ),
-          animation: "none",
-          presentation: "modal",
+          headerShown: false,
+          animation: "slide_from_bottom",
+          presentation: "fullScreenModal",
         }}
-      ></Stack.Screen>
+      />
 
       <Stack.Screen
         name="snap-inputs"
