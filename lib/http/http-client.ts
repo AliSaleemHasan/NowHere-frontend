@@ -43,8 +43,25 @@ export class HttpClient {
     return headers;
   }
 
+  private resolveUrl(endpoint: string = "", api?: APIS): string {
+    const rawBaseUrl = (this.getBaseUrl(api) || "").trim().replace(/\/+$/, "");
+    let cleanEndpoint = (endpoint || "").trim().replace(/^\/+/, "");
+
+    if (api && (cleanEndpoint === api || cleanEndpoint.startsWith(`${api}/`))) {
+      cleanEndpoint = cleanEndpoint.slice(api.length).replace(/^\/+/, "");
+    }
+
+    if (!rawBaseUrl) {
+      return cleanEndpoint.startsWith("http://") || cleanEndpoint.startsWith("https://")
+        ? cleanEndpoint
+        : `/${cleanEndpoint}`;
+    }
+
+    return cleanEndpoint ? `${rawBaseUrl}/${cleanEndpoint}` : rawBaseUrl;
+  }
+
   public async request<T>(
-    endpoint: string,
+    endpoint: string = "",
     config: RequestConfig = {},
   ): Promise<ApiResponse<T>> {
     const {
@@ -59,7 +76,9 @@ export class HttpClient {
     const tokens = this.tokenProvider?.getTokens();
     let authToken: string | undefined;
 
-    if (auth === true) {
+    if (customHeaders["Authorization"]) {
+      authToken = customHeaders["Authorization"].replace(/^Bearer\s+/i, "");
+    } else if (auth === true) {
       if (!tokens?.accessToken || !tokens?.refreshToken) {
         await this.tokenProvider?.clearTokens();
         throw new ApiError("User is not authorized to access this resource.", 401);
@@ -75,12 +94,25 @@ export class HttpClient {
       ...customHeaders,
     };
 
-    const baseUrl = this.getBaseUrl(api) || "";
-    const url = baseUrl ? `${baseUrl}/${endpoint}` : endpoint;
-    const response = await fetch(url, {
-      ...requestOptions,
-      headers: finalHeaders,
-    });
+    const url = this.resolveUrl(endpoint, api);
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...requestOptions,
+        headers: finalHeaders,
+      });
+    } catch (networkError: any) {
+      throw new ApiError(
+        networkError?.message?.includes("Network request failed") ||
+        networkError?.name === "TypeError"
+          ? "Unable to connect to the server. Please check your internet connection."
+          : networkError?.message || "Network request failed",
+        0,
+        undefined,
+        networkError,
+      );
+    }
 
     let data: any;
     const rawText = await response.text();

@@ -35,15 +35,17 @@ export type UserResponse = {
   id: string;
   email: string;
   bio?: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   image?: string;
   userImage?: string;
   role?: string;
+  isActive?: boolean;
+  lastLoginAt?: Date | string;
 };
 
-export type GetUserResponse = UserResponse & {
-  user?: UserResponse;
+export type GetUserResponse = {
+  user: UserResponse;
   userImage?: string;
 };
 

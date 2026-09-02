@@ -75,5 +75,3 @@ export const apiHybridFetch = async <T>({
   });
 };
 
-// Backward-compatible spelling alias
-export const apiHypridFetch = apiHybridFetch;

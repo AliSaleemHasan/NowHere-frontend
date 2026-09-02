@@ -21,28 +21,8 @@ export const TagsColors: { [key in keyof typeof Tags]: string } = {
 export type APIS = "users" | "snaps" | "storage" | "auth";
 
 export const getApiURL = (api?: APIS) => {
-  let api_url: string | undefined = "";
-
-  switch (api) {
-    case "users":
-      api_url = process.env.EXPO_PUBLIC_USERS_URL;
-      break;
-
-    case "snaps":
-      api_url = process.env.EXPO_PUBLIC_SNAPS_URL;
-      break;
-
-    case "storage":
-      api_url = process.env.EXPO_PUBLIC_STORAGE_URL;
-      break;
-    case "auth":
-      api_url = process.env.EXPO_PUBLIC_AUTH_URL;
-      break;
-    default:
-      api_url = process.env.EXPO_PUBLIC_SNAPS_URL;
-      break;
-  }
-  return api_url;
+  const base = process.env.EXPO_PUBLIC_GATEWAY_URL;
+  return api ? `${base}/${api}` : base || "";
 };
 
 export const userUISettings: {
@@ -52,20 +32,20 @@ export const userUISettings: {
     in: string;
   };
 } = {
-  max_distance: {
-    title: "User Max Visibility Distance ",
+  maxDistance: {
+    title: "User Max Visibility Distance",
     description:
-      "The distance were that user cannot say snaps after depending on location",
+      "The distance where user cannot see snaps after depending on location",
     in: "Meters",
   },
-  new_snap_distance: {
-    title: "Allowed range to post new snap ",
-    description: "The minimmum distance for the previous post of the user",
+  newSnapDistance: {
+    title: "Allowed range to post new snap",
+    description: "The minimum distance for the previous post of the user",
     in: "Meters",
   },
   snapDisappearTime: {
     title: "Visibility expiration time (Days)",
-    description: "Number of days the snaps will be visible in users locaiton",
+    description: "Number of days the snaps will be visible in users location",
     in: "Days",
   },
 };
