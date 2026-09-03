@@ -1,15 +1,26 @@
 import type { ApiProblemDetails } from "@/types/api";
+import { isRecord } from "./is-record";
+
+function stringifyUnknown(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (isRecord(value) && typeof value.message === "string") return value.message;
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
 
 export class ApiError extends Error {
   public readonly statusCode: number;
   public readonly problemDetails?: ApiProblemDetails;
-  public readonly data?: any;
+  public readonly data?: unknown;
 
   constructor(
     message: string,
     statusCode: number = 500,
     problemDetails?: ApiProblemDetails,
-    data?: any,
+    data?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -21,16 +32,41 @@ export class ApiError extends Error {
 
   public static fromResponse(
     statusCode: number,
-    data: any,
+    data: unknown,
     fallbackMessage?: string,
   ): ApiError {
     const fallback =
       fallbackMessage || ApiError.getDefaultStatusMessage(statusCode);
     const message = ApiError.extractMessage(data, fallback);
-    const problemDetails: ApiProblemDetails | undefined =
-      data && typeof data === "object" ? data : undefined;
+    const problemDetails = ApiError.asProblemDetails(data);
 
     return new ApiError(message, statusCode, problemDetails, data);
+  }
+
+  public static asProblemDetails(data: unknown): ApiProblemDetails | undefined {
+    if (!isRecord(data)) return undefined;
+    if (
+      typeof data.title !== "string" &&
+      typeof data.detail !== "string" &&
+      typeof data.status !== "number"
+    ) {
+      return undefined;
+    }
+
+    return {
+      type: typeof data.type === "string" ? data.type : "about:blank",
+      title: typeof data.title === "string" ? data.title : "Error",
+      status: typeof data.status === "number" ? data.status : 500,
+      detail: typeof data.detail === "string" ? data.detail : "",
+      instance: typeof data.instance === "string" ? data.instance : "",
+      timestamp:
+        typeof data.timestamp === "string"
+          ? data.timestamp
+          : new Date().toISOString(),
+      errors: Array.isArray(data.errors)
+        ? data.errors.filter((item): item is string => typeof item === "string")
+        : undefined,
+    };
   }
 
   public static getDefaultStatusMessage(statusCode: number): string {
@@ -40,7 +76,7 @@ export class ApiError extends Error {
       case 400:
         return "Invalid request. Please check your inputs.";
       case 401:
-        return "Invalid email or password.";
+        return "Your session has expired. Please sign in again.";
       case 403:
         return "You do not have permission to perform this action.";
       case 404:
@@ -49,6 +85,8 @@ export class ApiError extends Error {
         return "A record with this information already exists.";
       case 422:
         return "Validation failed. Please verify your submitted data.";
+      case 429:
+        return "Too many attempts. Please wait a minute and try again.";
       case 500:
       case 502:
       case 503:
@@ -60,43 +98,33 @@ export class ApiError extends Error {
   }
 
   public static extractMessage(
-    data: any,
+    data: unknown,
     fallback: string = "Request failed",
   ): string {
-    if (!data) return fallback;
+    if (data == null) return fallback;
 
-    // Plain text / string response
     if (typeof data === "string" && data.trim().length > 0) {
       return data.trim();
     }
 
-    // RFC 9457 validation errors array
+    if (!isRecord(data)) return fallback;
+
     if (Array.isArray(data.errors) && data.errors.length > 0) {
-      return data.errors
-        .map((e: any) =>
-          typeof e === "string" ? e : e?.message || JSON.stringify(e),
-        )
-        .join(", ");
+      return data.errors.map(stringifyUnknown).join(", ");
     }
 
-    // RFC 9457 detail summary
     if (typeof data.detail === "string" && data.detail.trim().length > 0) {
       return data.detail.trim();
     }
 
-    // Common NestJS / Express message field (array or string)
     if (Array.isArray(data.message) && data.message.length > 0) {
-      return data.message
-        .map((e: any) =>
-          typeof e === "string" ? e : e?.message || JSON.stringify(e),
-        )
-        .join(", ");
+      return data.message.map(stringifyUnknown).join(", ");
     }
+
     if (typeof data.message === "string" && data.message.trim().length > 0) {
       return data.message.trim();
     }
 
-    // RFC 9457 title
     if (typeof data.title === "string" && data.title.trim().length > 0) {
       return data.title.trim();
     }
@@ -111,3 +139,6 @@ export class ApiError extends Error {
 
 export const extractErrorMessage = ApiError.extractMessage;
 
+export function isApiError(error: unknown): error is ApiError {
+  return error instanceof ApiError;
+}

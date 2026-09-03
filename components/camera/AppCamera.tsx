@@ -1,5 +1,10 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from "react-native";
 import {
   CameraType,
   CameraView,
@@ -7,6 +12,7 @@ import {
   useCameraPermissions,
 } from "expo-camera";
 import { cssInterop } from "nativewind";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CameraPermissionView } from "./CameraPermissionView";
 import { CameraTopControls } from "./CameraTopControls";
 import { CameraShutterButton } from "./CameraShutterButton";
@@ -24,8 +30,6 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 });
-
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface AppCameraProps {
   onCapture: (uri: string) => void | Promise<void>;
@@ -183,4 +187,3 @@ export const AppCamera: React.FC<AppCameraProps> = ({
 };
 
 export default AppCamera;
-

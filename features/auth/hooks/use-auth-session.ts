@@ -1,8 +1,9 @@
-import { setUser } from "@/features/users/context/user-store";
+import { patchUser } from "@/features/users/context/user-store";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { getMeApi } from "../api/auth-api";
 import { useAuth } from "../context/auth-store";
+import { ApiError } from "@/lib/http/api-error";
 
 export const useAuthSession = () => {
   const hasHydrated = useAuth((state) => state._hasHydrated);
@@ -20,24 +21,28 @@ export const useAuthSession = () => {
   useEffect(() => {
     if (!hasHydrated) return;
 
+    let cancelled = false;
+
     const verifySession = async () => {
       if (!isLoggedIn || !tokens?.accessToken) {
-        setIsValidating(false);
+        if (!cancelled) setIsValidating(false);
         await SplashScreen.hideAsync();
         return;
       }
 
       try {
-        const response = await getMeApi(tokens.accessToken);
-        if (response?.data) {
-          setUser(response.data);
-        }
-        useAuth.setState({ isLoggedIn: true });
-      } catch (err: any) {
-        if (
-          err?.statusCode === 401 ||
-          err?.message?.toLowerCase().includes("unauthorized")
-        ) {
+        const me = await getMeApi(tokens.accessToken);
+        if (cancelled) return;
+        patchUser({
+          id: me.id,
+          email: me.email,
+          role: me.role,
+        });
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const unauthorized =
+          err instanceof ApiError && err.statusCode === 401;
+        if (unauthorized) {
           console.warn("Session expired or invalid, logging out:", err);
           await logout();
         } else {
@@ -45,17 +50,18 @@ export const useAuthSession = () => {
             "Could not reach auth server, keeping offline session:",
             err,
           );
-          useAuth.setState({ isLoggedIn: true });
         }
       } finally {
-        setIsValidating(false);
+        if (!cancelled) setIsValidating(false);
         await SplashScreen.hideAsync();
       }
     };
 
     verifySession();
-  }, [hasHydrated]); // Only runs after hydrate() finishes
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHydrated, isLoggedIn, tokens?.accessToken, logout]);
 
   return { isReady: hasHydrated && !isValidating };
 };
-

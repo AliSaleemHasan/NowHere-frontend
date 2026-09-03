@@ -1,16 +1,16 @@
-import FromButton from "@/components/FormButton";
+import FormButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
+import { getApiValidationErrors, getErrorMessage } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Keyboard, SafeAreaView, Text, View } from "react-native";
+import { Keyboard, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
-import { useLogin } from "../hooks/use-login";
+import { useLogin } from "../hooks/use-auth-mutations";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
-import SocialNetworksAuth from "./SocialNetworkAuth";
 
 const LoginSchema = z.object({
   email: z.email(),
@@ -36,7 +36,7 @@ export const LoginForm = () => {
     mode: "onChange",
   });
 
-  const onSubmit = async (values: LoginFormData) => {
+  const onSubmit = (values: LoginFormData) => {
     Keyboard.dismiss();
     mutation.mutate(values, {
       onSuccess: () => {
@@ -47,45 +47,60 @@ export const LoginForm = () => {
         });
         router.replace("/");
       },
-      onError: (err: any) => {
+      onError: (err: unknown) => {
         Toast.show({
           type: "error",
           text1: "Sign in failed",
-          text2: err?.message || "Please check your email and password.",
+          text2: getErrorMessage(
+            err,
+            "Please check your email and password.",
+          ),
         });
       },
     });
   };
 
   return (
-    <SafeAreaView className="rounded-tl-md h-full   gap-4 w-full  items-center justify-center   ">
-      <Text className="text-center  text-xl "> Signin </Text>
+    <View className="h-full w-full items-center justify-center gap-4">
+      <Text className="text-center text-xl">Sign in</Text>
       <Text>Welcome To NowHere</Text>
 
-      <View className="flex gap-4   h-2/3 w-5/6 ">
-        <Input control={control} name="email" placeholder="Email.." />
+      <View className="h-2/3 w-5/6 gap-4">
+        <Input
+          control={control}
+          name="email"
+          placeholder="Email.."
+          keyboardType="email-address"
+          autoComplete="email"
+          textContentType="emailAddress"
+        />
+        {errors.email?.message && (
+          <FormError message={errors.email.message} />
+        )}
         <Input
           placeholder="Password.."
           name="password"
           control={control}
           secureTextEntry
+          autoComplete="password"
+          textContentType="password"
         />
-        <FromButton
+        {errors.password?.message && (
+          <FormError message={errors.password.message} />
+        )}
+        <FormButton
           onSubmit={handleSubmit(onSubmit)}
           disabled={!isValid}
           text="Login"
-          isLoading={isLoading || isSubmitting}
-        ></FromButton>
+          isLoading={isLoading || isSubmitting || mutation.isPending}
+        />
 
         {mutation.error && (
           <FormError
-            message={mutation.error.message}
-            errors={(mutation.error as any)?.problemDetails?.errors}
+            message={getErrorMessage(mutation.error)}
+            errors={getApiValidationErrors(mutation.error)}
           />
         )}
-        <Text className="text-gray-600 text-xs font-thin text-center">
-          Forgot Password?
-        </Text>
 
         <AuthRedirectPrompt
           linkText="Sign up"
@@ -94,10 +109,7 @@ export const LoginForm = () => {
             router.navigate("/signup");
           }}
         />
-
-        {/* Social networks auth section */}
-        <SocialNetworksAuth />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

@@ -3,19 +3,20 @@ import { mmkvStorage } from "@/lib/storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { SnapLocation } from "../types/snaps-api-type";
+
 type UserLocationState = {
   location: SnapLocation;
   error?: string;
   loading?: boolean;
   boarding: boolean;
-  featchLocation: () => Promise<void>;
+  fetchLocation: () => Promise<void>;
   setBoarding: () => void;
   setLocation: (newLocation: SnapLocation) => void;
 };
 
 export const useLocation = create<UserLocationState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       loading: false,
       boarding: false,
       location: {
@@ -25,12 +26,12 @@ export const useLocation = create<UserLocationState>()(
       setBoarding: () => {
         set(() => ({ boarding: true }));
       },
-      async featchLocation() {
+      async fetchLocation() {
         set(() => ({ loading: true }));
         try {
           const results = await getUserLocation();
 
-          if (!results.success || !results.data) {
+          if (!results.success) {
             set(() => ({
               error: results.message || "Failed to get location",
               loading: false,
@@ -45,16 +46,14 @@ export const useLocation = create<UserLocationState>()(
           }
         } catch (err) {
           set(() => ({
-            error: err instanceof Error ? err.message : JSON.stringify(err),
+            error: err instanceof Error ? err.message : "Location error",
             loading: false,
           }));
         } finally {
           set(() => ({ loading: false }));
         }
       },
-      setLocation: (
-        newLocation // TODO: make sure to emit userLocation event
-      ) =>
+      setLocation: (newLocation) =>
         set(() => ({
           location: newLocation,
         })),
@@ -66,6 +65,6 @@ export const useLocation = create<UserLocationState>()(
         location: state.location,
         boarding: state.boarding,
       }),
-    }
-  )
+    },
+  ),
 );

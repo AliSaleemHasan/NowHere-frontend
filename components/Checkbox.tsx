@@ -1,4 +1,4 @@
-import Checkbox, { CheckboxProps } from "expo-checkbox";
+import ExpoCheckbox, { type CheckboxProps } from "expo-checkbox";
 import React from "react";
 import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 
@@ -17,7 +17,7 @@ export default function CustomCheckbox(props: Props & CheckboxProps) {
       className={`p-2 rounded-lg ${isSelected ? "bg-primary" : "bg-gray-400"}`}
     >
       {/* Hidden checkbox just for accessibility */}
-      <Checkbox
+      <ExpoCheckbox
         {...checkboxProps}
         value={isSelected}
         className="opacity-0 absolute"

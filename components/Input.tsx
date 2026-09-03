@@ -9,7 +9,7 @@ type InputProps<TFieldValues extends FieldValues> = {
 };
 
 export function Input<TFieldValues extends FieldValues = FieldValues>(
-  props: InputProps<TFieldValues> & TextInputProps
+  props: InputProps<TFieldValues> & TextInputProps,
 ) {
   const { name, control, ...textInputProps } = props;
   const {
@@ -17,20 +17,19 @@ export function Input<TFieldValues extends FieldValues = FieldValues>(
   } = useController<TFieldValues>({
     name,
     control,
-    defaultValue: "" as any, // you can make this generic too
   });
 
   return (
     <TextInput
-      placeholderTextColor={"#9ca3af"}
+      placeholderTextColor="#9ca3af"
       {...textInputProps}
-      value={value as string}
+      value={value == null ? "" : String(value)}
       autoCapitalize={textInputProps.autoCapitalize ?? "none"}
       onChangeText={onChange}
       onBlur={onBlur}
       className={cn(
-        "text-dark p-4 bg-background border border-gray-300 rounded-md",
-        textInputProps.className
+        "rounded-md border border-gray-300 bg-background p-4 text-dark",
+        textInputProps.className,
       )}
     />
   );

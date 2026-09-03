@@ -1,18 +1,17 @@
 import React, { memo, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { Tags, TagsColors } from "@/utils";
+import { Tags, tagColor } from "@/utils";
 import UnifiedMarker from "@/features/map/components/UnifiedMarker";
 
 interface Props {
-  id?: string;
-  _id?: string;
+  id: string;
   tag: Tags;
   lat: number;
   lng: number;
 }
 
-const MapMarker = ({ id, _id, tag, lat, lng }: Props) => {
-  const markerId = id || _id || `${lat}-${lng}`;
+const MapMarker = ({ id, tag, lat, lng }: Props) => {
+  const markerId = id;
   const router = useRouter();
 
   const handlePress = useCallback(() => {
@@ -25,7 +24,7 @@ const MapMarker = ({ id, _id, tag, lat, lng }: Props) => {
     <UnifiedMarker
       id={markerId}
       title={tag}
-      pinColor={TagsColors[tag]}
+      pinColor={tagColor(tag)}
       coordinate={{
         latitude: lat,
         longitude: lng,

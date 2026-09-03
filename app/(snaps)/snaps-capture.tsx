@@ -1,5 +1,6 @@
-import AppCamera from "@/components/camera/AppCamera";
-import { useSnap } from "@/features/snaps/context/snap-store";
+import { AppCamera } from "@/components/camera";
+import { useSnapDraft } from "@/features/snaps/context/snap-store";
+import { MAX_SNAP_IMAGES } from "@/lib/image-upload";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 import Gallery from "react-native-awesome-gallery";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function SnapsCapture() {
   const router = useRouter();
@@ -20,9 +22,21 @@ export default function SnapsCapture() {
   const [mode, setMode] = useState<"camera" | "review">("camera");
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
-  const snaps = useSnap((state) => state.snaps);
-  const addSnap = useSnap((state) => state.addSnap);
-  const deleteSnap = useSnap((state) => state.removeSnap);
+  const snaps = useSnapDraft((state) => state.snaps);
+  const addSnap = useSnapDraft((state) => state.addSnap);
+  const deleteSnap = useSnapDraft((state) => state.removeSnap);
+
+  const handleCapture = (uri: string) => {
+    if (snaps.length >= MAX_SNAP_IMAGES) {
+      Toast.show({
+        type: "info",
+        text1: `You can add up to ${MAX_SNAP_IMAGES} photos`,
+      });
+      setMode("review");
+      return;
+    }
+    addSnap(uri);
+  };
 
   const handleDeleteCurrentSnap = () => {
     const currentSnap = snaps[galleryIndex];
@@ -42,36 +56,33 @@ export default function SnapsCapture() {
     router.replace("/(snaps)/snap-inputs");
   };
 
-  // REVIEW MODE
   if (mode === "review" && snaps.length > 0) {
     return (
       <View className="flex-1 bg-black">
         <SafeAreaView className="flex-1 justify-between">
-          {/* Top Review Header */}
           <View
             style={{ paddingTop: Math.max(insets.top, 16) }}
-            className="flex-row items-center justify-between px-5 pb-2 z-10"
+            className="z-10 flex-row items-center justify-between px-5 pb-2"
           >
             <TouchableOpacity
               onPress={() => setMode("camera")}
-              className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
+              className="h-10 w-10 items-center justify-center rounded-full bg-black/50"
             >
               <Ionicons name="camera" size={22} color="#ffffff" />
             </TouchableOpacity>
 
-            <Text className="text-white text-sm font-semibold">
+            <Text className="text-sm font-semibold text-white">
               {galleryIndex + 1} of {snaps.length}
             </Text>
 
             <TouchableOpacity
               onPress={handleProceedToInputs}
-              className="bg-blue-600 px-4 py-2 rounded-full"
+              className="rounded-full bg-blue-600 px-4 py-2"
             >
-              <Text className="text-white font-semibold text-sm">Next</Text>
+              <Text className="text-sm font-semibold text-white">Next</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Gallery View */}
           <View className="flex-1">
             <Gallery
               onIndexChange={(newIndex) => setGalleryIndex(newIndex)}
@@ -81,31 +92,33 @@ export default function SnapsCapture() {
               renderItem={({ item }) => (
                 <ImageBackground
                   source={{ uri: item }}
-                  className="w-full h-full"
+                  className="h-full w-full"
                   resizeMode="contain"
                 />
               )}
             />
           </View>
 
-          {/* Bottom Controls */}
           <View
             style={{ paddingBottom: Math.max(insets.bottom, 20) }}
             className="flex-row items-center justify-between px-8 pt-4"
           >
             <TouchableOpacity
               onPress={handleDeleteCurrentSnap}
-              className="w-12 h-12 rounded-full bg-red-600/30 items-center justify-center"
+              className="h-12 w-12 items-center justify-center rounded-full bg-red-600/30"
             >
               <FontAwesome name="trash" size={22} color="#ff4444" />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setMode("camera")}
-              className="flex-row items-center bg-white/20 px-5 py-3 rounded-full gap-2"
+              disabled={snaps.length >= MAX_SNAP_IMAGES}
+              className="flex-row items-center gap-2 rounded-full bg-white/20 px-5 py-3"
             >
               <FontAwesome name="plus" size={16} color="#ffffff" />
-              <Text className="text-white text-sm font-medium">Add More</Text>
+              <Text className="text-sm font-medium text-white">
+                {snaps.length >= MAX_SNAP_IMAGES ? "Limit reached" : "Add more"}
+              </Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -113,23 +126,23 @@ export default function SnapsCapture() {
     );
   }
 
-  // LIVE IN-APP CAMERA MODE
   return (
     <AppCamera
-      onCapture={(uri) => addSnap(uri)}
+      onCapture={handleCapture}
       onClose={() => router.replace("/")}
+      shutterDisabled={snaps.length >= MAX_SNAP_IMAGES}
       leftBottomControl={
         snaps.length > 0 ? (
           <TouchableOpacity
             onPress={() => setMode("review")}
-            className="relative w-14 h-14 rounded-xl border-2 border-white overflow-hidden"
+            className="relative h-14 w-14 overflow-hidden rounded-xl border-2 border-white"
           >
             <Image
               source={{ uri: snaps[snaps.length - 1] }}
-              className="w-full h-full"
+              className="h-full w-full"
             />
-            <View className="absolute top-0 right-0 bg-blue-600 px-1.5 py-0.5 rounded-bl-lg">
-              <Text className="text-white text-xs font-bold">
+            <View className="absolute right-0 top-0 rounded-bl-lg bg-blue-600 px-1.5 py-0.5">
+              <Text className="text-xs font-bold text-white">
                 {snaps.length}
               </Text>
             </View>
@@ -140,7 +153,7 @@ export default function SnapsCapture() {
         snaps.length > 0 ? (
           <TouchableOpacity
             onPress={handleProceedToInputs}
-            className="w-14 h-14 rounded-full bg-blue-600 items-center justify-center shadow-lg"
+            className="h-14 w-14 items-center justify-center rounded-full bg-blue-600 shadow-lg"
           >
             <Ionicons name="arrow-forward" size={24} color="#ffffff" />
           </TouchableOpacity>
@@ -149,6 +162,3 @@ export default function SnapsCapture() {
     />
   );
 }
-
-
-

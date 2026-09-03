@@ -3,34 +3,26 @@ import { Text, View } from "react-native";
 
 interface Props {
   message?: string;
-  errors?: (string | { message?: string } | any)[];
+  errors?: string[];
 }
 
 export default function FormError({ message, errors }: Props) {
-  if (errors && Array.isArray(errors) && errors.length > 0) {
+  if (errors && errors.length > 0) {
     return (
-      <View className="gap-1 my-1 p-2.5 bg-red-50/80 border border-error/30 rounded-lg">
-        {errors.map((err, idx) => {
-          const text =
-            typeof err === "string"
-              ? err
-              : err?.message || (typeof err === "object" ? JSON.stringify(err) : String(err));
-          return (
-            <Text key={idx} className="text-xs text-error font-medium">
-              • {text}
-            </Text>
-          );
-        })}
+      <View className="my-1 gap-1 rounded-lg border border-error/30 bg-red-50/80 p-2.5">
+        {errors.map((text, idx) => (
+          <Text key={`${text}-${idx}`} className="text-xs font-medium text-error">
+            • {text}
+          </Text>
+        ))}
       </View>
     );
   }
 
   if (!message) return null;
   return (
-    <View className="my-1 p-2.5 bg-red-50/80 border border-error/30 rounded-lg">
-      <Text className="text-xs text-error font-medium">{message}</Text>
+    <View className="my-1 rounded-lg border border-error/30 bg-red-50/80 p-2.5">
+      <Text className="text-xs font-medium text-error">{message}</Text>
     </View>
   );
 }
-
-

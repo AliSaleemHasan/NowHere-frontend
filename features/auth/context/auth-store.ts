@@ -1,4 +1,5 @@
 import { useUserStore } from "@/features/users/context/user-store";
+import { disconnectSnapSocket } from "@/lib/socket";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { create } from "zustand";
 import type { Tokens } from "../types/auth-api.types";
@@ -67,6 +68,7 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   logout: async () => {
+    disconnectSnapSocket();
     await Promise.all([
       deleteItemAsync(ACCESS_TOKEN_KEY),
       deleteItemAsync(REFRESH_TOKEN_KEY),

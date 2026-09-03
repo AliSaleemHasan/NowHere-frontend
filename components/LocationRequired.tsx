@@ -1,43 +1,39 @@
-import { useLocation } from "@/features/snaps/context/location-store";
 import { askLocationPermission } from "@/lib/location";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   withErrorImage?: boolean;
+  onGranted: () => void | Promise<void>;
 }
+
 const LocationRequired = (props: Props) => {
-  const fetchLocation = useLocation((state) => state.featchLocation);
-
-  const locationError = useLocation((state) => state.error);
-
   const handleLocationPermission = async () => {
     const granted = await askLocationPermission();
-
     if (!granted) return;
-    await fetchLocation();
+    await props.onGranted();
   };
 
   return (
-    <View className="flex items-center justify-center flex-1 ">
+    <View className="flex flex-1 items-center justify-center">
       {props.withErrorImage && (
-        <View className="w-44 h-44  relative">
+        <View className="relative h-44 w-44">
           <Image
-            className="w-full h-full rounded-full"
+            className="h-full w-full rounded-full"
             source={require("@/assets/images/location-required.png")}
             resizeMode="contain"
           />
         </View>
       )}
-      <View className=" flex items-center p-4 gap-5">
-        <Text className="text-sm text-center">
+      <View className="items-center gap-5 p-4">
+        <Text className="text-center text-sm">
           To continue, please allow location access by tapping the button below.
         </Text>
         <TouchableOpacity
           onPress={handleLocationPermission}
-          className=" p-4  bg-alert rounderd-full  rounded-md "
+          className="rounded-md bg-alert p-4"
         >
-          <Text className="text-white text-sm ">Grant Location Access</Text>
+          <Text className="text-sm text-white">Grant Location Access</Text>
         </TouchableOpacity>
       </View>
     </View>

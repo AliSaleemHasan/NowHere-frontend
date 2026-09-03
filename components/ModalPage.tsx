@@ -1,11 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 
 interface Props {
   imageSource: ImageSourcePropType | undefined;
@@ -43,5 +37,3 @@ export default function ModalPage({
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

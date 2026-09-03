@@ -1,61 +1,62 @@
-//
-// General API Types
-//
-
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-  statusCode?: number;
-  path?: string;
+export interface ApiResponse<T> {
+  success: true;
+  data: T;
 }
 
 export interface ApiProblemDetails {
-  type?: string;
-  title?: string;
-  status?: number;
-  detail?: string;
-  instance?: string;
-  timestamp?: string;
+  type: string;
+  title: string;
+  status: number;
+  detail: string;
+  instance: string;
+  timestamp: string;
   errors?: string[];
-  [key: string]: any;
 }
 
 export type HeaderContentType = "json" | "files" | "text" | "html";
 
-export type FetchResponse<T> = ApiResponse<T>;
+export type UserRole = "USER" | "ADMIN";
 
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
 
-//
-// Users
-//
-
-export type UserResponse = {
+export type AuthIdentity = {
   id: string;
   email: string;
-  bio?: string;
+  role: UserRole;
+};
+
+export type AuthUser = AuthIdentity & {
+  isActive: boolean;
+  lastLoginAt?: string | null;
+};
+
+export type UserProfile = {
+  id: string;
+  email: string;
   firstName?: string;
   lastName?: string;
+  bio?: string;
   image?: string;
   userImage?: string;
-  role?: string;
+  role?: UserRole;
   isActive?: boolean;
-  lastLoginAt?: Date | string;
+  lastLoginAt?: string | null;
 };
 
 export type GetUserResponse = {
-  user: UserResponse;
-  userImage?: string;
+  user: UserProfile;
+  userImage: string;
 };
 
-//
-// Snaps
-//
+export type UpdateUserImageResponse = GetUserResponse;
 
-export type AddSnapRequest = {
-  description: string;
-  snaps: Array<string>;
-};
-
-
+export function formatUserDisplayName(
+  user?: Pick<UserProfile, "firstName" | "lastName" | "email"> | null,
+  fallback = "Anonymous",
+): string {
+  const name = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
+  return name || user?.email || fallback;
+}

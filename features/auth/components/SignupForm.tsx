@@ -1,22 +1,16 @@
-import FromButton from "@/components/FormButton";
+import FormButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
+import { getApiValidationErrors, getErrorMessage } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  View,
-} from "react-native";
+import { Keyboard, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
-import { useSignup } from "../hooks/use-signup";
+import { useSignup } from "../hooks/use-auth-mutations";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
-import SocialNetworksAuth from "./SocialNetworkAuth";
 
 const SignUpSchema = z
   .object({
@@ -27,7 +21,7 @@ const SignUpSchema = z
       .regex(/[a-z]/, "One lowercase letter is required")
       .regex(/[A-Z]/, "One uppercase letter is required")
       .regex(/\d/, "One number is required")
-      .regex(/\W/, "One symbol is required"),
+      .regex(/[^A-Za-z0-9]/, "One symbol is required"),
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
     confirm: z.string(),
@@ -48,18 +42,27 @@ export const SignupForm = () => {
     handleSubmit,
     formState: { errors, isValid, isLoading, isSubmitting },
   } = useForm<SignupFormData>({
+    defaultValues: {
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      confirm: "",
+    },
     resolver: zodResolver(SignUpSchema),
     mode: "onChange",
   });
 
   const onSubmit = (values: SignupFormData) => {
-    const { confirm, ...data } = values;
-    const username =
-      `${data.firstName} ${data.lastName}`.trim() || data.email;
     Keyboard.dismiss();
+    const data = {
+      email: values.email,
+      password: values.password,
+      firstName: values.firstName,
+      lastName: values.lastName,
+    };
 
-    mutation.mutate(
-      { ...data, username },
+    mutation.mutate(data,
       {
         onSuccess: () => {
           Toast.show({
@@ -69,11 +72,14 @@ export const SignupForm = () => {
           });
           router.replace("/");
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
           Toast.show({
             type: "error",
             text1: "Sign up failed",
-            text2: err?.message || "Please check the form and try again.",
+            text2: getErrorMessage(
+              err,
+              "Please check the form and try again.",
+            ),
           });
         },
       },
@@ -81,36 +87,34 @@ export const SignupForm = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      className="rounded-tl-md h-full   gap-2 w-full  items-center justify-center"
-      behavior={Platform.select({ ios: "padding", android: "height" })}
-      keyboardVerticalOffset={Platform.select({ ios: 100, android: 0 })}
-    >
-      <Text className="text-center  text-xl "> Signup </Text>
+    <View className="h-full w-full items-center justify-center gap-2">
+      <Text className="text-center text-xl">Sign up</Text>
       <Text>Welcome To NowHere</Text>
 
-      <View className="flex gap-4   h-2/3 w-5/6 ">
+      <View className="h-2/3 w-5/6 gap-4">
         <Input
           control={control}
           name="email"
           placeholder="Email.."
-          keyboardType={"email-address"}
+          keyboardType="email-address"
+          autoComplete="email"
+          textContentType="emailAddress"
         />
         {errors.email?.message && (
-          <FormError message={errors.email?.message}></FormError>
+          <FormError message={errors.email.message} />
         )}
-        <View className="flex-row gap-3 w-full ">
+        <View className="w-full flex-row gap-3">
           <Input
             control={control}
             name="firstName"
             placeholder="First Name.."
-            className={`flex-1  ${errors.firstName && "border-2 border-error"}`}
+            className={`flex-1 ${errors.firstName ? "border-2 border-error" : ""}`}
           />
           <Input
             control={control}
             name="lastName"
             placeholder="Last Name.."
-            className={`flex-1 ${errors.lastName && "border-2 border-error"}`}
+            className={`flex-1 ${errors.lastName ? "border-2 border-error" : ""}`}
           />
         </View>
         <Input
@@ -121,7 +125,7 @@ export const SignupForm = () => {
           textContentType="password"
         />
         {errors.password?.message && (
-          <FormError message={errors.password.message}></FormError>
+          <FormError message={errors.password.message} />
         )}
         <Input
           control={control}
@@ -131,18 +135,18 @@ export const SignupForm = () => {
           secureTextEntry
         />
         {errors.confirm?.message && (
-          <FormError message={errors.confirm.message}></FormError>
+          <FormError message={errors.confirm.message} />
         )}
-        <FromButton
+        <FormButton
           onSubmit={handleSubmit(onSubmit)}
           text="Signup"
-          isLoading={isLoading || isSubmitting}
+          isLoading={isLoading || isSubmitting || mutation.isPending}
           disabled={!isValid}
-        ></FromButton>
+        />
         {mutation.isError && (
           <FormError
-            message={mutation.error.message}
-            errors={(mutation.error as any)?.problemDetails?.errors}
+            message={getErrorMessage(mutation.error)}
+            errors={getApiValidationErrors(mutation.error)}
           />
         )}
 
@@ -153,10 +157,7 @@ export const SignupForm = () => {
             router.replace("/login");
           }}
         />
-
-        {/* Social networks auth section */}
-        <SocialNetworksAuth />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };

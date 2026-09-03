@@ -1,8 +1,8 @@
-import DiscardFormButton from "@/components/DiscardFormButton";
+import DiscardFormButton from "@/features/snaps/components/DiscardFormButton";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import { Platform, Pressable, Text } from "react-native";
+import { Platform, Pressable } from "react-native";
 
 export default function SnapsLayout() {
   const router = useRouter();
@@ -12,16 +12,19 @@ export default function SnapsLayout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: "Snap Detail",
+          title: "Snap",
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+          headerTitleAlign: "center",
           headerShadowVisible: false,
-
+          headerStyle: { backgroundColor: "#f9fafb" },
           presentation: Platform.OS === "ios" ? "transparentModal" : "modal",
           animation: "slide_from_bottom",
           gestureDirection: "vertical",
           ...(Platform.OS === "ios" && {
             sheetGrabberVisible: true,
+            sheetCornerRadius: 28,
             sheetInitialDetentIndex: 0,
-            sheetAllowedDetents: [0.3, 0.75, 1],
+            sheetAllowedDetents: [0.58, 0.92, 1],
             sheetExpandsWhenScrolledToEdge: true,
           }),
         }}
@@ -40,22 +43,18 @@ export default function SnapsLayout() {
         name="snap-inputs"
         options={{
           title: "New Snap",
-          headerTitleStyle: { fontSize: 14 },
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
           headerTitleAlign: "center",
           headerLeft: () => (
             <Pressable onPressIn={() => router.replace("/snaps-capture")}>
-              <FontAwesome name="backward" size={20} />
+              <FontAwesome name="chevron-left" size={18} />
             </Pressable>
           ),
-          headerRight: () => (
-            <Pressable onPressIn={() => router.replace("/")}>
-              <Text className="font-thin"> Discard</Text>
-            </Pressable>
-          ),
+          headerRight: () => <DiscardFormButton />,
           animation: "none",
           presentation: "modal",
         }}
-      ></Stack.Screen>
+      />
     </Stack>
   );
 }

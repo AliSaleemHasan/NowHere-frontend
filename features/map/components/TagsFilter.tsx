@@ -1,7 +1,6 @@
 import CustomCheckbox from "@/components/Checkbox";
-import FromButton from "@/components/FormButton";
-import { useAuth } from "@/features/auth/context/auth-store";
-import { Tags } from "@/utils";
+import FormButton from "@/components/FormButton";
+import { displayTag, parseTagsParam, SELECTABLE_TAGS, Tags } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -9,18 +8,29 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { PropsWithChildren, useCallback, useRef, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-const TagsFilter = ({ children }: PropsWithChildren) => {
-  const params = useLocalSearchParams();
+const TagsFilter = ({
+  children,
+  isLoggedIn = false,
+}: PropsWithChildren<{ isLoggedIn?: boolean }>) => {
+  const params = useLocalSearchParams<{
+    tags?: string | string[];
+    seen?: string;
+  }>();
   const bottomSheetRef = useRef<BottomSheet>(null);
-
-  const isLoggedIn = useAuth((state) => state.isLoggedIn);
-  const [searchTags, setSearchTags] = useState<Tags[]>(
-    (params?.tags as Tags[]) || []
+  const [searchTags, setSearchTags] = useState<Tags[]>(() =>
+    parseTagsParam(params.tags),
   );
+
+  const showSeen = params.seen === "1";
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -31,7 +41,7 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
         pressBehavior="close"
       />
     ),
-    []
+    [],
   );
 
   const handleTagsFilter = () => {
@@ -40,72 +50,80 @@ const TagsFilter = ({ children }: PropsWithChildren) => {
     });
     bottomSheetRef.current?.close();
   };
+
   return (
     <GestureHandlerRootView className="flex-1">
       {children}
 
-      <View className="absolute top-20 right-5 flex gap-4">
+      <View className="absolute right-5 top-20 flex gap-4">
         <TouchableOpacity
           onPress={() => bottomSheetRef.current?.expand()}
-          className=" gap-1 bg-white py-6 px-5 rounded-full z-50 items-center"
+          className="z-50 items-center rounded-full bg-white px-5 py-6"
         >
-          <FontAwesome size={10}>tags</FontAwesome>
+          <FontAwesome size={14} name="filter" />
         </TouchableOpacity>
       </View>
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         enablePanDownToClose
-        backdropComponent={renderBackdrop} // 👈 add backdrop
+        backdropComponent={renderBackdrop}
       >
-        <BottomSheetView className="p-4 flex-1  gap-4">
+        <BottomSheetView className="flex-1 gap-4 p-4">
           <View className="flex-row items-center gap-4">
-            <Text>Show Snaps of type :</Text>
+            <Text className="font-medium">Show snaps of type</Text>
             {searchTags.length > 0 && (
               <TouchableOpacity
                 className="flex-1"
                 hitSlop={10}
                 onPress={() => setSearchTags([])}
               >
-                <Text className=" font-thin text-sm  ">Clear</Text>
+                <Text className="text-right text-sm font-thin">Clear</Text>
               </TouchableOpacity>
             )}
           </View>
-          <View className="items-center flex-row flex-wrap gap-2">
-            {Object.values(Tags).map((tag, index) => (
+          <View className="flex-row flex-wrap items-center gap-2">
+            {SELECTABLE_TAGS.map((tag) => (
               <CustomCheckbox
                 isSelected={searchTags.includes(tag)}
-                label={tag}
-                key={`${tag}_${index}`}
+                label={displayTag(tag)}
+                key={tag}
                 buttonProps={{
                   onPress: () =>
                     setSearchTags((tags) =>
-                      searchTags.includes(tag)
+                      tags.includes(tag)
                         ? tags.filter((item) => item !== tag)
-                        : [...tags, tag]
+                        : [...tags, tag],
                     ),
                 }}
-              ></CustomCheckbox>
+              />
             ))}
           </View>
           {isLoggedIn && (
-            <View className="flex-row gap-3 font-bold">
+            <View className="flex-row gap-2 rounded-2xl bg-gray-100 p-1">
               <TouchableOpacity
-                onPress={() => {
-                  router.setParams({
-                    seen: !params.seen || params.seen === "0" ? "1" : "0",
-                  });
-                }}
+                onPress={() => router.setParams({ seen: "0" })}
+                className={`flex-1 rounded-2xl py-2 ${!showSeen ? "bg-white" : ""}`}
               >
                 <Text
-                  className={`underline ${params.seen === "1" && "color-alert"}`}
+                  className={`text-center text-xs font-semibold ${!showSeen ? "text-primary" : "text-gray-500"}`}
                 >
-                  Do not show seen snaps
+                  New nearby
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.setParams({ seen: "1" })}
+                className={`flex-1 rounded-2xl py-2 ${showSeen ? "bg-white" : ""}`}
+              >
+                <Text
+                  className={`text-center text-xs font-semibold ${showSeen ? "text-primary" : "text-gray-500"}`}
+                >
+                  Already opened
                 </Text>
               </TouchableOpacity>
             </View>
           )}
-          <FromButton text="Search" onSubmit={handleTagsFilter}></FromButton>
+          <FormButton text="Search" onSubmit={handleTagsFilter} />
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>

@@ -1,9 +1,14 @@
 import React from "react";
-import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
+import { render, fireEvent, act } from "@testing-library/react-native";
 import { Text } from "react-native";
-import AppCamera from "../AppCamera";
+import * as ExpoCamera from "expo-camera";
+import { AppCamera } from "../AppCamera";
 
-const expoCameraMock = require("expo-camera");
+const expoCameraMock = ExpoCamera as typeof ExpoCamera & {
+  __setMockPermission: (permission: unknown) => void;
+  __mockTakePictureAsync: jest.Mock;
+  __mockRequestPermission: jest.Mock;
+};
 
 describe("AppCamera Component", () => {
   const onCaptureMock = jest.fn();

@@ -1,65 +1,51 @@
 import { apiAuthFetch, apiFetch } from "@/lib/fetch-api";
 import { ApiError } from "@/lib/http/api-error";
-import type { ApiResponse, UserResponse } from "@/types/api";
+import type { AuthUser } from "@/types/api";
 import type {
   AuthSuccessData,
   LoginRequest,
+  MeResponse,
   SignupRequest,
   Tokens,
 } from "../types/auth-api.types";
 
-export const loginApi = async (
-  payload: LoginRequest,
-): Promise<AuthSuccessData> => {
+async function postAuth(
+  url: "login" | "signup",
+  payload: LoginRequest | SignupRequest,
+  incompleteMessage: string,
+): Promise<AuthSuccessData> {
   const response = await apiFetch<AuthSuccessData>({
     api: "auth",
-    url: "login",
+    url,
     options: {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: payload,
     },
   });
 
   if (!response.data?.tokens?.accessToken || !response.data?.user) {
-    throw new ApiError(
-      "Failed to login: Incomplete authentication data received from server",
-      500,
-      undefined,
-      response.data,
-    );
+    throw new ApiError(incompleteMessage, 500, undefined, response.data);
   }
 
   return response.data;
-};
+}
 
-export const signupApi = async (
-  payload: SignupRequest,
-): Promise<AuthSuccessData> => {
-  const response = await apiFetch<AuthSuccessData>({
-    api: "auth",
-    url: "signup",
-    options: {
-      method: "POST",
-      body: JSON.stringify(payload),
-    },
-  });
+export const loginApi = (payload: LoginRequest): Promise<AuthSuccessData> =>
+  postAuth(
+    "login",
+    payload,
+    "Failed to login: Incomplete authentication data received from server",
+  );
 
-  if (!response.data?.tokens?.accessToken || !response.data?.user) {
-    throw new ApiError(
-      "Failed to signup: Incomplete authentication data received from server",
-      500,
-      undefined,
-      response.data,
-    );
-  }
+export const signupApi = (payload: SignupRequest): Promise<AuthSuccessData> =>
+  postAuth(
+    "signup",
+    payload,
+    "Failed to signup: Incomplete authentication data received from server",
+  );
 
-  return response.data;
-};
-
-export const getMeApi = async (
-  accessToken?: string,
-): Promise<ApiResponse<UserResponse>> => {
-  return await apiAuthFetch<UserResponse>({
+export const getMeApi = async (accessToken?: string): Promise<MeResponse> => {
+  const response = await apiAuthFetch<MeResponse>({
     api: "auth",
     url: "me",
     options: {
@@ -73,9 +59,17 @@ export const getMeApi = async (
         : {}),
     },
   });
-};
 
-export const validateTokenApi = getMeApi;
+  if (!response.data?.id || !response.data?.email) {
+    throw new ApiError("Failed to load session identity", 500);
+  }
+
+  return {
+    id: response.data.id,
+    email: response.data.email,
+    role: response.data.role ?? "USER",
+  };
+};
 
 export const refreshTokensApi = async (
   refreshToken: string,
@@ -102,3 +96,13 @@ export const refreshTokensApi = async (
 
   return response.data.tokens;
 };
+
+export function authUserToProfile(user: AuthUser) {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    isActive: user.isActive,
+    lastLoginAt: user.lastLoginAt ?? null,
+  };
+}

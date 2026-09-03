@@ -1,4 +1,4 @@
-import HeaderLogooutButton from "@/components/HeaderLogooutButton";
+import LogoutButton from "@/features/auth/components/LogoutButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
 import React from "react";
@@ -9,23 +9,26 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Welcome Back",
-          headerTitleStyle: { fontSize: 12, fontWeight: "100" },
-
+          title: "Profile",
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
           headerRight: () => (
-            <Link href={"/(tabs)/profile/settings"}>
-              <Ionicons name="settings" size={20}></Ionicons>
+            <Link href="/(tabs)/profile/settings" className="p-1">
+              <Ionicons name="settings-outline" size={20} />
             </Link>
           ),
         }}
-      ></Stack.Screen>
+      />
 
       <Stack.Screen
         name="settings"
         options={{
-          headerRight: () => <HeaderLogooutButton />,
+          title: "Settings",
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+          headerRight: () => <LogoutButton />,
         }}
-      ></Stack.Screen>
+      />
     </Stack>
   );
 }

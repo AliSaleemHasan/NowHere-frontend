@@ -1,6 +1,6 @@
-import { UserSetting } from "@/features/users/types/users-api-type";
-
 export enum Tags {
+  PROMOTION = "PROMOTION",
+  /** @deprecated typo kept for existing Mongo documents */
   PROOMOTION = "PROOMOTION",
   INTERESTING = "INTERESTING",
   FINDINGS = "FINDINGS",
@@ -9,43 +9,86 @@ export enum Tags {
   SOCIAL = "SOCIAL",
 }
 
-export const TagsColors: { [key in keyof typeof Tags]: string } = {
-  FINDINGS: "red",
-  HIDDEN_GEM: "cyan",
-  INTERESTING: "skyblue",
-  LOST: "purple",
-  PROOMOTION: "green",
-  SOCIAL: "black",
+export const SELECTABLE_TAGS = [
+  Tags.SOCIAL,
+  Tags.INTERESTING,
+  Tags.HIDDEN_GEM,
+  Tags.FINDINGS,
+  Tags.LOST,
+  Tags.PROMOTION,
+] as const;
+
+export type SelectableTag = (typeof SELECTABLE_TAGS)[number];
+
+export const TagLabels: Record<Tags, string> = {
+  PROMOTION: "Promotion",
+  PROOMOTION: "Promotion",
+  INTERESTING: "Interesting",
+  FINDINGS: "Findings",
+  LOST: "Lost",
+  HIDDEN_GEM: "Hidden gem",
+  SOCIAL: "Social",
 };
+
+export const TagDescriptions: Record<Tags, string> = {
+  PROMOTION: "A nearby offer, pop-up, or event.",
+  PROOMOTION: "A nearby offer, pop-up, or event.",
+  INTERESTING: "Someone flagged this as worth a look.",
+  FINDINGS: "Something was found around this location.",
+  LOST: "Someone lost something near here.",
+  HIDDEN_GEM: "A local spot that is easy to miss.",
+  SOCIAL: "A nearby moment from someone around you.",
+};
+
+export function tagDescription(tag: string): string {
+  return isTag(tag) ? TagDescriptions[tag] : TagDescriptions.SOCIAL;
+}
+
+export const TagsColors: Record<Tags, string> = {
+  PROMOTION: "#16a34a",
+  PROOMOTION: "#16a34a",
+  INTERESTING: "#0ea5e9",
+  FINDINGS: "#ef4444",
+  LOST: "#7c3aed",
+  HIDDEN_GEM: "#06b6d4",
+  SOCIAL: "#0f0d23",
+};
+
+export function isTag(value: string): value is Tags {
+  return (Object.values(Tags) as string[]).includes(value);
+}
+
+export function parseTagsParam(
+  raw: string | string[] | undefined,
+): Tags[] {
+  if (!raw) return [];
+  const values = Array.isArray(raw) ? raw : raw.split(",");
+  return values.filter(isTag);
+}
+
+export function displayTag(tag: string): string {
+  return isTag(tag) ? TagLabels[tag] : tag;
+}
+
+export function tagColor(tag: string): string {
+  return isTag(tag) ? TagsColors[tag] : TagsColors.SOCIAL;
+}
+
+export function expandTagsForQuery(tags: readonly Tags[]): Tags[] {
+  if (tags.includes(Tags.PROMOTION) && !tags.includes(Tags.PROOMOTION)) {
+    return [...tags, Tags.PROOMOTION];
+  }
+  return [...tags];
+}
 
 export type APIS = "users" | "snaps" | "storage" | "auth";
 
 export const getApiURL = (api?: APIS) => {
-  const base = process.env.EXPO_PUBLIC_GATEWAY_URL;
-  return api ? `${base}/${api}` : base || "";
+  const base = (process.env.EXPO_PUBLIC_GATEWAY_URL ?? "")
+    .trim()
+    .replace(/\/+$/, "");
+  if (!api) return base;
+  return base ? `${base}/${api}` : api;
 };
 
-export const userUISettings: {
-  [k in keyof UserSetting]: {
-    title: string;
-    description: string;
-    in: string;
-  };
-} = {
-  maxDistance: {
-    title: "User Max Visibility Distance",
-    description:
-      "The distance where user cannot see snaps after depending on location",
-    in: "Meters",
-  },
-  newSnapDistance: {
-    title: "Allowed range to post new snap",
-    description: "The minimum distance for the previous post of the user",
-    in: "Meters",
-  },
-  snapDisappearTime: {
-    title: "Visibility expiration time (Days)",
-    description: "Number of days the snaps will be visible in users location",
-    in: "Days",
-  },
-};
+export const SNAPS_SOCKET_URL = process.env.EXPO_PUBLIC_SNAPS_SOCKET_URL || "";

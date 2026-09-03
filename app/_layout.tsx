@@ -1,6 +1,10 @@
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { useLocation } from "@/features/snaps/context/location-store";
+import {
+  retryDelayBackoff,
+  retryUnlessClientError,
+} from "@/lib/query-retry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { preventAutoHideAsync } from "expo-splash-screen";
@@ -10,8 +14,14 @@ import "./global.css";
 
 preventAutoHideAsync();
 
-// Define Tanstack react query Client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: retryUnlessClientError,
+      retryDelay: retryDelayBackoff,
+    },
+  },
+});
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",

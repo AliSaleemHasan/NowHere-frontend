@@ -22,8 +22,8 @@ export default function Layout() {
         ),
       }}
     >
-      <Stack.Screen name="login"></Stack.Screen>
-      <Stack.Screen name="signup"></Stack.Screen>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="signup" />
     </Stack>
   );
 }

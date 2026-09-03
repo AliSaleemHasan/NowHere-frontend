@@ -1,108 +1,100 @@
-import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
-import { useSnap } from "@/features/snaps/api/useSnap";
+import { useSnapById } from "@/features/snaps/api/useSnap";
+import SnapDetailsView from "@/features/snaps/components/SnapDetailsView";
+import { useLocation } from "@/features/snaps/context/location-store";
+import { isValidSnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { useUser } from "@/features/users/api/useUser";
-import { TagsColors } from "@/utils";
-import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { ScrollView, Text, View, useWindowDimensions } from "react-native";
-import Carousel from "react-native-reanimated-carousel";
+import { useUserSettings } from "@/features/users/api/useUserSettings";
+import { useUserStore } from "@/features/users/context/user-store";
+import { haversineDistanceMeters } from "@/lib/geo";
+import { formatUserDisplayName } from "@/types/api";
+import { displayTag } from "@/utils";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams } from "expo-router";
+import React from "react";
+import { Text, View } from "react-native";
 
 export const ErrorBoundary = NowHereError;
 
-const SnapDetails = () => {
-  const params = useLocalSearchParams();
-  const { width } = useWindowDimensions();
-
-  const CARD_WIDTH = Math.min(width * 0.9, 400);
-  const IMAGE_HEIGHT = CARD_WIDTH * (16 / 10);
-
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const { data: snapData, isLoading: isSnapLoading } = useSnap(
-    params.id as string
+function SnapUnavailable() {
+  return (
+    <View
+      testID="snap-unavailable"
+      className="flex-1 items-center justify-center bg-gray-50 px-8"
+    >
+      <View className="h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+        <Ionicons name="location-outline" size={26} color="#0f0d23" />
+      </View>
+      <Text className="mt-4 text-center text-lg font-semibold text-primary">
+        This snap isn’t available
+      </Text>
+      <Text className="mt-2 text-center text-sm leading-5 text-gray-500">
+        It may have expired nearby, or the link is no longer valid.
+      </Text>
+    </View>
   );
+}
 
-  const snapPayload = snapData?.data;
-  const snap = snapPayload?.snap || (snapPayload as any);
-  const snapCreatorId = snap?._userId || snap?.userId;
+const SnapDetails = () => {
+  const params = useLocalSearchParams<{ id: string }>();
+  const {
+    data: snapPayload,
+    isLoading: isSnapLoading,
+    isError: isSnapError,
+  } = useSnapById(params.id);
+  const snap = snapPayload?.snap;
+  const images = snapPayload?.imageKeys ?? [];
+  const snapCreatorId = snap?._userId;
 
-  const { data: userData, isLoading: isUserLoading } = useUser(snapCreatorId);
+  const { data: userPayload, isLoading: isUserLoading } = useUser(snapCreatorId);
+  const { data: settings } = useUserSettings();
+  const viewerId = useUserStore((state) => state.user?.id);
+  const viewerLocation = useLocation((state) => state.location);
 
-  if (isSnapLoading || isUserLoading) return <Loading />;
+  if (isSnapLoading) {
+    return <Loading cause="Opening this snap…" />;
+  }
 
-  const user = userData?.data ? ((userData.data as any).user || userData.data) : undefined;
-  const images = snapPayload?.imageKeys || snap?.snaps || [];
+  if (isSnapError || !snap) {
+    return (
+      <>
+        <Stack.Screen options={{ title: "Snap" }} />
+        <SnapUnavailable />
+      </>
+    );
+  }
 
-  const snapTag = (snap?.tag || snap?.snap?.tag || "SOCIAL") as keyof typeof TagsColors;
-  const snapDescription = snap?.description || snap?.snap?.description || "";
+  const user = userPayload?.user;
+  const authorName = formatUserDisplayName(user);
+  const authorImage =
+    userPayload?.userImage || user?.userImage || user?.image;
+  const [lng, lat] = snap.location.coordinates;
+  const distanceMeters = isValidSnapLocation(viewerLocation)
+    ? haversineDistanceMeters(viewerLocation.coordinates, snap.location.coordinates)
+    : null;
 
   return (
-    // The main container to center everything
-    <View className="flex-1 items-center bg-white p-4">
-      {/* This is the white card container that holds both the image and the text */}
-      <View
-        style={{ width: CARD_WIDTH }}
-        className="bg-white rounded-lg overflow-hidden"
-      >
-        {/* Image/Carousel container */}
-        <View style={{ height: IMAGE_HEIGHT, width: "100%" }}>
-          <Carousel
-            // The width of the carousel items is the CARD_WIDTH
-            width={CARD_WIDTH}
-            height={IMAGE_HEIGHT} // Carousel height matches image height
-            autoPlay={false}
-            data={images}
-            loop={images.length > 1}
-            scrollAnimationDuration={500}
-            onSnapToItem={(index) => setActiveIndex(index)}
-            renderItem={({ item }: { item: string }) => (
-              <ImageWithSkeleton uri={item} className={"w-full flex-1"} />
-            )}
-          />
-        </View>
-
-        {/* Text/Details section below the image */}
-        <View className="p-4">
-          <View className="flex items-center justify-between flex-row">
-            <Text className="font-bold text-lg mb-1">
-              {`${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Anonymous"}
-            </Text>
-
-            <Text
-              className="font-bold text-sm mb-1 px-2 rounded-full text-white "
-              style={{
-                backgroundColor: TagsColors[snapTag] || "black",
-              }}
-            >
-              {snapTag}
-            </Text>
-          </View>
-          <ScrollView style={{ maxHeight: 50 }}>
-            <Text className="text-base text-gray-700">
-              {snapDescription}
-            </Text>
-          </ScrollView>
-
-          {/* Pagination Dots - only show if there are multiple images */}
-          {images.length > 1 && (
-            <View className="flex-row justify-center items-center mt-3">
-              {images.map((_: string, index: number) => (
-                <View
-                  key={index}
-                  className={`h-2 w-2 rounded-full mx-1 ${
-                    activeIndex === index ? "bg-black" : "bg-gray-300"
-                  }`}
-                />
-              ))}
-            </View>
-          )}
-        </View>
-      </View>
-    </View>
+    <>
+      <Stack.Screen options={{ title: displayTag(snap.tag ?? "SOCIAL") }} />
+      <SnapDetailsView
+        images={images}
+        tag={snap.tag ?? "SOCIAL"}
+        description={snap.description ?? ""}
+        authorName={authorName}
+        authorBio={user?.bio}
+        authorImage={authorImage}
+        isAuthorLoading={Boolean(snapCreatorId) && isUserLoading}
+        isOwnSnap={Boolean(viewerId && snapCreatorId && viewerId === snapCreatorId)}
+        createdAt={snap.createdAt}
+        latitude={lat}
+        longitude={lng}
+        distanceMeters={distanceMeters}
+        lifetimeDays={settings?.snapDisappearTime}
+        status={snap.status}
+      />
+    </>
   );
 };
 
 export default SnapDetails;
-

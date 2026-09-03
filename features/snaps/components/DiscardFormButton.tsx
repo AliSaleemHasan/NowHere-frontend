@@ -1,11 +1,11 @@
-import { useSnap } from "@/features/snaps/context/snap-store";
+import { useSnapDraft } from "@/features/snaps/context/snap-store";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Alert, Pressable, Text } from "react-native";
 
 export default function DiscardFormButton() {
   const router = useRouter();
-  const clearSnaps = useSnap((state) => state.clearSnaps);
+  const clearSnaps = useSnapDraft((state) => state.clearSnaps);
   const handleDiscardSnap = () => {
     Alert.alert(
       "Discard this snap?",
@@ -23,12 +23,12 @@ export default function DiscardFormButton() {
           text: "Cancel",
           style: "cancel",
         },
-      ]
+      ],
     );
   };
   return (
-    <Pressable onPressIn={handleDiscardSnap}>
-      <Text className="text-lg font-extralight">X</Text>
+    <Pressable onPressIn={handleDiscardSnap} hitSlop={10}>
+      <Text className="text-sm font-medium text-error">Discard</Text>
     </Pressable>
   );
 }

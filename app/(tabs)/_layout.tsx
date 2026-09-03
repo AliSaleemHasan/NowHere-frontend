@@ -8,22 +8,19 @@ import React, { useEffect } from "react";
 const TabsLayout = () => {
   const router = useRouter();
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
-  const fetchLocation = useLocation((state) => state.featchLocation);
+  const fetchLocation = useLocation((state) => state.fetchLocation);
 
   const isLocationError = useLocation((state) => state.error);
 
   useEffect(() => {
     fetchLocation();
-  }, []);
+  }, [fetchLocation]);
 
-  if (isLocationError) return <LocationRequired withErrorImage />;
-
-  // if (isLocationLoading)
-  //   return (
-  //     <Loading
-  //       cause={`Location is loading ${isLocationError && "with this error" + isLocationError} `}
-  //     />
-  //   );
+  if (isLocationError) {
+    return (
+      <LocationRequired withErrorImage onGranted={fetchLocation} />
+    );
+  }
 
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
@@ -36,7 +33,7 @@ const TabsLayout = () => {
             <FontAwesome size={20} name="map" color={color} />
           ),
         }}
-      ></Tabs.Screen>
+      />
 
       <Tabs.Screen
         name="add-snap"

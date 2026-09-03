@@ -1,84 +1,119 @@
-import AppCamera from "@/components/camera/AppCamera";
-import FromButton from "@/components/FormButton";
-import { apiAuthFetch } from "@/lib/fetch-api";
+import { AppCamera } from "@/components/camera";
+import { patchUser } from "@/features/users/context/user-store";
+import { getErrorMessage } from "@/utils";
+import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { Image, Modal, TouchableOpacity } from "react-native";
+import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import { updateUserImage } from "../api/updateUserImage";
+import { userQueryKeys } from "../api/user-query";
 
 interface Props {
   userId?: string;
   image?: string;
+  size?: number;
 }
 
-export default function ProfileImage({ userId, image }: Props) {
+export default function ProfileImage({ userId, image, size = 112 }: Props) {
   const queryClient = useQueryClient();
-  const [expandImage, setExpandImage] = useState<boolean>(false);
-  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   const updateImageMutation = useMutation({
-    mutationFn: async (data: FormData) =>
-      await apiAuthFetch({
-        url: "image",
-        api: "users",
-        contentType: "files",
-        options: {
-          method: "PUT",
-          body: data,
-        },
-      }),
+    mutationFn: updateUserImage,
   });
 
   const handleUploadPhoto = async (photoUri: string) => {
     setIsCameraOpen(false);
-    setExpandImage(false);
+    setIsPreviewOpen(false);
 
-    const payload = new FormData();
-    payload.set("photo", {
-      uri: photoUri,
-      name: photoUri.split("/").pop() || crypto.randomUUID(),
-      type: `image/${photoUri.split(".").pop() || "jpg"}`,
-    } as any);
-
-    updateImageMutation.mutate(payload, {
-      onSuccess: (data) => {
-        queryClient.setQueryData(["profile", userId], data);
-        queryClient.invalidateQueries({ queryKey: ["profile", userId] });
-        queryClient.invalidateQueries({ queryKey: ["user", userId] });
-        Toast.show({ type: "success", text1: "Profile image updated" });
+    updateImageMutation.mutate(photoUri, {
+      onSuccess: (payload) => {
+        if (payload?.user) {
+          queryClient.setQueryData(userQueryKeys.detail(userId), payload);
+          patchUser({
+            ...payload.user,
+            userImage: payload.userImage || payload.user.image,
+          });
+        }
+        queryClient.invalidateQueries({ queryKey: userQueryKeys.detail(userId) });
+        Toast.show({ type: "success", text1: "Profile photo updated" });
       },
-      onError: (err) => {
-        Toast.show({ type: "error", text1: err.message });
+      onError: (err: unknown) => {
+        Toast.show({
+          type: "error",
+          text1: "Could not update photo",
+          text2: getErrorMessage(err),
+        });
       },
     });
   };
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => setExpandImage((expanded) => !expanded)}
-        className={`${expandImage ? "w-full flex-1" : "w-40 h-40 "}  bg-transparent shadow-sm shadow-primary rounded-full relative`}
+      <View style={{ width: size, height: size }} className="relative">
+        <TouchableOpacity
+          onPress={() => setIsPreviewOpen(true)}
+          className="h-full w-full overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-sm"
+          accessibilityLabel="View profile photo"
+        >
+          <Image
+            source={
+              image ? { uri: image } : require("@/assets/images/icon.png")
+            }
+            resizeMode="cover"
+            className="h-full w-full"
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setIsCameraOpen(true)}
+          disabled={updateImageMutation.isPending}
+          className="absolute bottom-0 right-0 h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-primary"
+          accessibilityLabel="Change profile photo"
+        >
+          <Ionicons name="camera" size={16} color="#ffffff" />
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        visible={isPreviewOpen}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setIsPreviewOpen(false)}
       >
-        <Image
-          source={
-            image ? { uri: `${image}` } : require("@/assets/images/icon.png")
-          }
-          resizeMode="contain"
-          className="w-full h-full rounded-full"
-        />
-      </TouchableOpacity>
-      {expandImage && (
-        <FromButton
-          text="Upload New.."
-          onSubmit={() => setIsCameraOpen(true)}
-          isLoading={updateImageMutation.isPending}
-        />
-      )}
+        <View className="flex-1 items-center justify-center bg-black/80 px-6">
+          <Image
+            source={
+              image ? { uri: image } : require("@/assets/images/icon.png")
+            }
+            className="h-72 w-72 rounded-full"
+            resizeMode="cover"
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setIsPreviewOpen(false);
+              setIsCameraOpen(true);
+            }}
+            className="mt-6 rounded-full bg-white px-5 py-3"
+          >
+            <Text className="font-semibold text-primary">Take a new photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsPreviewOpen(false)}
+            className="mt-3 px-5 py-2"
+          >
+            <Text className="text-white">Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       <Modal
         visible={isCameraOpen}
         animationType="slide"
         presentationStyle="fullScreen"
+        onRequestClose={() => setIsCameraOpen(false)}
       >
         <AppCamera
           onCapture={handleUploadPhoto}
