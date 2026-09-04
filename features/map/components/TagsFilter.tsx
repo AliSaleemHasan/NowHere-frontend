@@ -1,7 +1,6 @@
 import CustomCheckbox from "@/components/Checkbox";
 import FormButton from "@/components/FormButton";
 import { displayTag, parseTagsParam, SELECTABLE_TAGS, Tags } from "@/utils";
-import { FontAwesome } from "@expo/vector-icons";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -9,19 +8,26 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
 import React, {
-  PropsWithChildren,
   useCallback,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+type TagsFilterApi = {
+  openFilter: () => void;
+};
+
 const TagsFilter = ({
   children,
   isLoggedIn = false,
-}: PropsWithChildren<{ isLoggedIn?: boolean }>) => {
+}: {
+  children: (api: TagsFilterApi) => ReactNode;
+  isLoggedIn?: boolean;
+}) => {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{
     tags?: string | string[];
@@ -46,6 +52,10 @@ const TagsFilter = ({
     [],
   );
 
+  const openFilter = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
+
   const handleTagsFilter = () => {
     router.setParams({
       tags: searchTags,
@@ -55,18 +65,8 @@ const TagsFilter = ({
 
   return (
     <GestureHandlerRootView className="flex-1">
-      {children}
+      {children({ openFilter })}
 
-      <View className="absolute right-5 top-20 flex gap-4">
-        <TouchableOpacity
-          onPress={() => bottomSheetRef.current?.expand()}
-          accessibilityRole="button"
-          accessibilityLabel={t("map.filterA11y")}
-          className="z-50 items-center rounded-full bg-white px-5 py-6"
-        >
-          <FontAwesome size={14} name="filter" />
-        </TouchableOpacity>
-      </View>
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}

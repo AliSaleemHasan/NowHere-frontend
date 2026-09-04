@@ -1,6 +1,7 @@
-import MapListToggle, {
-  type MapViewMode,
-} from "./MapListToggle";
+import ExploreChrome from "./ExploreChrome";
+import { type MapViewMode } from "./MapListToggle";
+import EmptyState from "@/components/EmptyState";
+import { SafeScreen } from "@/components/SafeScreen";
 import { useAuth } from "@/features/auth/context/auth-store";
 import TagsFilter from "@/features/map/components/TagsFilter";
 import { UnifiedMap } from "@/features/map/components/UnifiedMap";
@@ -14,12 +15,14 @@ import {
   getSnapId,
   isValidSnapLocation,
 } from "@/features/snaps/types/snaps-api-type";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 type FeedStatus = {
+  icon: keyof typeof Ionicons.glyphMap;
   title: string;
   body: string;
   actionLabel?: string;
@@ -27,44 +30,44 @@ type FeedStatus = {
 };
 
 function NearbyFeedStatus({
+  icon,
   title,
   body,
   actionLabel,
   onAction,
   overlay = false,
 }: FeedStatus & { overlay?: boolean }) {
-  const action = actionLabel && onAction ? (
-    <TouchableOpacity
-      onPress={onAction}
-      className={`mt-3 rounded-full bg-primary ${overlay ? "self-start px-4 py-2" : "self-center px-5 py-3"}`}
-    >
-      <Text
-        className={`font-semibold text-white ${overlay ? "text-xs" : ""}`}
-      >
-        {actionLabel}
-      </Text>
-    </TouchableOpacity>
-  ) : null;
-
-  if (overlay) {
+  if (!overlay) {
     return (
-      <View className="absolute bottom-6 left-5 right-5 rounded-2xl bg-white px-4 py-3 shadow-sm">
-        <Text className="text-sm font-medium text-primary">{title}</Text>
-        <Text className="mt-1 text-xs text-gray-500">{body}</Text>
-        {action}
-      </View>
+      <EmptyState
+        icon={icon}
+        title={title}
+        body={body}
+        actionLabel={actionLabel}
+        onAction={onAction}
+      />
     );
   }
 
   return (
-    <View className="items-center px-2 py-6">
-      <Text className="text-center text-base font-semibold text-primary">
-        {title}
-      </Text>
-      <Text className="mt-2 text-center text-sm leading-5 text-gray-500">
-        {body}
-      </Text>
-      {action}
+    <View className="absolute bottom-6 left-5 right-5 z-40 flex-row items-start rounded-2xl bg-white px-4 py-3 shadow-sm">
+      <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+        <Ionicons name={icon} size={18} color="#0f0d23" />
+      </View>
+      <View className="flex-1">
+        <Text className="text-sm font-medium text-primary">{title}</Text>
+        <Text className="mt-1 text-xs text-gray-500">{body}</Text>
+        {actionLabel && onAction ? (
+          <TouchableOpacity
+            onPress={onAction}
+            className="mt-3 self-start rounded-full bg-primary px-4 py-2"
+          >
+            <Text className="text-xs font-semibold text-white">
+              {actionLabel}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -84,11 +87,10 @@ const NowHereMap = () => {
   const [lng, lat] = hasValidLocation ? location.coordinates : [0, 0];
   const showSeen = params.seen === "1";
 
-  const snaps = (query.data?.success ? query.data.data : undefined) ?? [];
-  const visibleSnaps = useMemo(
-    () => filterHiddenSnaps(snaps, hiddenSnapIds),
-    [snaps, hiddenSnapIds],
-  );
+  const visibleSnaps = useMemo(() => {
+    const snaps = (query.data?.success ? query.data.data : undefined) ?? [];
+    return filterHiddenSnaps(snaps, hiddenSnapIds);
+  }, [query.data, hiddenSnapIds]);
 
   const mapRegion = useMemo(
     () => ({
@@ -102,10 +104,10 @@ const NowHereMap = () => {
 
   if (!hasValidLocation || loading) {
     return (
-      <View className="h-full w-full flex-1 items-center justify-center gap-3">
+      <SafeScreen className="items-center justify-center gap-3 bg-gray-50">
         <ActivityIndicator size="large" />
         <Text className="text-sm text-gray-500">{t("map.locating")}</Text>
-      </View>
+      </SafeScreen>
     );
   }
 
@@ -119,6 +121,7 @@ const NowHereMap = () => {
   let feedStatus: FeedStatus | null = null;
   if (isLoggedIn && query.isError) {
     feedStatus = {
+      icon: "cloud-offline-outline",
       title: t("map.loadErrorTitle"),
       body: t("map.loadErrorBody"),
       actionLabel: t("map.retry"),
@@ -127,9 +130,14 @@ const NowHereMap = () => {
       },
     };
   } else if (isLoggedIn && !query.isLoading && visibleSnaps.length === 0) {
-    feedStatus = { title: emptyTitle, body: emptyBody };
+    feedStatus = {
+      icon: showSeen ? "eye-outline" : "locate-outline",
+      title: emptyTitle,
+      body: emptyBody,
+    };
   } else if (!isLoggedIn) {
     feedStatus = {
+      icon: "log-in-outline",
       title: t("map.signInTitle"),
       body: t("map.signInBody"),
       actionLabel: t("map.signIn"),
@@ -143,34 +151,61 @@ const NowHereMap = () => {
 
   return (
     <TagsFilter isLoggedIn={isLoggedIn}>
-      {viewMode === "list" ? (
-        <NearbySnapList
-          snaps={visibleSnaps}
-          viewerLocation={location}
-          isLoading={isLoggedIn && query.isLoading}
-          empty={statusNode}
-        />
-      ) : (
-        <UnifiedMap region={mapRegion} showUserLocation>
-          {visibleSnaps.map((snap) => {
-            const snapId = getSnapId(snap);
-            const coordinates = snap.location?.coordinates;
-            if (!snapId || !coordinates || coordinates.length < 2) return null;
-            return (
-              <MapMarker
-                id={snapId}
-                lat={Number(coordinates[1])}
-                lng={Number(coordinates[0])}
-                tag={snap.tag}
-                resolution={snap.resolution}
-                key={snapId}
+      {({ openFilter }) => (
+        <View className="flex-1 bg-gray-50">
+          <View
+            className="flex-1"
+            pointerEvents={viewMode === "map" ? "auto" : "none"}
+          >
+            <UnifiedMap region={mapRegion} showUserLocation>
+              {visibleSnaps.map((snap) => {
+                const snapId = getSnapId(snap);
+                const coordinates = snap.location?.coordinates;
+                if (!snapId || !coordinates || coordinates.length < 2) {
+                  return null;
+                }
+                return (
+                  <MapMarker
+                    id={snapId}
+                    lat={Number(coordinates[1])}
+                    lng={Number(coordinates[0])}
+                    tag={snap.tag}
+                    resolution={snap.resolution}
+                    key={snapId}
+                  />
+                );
+              })}
+            </UnifiedMap>
+          </View>
+
+          {viewMode === "map" ? (
+            <>
+              <ExploreChrome
+                overlay
+                mode={viewMode}
+                onModeChange={setViewMode}
+                onOpenFilter={openFilter}
               />
-            );
-          })}
-        </UnifiedMap>
+              {statusNode}
+            </>
+          ) : (
+            <View className="absolute inset-0 bg-gray-50">
+              <ExploreChrome
+                mode={viewMode}
+                onModeChange={setViewMode}
+                onOpenFilter={openFilter}
+              >
+                <NearbySnapList
+                  snaps={visibleSnaps}
+                  viewerLocation={location}
+                  isLoading={isLoggedIn && query.isLoading}
+                  empty={statusNode}
+                />
+              </ExploreChrome>
+            </View>
+          )}
+        </View>
       )}
-      <MapListToggle mode={viewMode} onChange={setViewMode} />
-      {viewMode === "map" ? statusNode : null}
     </TagsFilter>
   );
 };

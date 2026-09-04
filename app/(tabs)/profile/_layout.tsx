@@ -1,6 +1,5 @@
 import LogoutButton from "@/features/auth/components/LogoutButton";
-import { Ionicons } from "@expo/vector-icons";
-import { Link, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,14 +11,7 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: t("users.profile.title"),
-          headerShadowVisible: false,
-          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
-          headerRight: () => (
-            <Link href="/(tabs)/profile/settings" className="p-1">
-              <Ionicons name="settings-outline" size={20} />
-            </Link>
-          ),
+          headerShown: false,
         }}
       />
 

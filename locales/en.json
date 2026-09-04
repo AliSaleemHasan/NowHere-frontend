@@ -1,5 +1,6 @@
 {
   "auth": {
+    "brandA11y": "NowHere",
     "password": {
       "minLength": "Password must be at least 8 characters",
       "lowercase": "One lowercase letter is required",
@@ -386,6 +387,7 @@
     "toggleMap": "Map",
     "toggleList": "List",
     "toggleA11y": "Map or list view",
+    "listTitle": "Nearby snaps",
     "locating": "Locating...",
     "loadErrorTitle": "Couldn’t load nearby snaps",
     "loadErrorBody": "Pull back to this tab or retry. Your snap is still saved if you already shared.",
@@ -506,8 +508,14 @@
     "network": "Unable to connect to the server. Please check your internet connection.",
     "tooManyAttempts": "Too many attempts. Try again in 15 minutes."
   },
+  "notFound": {
+    "title": "This page isn’t available",
+    "body": "It may have been moved, or the link is no longer valid."
+  },
   "common": {
     "tryAgain": "Try again",
-    "error": "Error"
+    "error": "Error",
+    "close": "Close",
+    "backToMap": "Back to map"
   }
 }

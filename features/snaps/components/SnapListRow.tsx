@@ -1,3 +1,4 @@
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import { formatDistanceAway } from "@/lib/geo";
 import { displayTag, formatRelativeTime, tagColor } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +8,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { isFoundResolution } from "../lib/snap-safety-actions";
 import { getSnapId, type Snap } from "../types/snaps-api-type";
 import FoundBadge from "./FoundBadge";
+
+function publicImageUri(value: string): string | undefined {
+  return value.startsWith("http://") || value.startsWith("https://")
+    ? value
+    : undefined;
+}
 
 type Props = {
   snap: Snap;
@@ -22,6 +29,9 @@ export default function SnapListRow({ snap, onPress, distanceMeters }: Props) {
   const posted = formatRelativeTime(snap.createdAt, Date.now(), "short");
   const distance =
     distanceMeters == null ? null : formatDistanceAway(distanceMeters);
+  const thumbnail = snap.snaps
+    .map(publicImageUri)
+    .find((uri): uri is string => Boolean(uri));
 
   return (
     <TouchableOpacity
@@ -31,11 +41,17 @@ export default function SnapListRow({ snap, onPress, distanceMeters }: Props) {
       onPress={onPress}
       className="mb-3 flex-row items-center rounded-3xl bg-white px-4 py-3 shadow-sm"
     >
-      <View
-        className="h-11 w-11 items-center justify-center rounded-2xl"
-        style={{ backgroundColor: `${color}22` }}
-      >
-        <Ionicons name="location" size={18} color={color} />
+      <View className="relative h-12 w-12 overflow-hidden rounded-2xl">
+        {thumbnail ? (
+          <ImageWithSkeleton uri={thumbnail} className="h-12 w-12" />
+        ) : (
+          <View
+            className="h-12 w-12 items-center justify-center"
+            style={{ backgroundColor: `${color}22` }}
+          >
+            <Ionicons name="image-outline" size={18} color={color} />
+          </View>
+        )}
       </View>
       <View className="ml-3 flex-1">
         <View className="flex-row items-center">

@@ -1,4 +1,5 @@
 import LocationRequired from "@/components/LocationRequired";
+import { SafeScreen } from "@/components/SafeScreen";
 import { useAuth } from "@/features/auth/context/auth-store";
 import {
   hasLocationConsent,
@@ -8,6 +9,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+
+export const unstable_settings = {
+  initialRouteName: "index",
+};
 
 const TabsLayout = () => {
   const { t } = useTranslation();
@@ -25,16 +30,21 @@ const TabsLayout = () => {
 
   if (isLocationError) {
     return (
-      <LocationRequired
-        withErrorImage
-        disabled={!hasLocationConsent(locationConsentAt)}
-        onGranted={fetchLocation}
-      />
+      <SafeScreen edges={["top", "bottom"]} className="bg-white">
+        <LocationRequired
+          withErrorImage
+          disabled={!hasLocationConsent(locationConsentAt)}
+          onGranted={fetchLocation}
+        />
+      </SafeScreen>
     );
   }
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
+    <Tabs
+      initialRouteName="index"
+      screenOptions={{ tabBarActiveTintColor: "black" }}
+    >
       <Tabs.Screen
         name="index"
         options={{

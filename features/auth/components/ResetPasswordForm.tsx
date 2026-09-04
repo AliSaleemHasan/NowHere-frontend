@@ -7,13 +7,14 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Keyboard, Text, View } from "react-native";
+import { Keyboard } from "react-native";
 import { getResetErrorMessage } from "../get-reset-error-message";
 import { useResetPassword } from "../hooks/use-auth-mutations";
 import {
   resetPasswordSchema,
   type ResetPasswordFormData,
 } from "../validation/reset-password-schema";
+import { AuthFormShell } from "./AuthFormShell";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 
 function readTokenParam(value: string | string[] | undefined): string {
@@ -51,11 +52,7 @@ export const ResetPasswordForm = () => {
 
   if (!token) {
     return (
-      <View className="h-full w-full items-center justify-center gap-4 px-6">
-        <Text className="text-center text-xl">{t("auth.reset.title")}</Text>
-        <Text className="text-center text-sm leading-5 text-gray-600">
-          {invalidMessage}
-        </Text>
+      <AuthFormShell title={t("auth.reset.title")} subtitle={invalidMessage}>
         <AuthRedirectPrompt
           linkText={t("auth.reset.backToLogin")}
           promptText={t("auth.reset.haveAccount")}
@@ -63,19 +60,16 @@ export const ResetPasswordForm = () => {
             router.replace("/login");
           }}
         />
-      </View>
+      </AuthFormShell>
     );
   }
 
   if (mutation.isSuccess) {
     return (
-      <View className="h-full w-full items-center justify-center gap-4 px-6">
-        <Text className="text-center text-xl">
-          {t("auth.reset.successTitle")}
-        </Text>
-        <Text className="text-center text-sm leading-5 text-gray-600">
-          {t("auth.reset.successBody")}
-        </Text>
+      <AuthFormShell
+        title={t("auth.reset.successTitle")}
+        subtitle={t("auth.reset.successBody")}
+      >
         <AuthRedirectPrompt
           linkText={t("auth.reset.backToLogin")}
           promptText={t("auth.reset.haveAccount")}
@@ -83,65 +77,61 @@ export const ResetPasswordForm = () => {
             router.replace("/login");
           }}
         />
-      </View>
+      </AuthFormShell>
     );
   }
 
   return (
-    <View className="h-full w-full items-center justify-center gap-4">
-      <Text className="text-center text-xl">{t("auth.reset.title")}</Text>
-      <Text className="px-8 text-center text-sm leading-5 text-gray-600">
-        {t("auth.reset.intro")}
-      </Text>
-
-      <View className="h-2/3 w-5/6 gap-4">
-        <Input
-          control={control}
-          name="newPassword"
-          placeholder={t("auth.reset.newPlaceholder")}
-          secureTextEntry
-          autoComplete="new-password"
-          textContentType="newPassword"
+    <AuthFormShell
+      title={t("auth.reset.title")}
+      subtitle={t("auth.reset.intro")}
+    >
+      <Input
+        control={control}
+        name="newPassword"
+        placeholder={t("auth.reset.newPlaceholder")}
+        secureTextEntry
+        autoComplete="new-password"
+        textContentType="newPassword"
+      />
+      {errors.newPassword?.message ? (
+        <FormError message={t(errors.newPassword.message)} />
+      ) : null}
+      <Input
+        control={control}
+        name="confirm"
+        placeholder={t("auth.reset.confirmPlaceholder")}
+        secureTextEntry
+        autoComplete="new-password"
+        textContentType="newPassword"
+      />
+      {errors.confirm?.message ? (
+        <FormError message={t(errors.confirm.message)} />
+      ) : null}
+      <FormButton
+        testID="reset-submit"
+        onSubmit={handleSubmit(onSubmit)}
+        disabled={!isValid}
+        text={t("auth.reset.submit")}
+        isLoading={isSubmitting || mutation.isPending}
+      />
+      {mutation.error ? (
+        <FormError
+          message={getResetErrorMessage(
+            mutation.error,
+            invalidMessage,
+            fallbackMessage,
+          )}
+          errors={getApiValidationErrors(mutation.error)}
         />
-        {errors.newPassword?.message ? (
-          <FormError message={t(errors.newPassword.message)} />
-        ) : null}
-        <Input
-          control={control}
-          name="confirm"
-          placeholder={t("auth.reset.confirmPlaceholder")}
-          secureTextEntry
-          autoComplete="new-password"
-          textContentType="newPassword"
-        />
-        {errors.confirm?.message ? (
-          <FormError message={t(errors.confirm.message)} />
-        ) : null}
-        <FormButton
-          testID="reset-submit"
-          onSubmit={handleSubmit(onSubmit)}
-          disabled={!isValid}
-          text={t("auth.reset.submit")}
-          isLoading={isSubmitting || mutation.isPending}
-        />
-        {mutation.error ? (
-          <FormError
-            message={getResetErrorMessage(
-              mutation.error,
-              invalidMessage,
-              fallbackMessage,
-            )}
-            errors={getApiValidationErrors(mutation.error)}
-          />
-        ) : null}
-        <AuthRedirectPrompt
-          linkText={t("auth.reset.backToLogin")}
-          promptText={t("auth.reset.haveAccount")}
-          onPress={() => {
-            router.replace("/login");
-          }}
-        />
-      </View>
-    </View>
+      ) : null}
+      <AuthRedirectPrompt
+        linkText={t("auth.reset.backToLogin")}
+        promptText={t("auth.reset.haveAccount")}
+        onPress={() => {
+          router.replace("/login");
+        }}
+      />
+    </AuthFormShell>
   );
 };

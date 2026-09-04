@@ -23,8 +23,14 @@ export default function LogoutButton() {
   const logout = useAuth((state) => state.logout);
 
   return (
-    <Pressable onPress={() => confirmLogout(logout)} hitSlop={10}>
-      <Ionicons size={20} name="log-out-outline" />
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={i18n.t("users.profile.logout")}
+      onPress={() => confirmLogout(logout)}
+      hitSlop={12}
+      className="p-1"
+    >
+      <Ionicons size={22} name="log-out-outline" color="#0f0d23" />
     </Pressable>
   );
 }

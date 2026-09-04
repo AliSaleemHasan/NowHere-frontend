@@ -6,7 +6,7 @@ export const ErrorBoundary = NowHereError;
 
 const ForgotPassword = () => {
   return (
-    <AvoidKeyboard>
+    <AvoidKeyboard edges={["bottom"]}>
       <ForgotPasswordForm />
     </AvoidKeyboard>
   );

@@ -1,5 +1,6 @@
 import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
+import { SafeAreaView, SafeScreen } from "@/components/SafeScreen";
 import { useAuth } from "@/features/auth/context/auth-store";
 import { confirmLogout } from "@/features/auth/components/LogoutButton";
 import { useUser } from "@/features/users/api/useUser";
@@ -86,14 +87,14 @@ export default function Profile() {
 
   if (!userId) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-50 p-6">
+      <SafeScreen className="items-center justify-center bg-gray-50 p-6">
         <Text className="text-center text-base font-semibold text-primary">
           {t("users.profile.sessionMissingTitle")}
         </Text>
         <Text className="mt-2 text-center text-sm text-gray-500">
           {t("users.profile.sessionMissingBody")}
         </Text>
-      </View>
+      </SafeScreen>
     );
   }
 
@@ -109,16 +110,30 @@ export default function Profile() {
   const onLogout = () => confirmLogout(logout);
 
   return (
-    <ScrollView
-      className="flex-1 bg-gray-50"
-      contentContainerClassName="pb-10"
-    >
-      <View className="bg-primary px-6 pb-16 pt-10">
-        <Text className="text-xs uppercase tracking-widest text-white/70">
-          {t("users.profile.yourProfile")}
-        </Text>
-        <Text className="mt-1 text-2xl font-semibold text-white">{name}</Text>
-      </View>
+    <View className="flex-1 bg-gray-50">
+      <SafeAreaView edges={["top"]} className="bg-primary" />
+      <ScrollView
+        className="flex-1 bg-gray-50"
+        contentContainerClassName="pb-10"
+      >
+        <View className="bg-primary px-5 pb-16 pt-2">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-xs uppercase tracking-widest text-white/70">
+              {t("users.profile.yourProfile")}
+            </Text>
+            <TouchableOpacity
+              testID="profile-settings"
+              accessibilityRole="button"
+              accessibilityLabel={t("users.profile.settingsTitle")}
+              hitSlop={12}
+              onPress={() => router.push("/(tabs)/profile/settings")}
+              className="h-10 w-10 items-center justify-center"
+            >
+              <Ionicons name="settings-outline" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+          <Text className="mt-2 text-2xl font-semibold text-white">{name}</Text>
+        </View>
 
       <View className="-mt-12 items-center px-5">
         <View className="w-full items-center rounded-3xl bg-white px-5 pb-6 pt-4 shadow-sm">
@@ -222,6 +237,7 @@ export default function Profile() {
           />
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

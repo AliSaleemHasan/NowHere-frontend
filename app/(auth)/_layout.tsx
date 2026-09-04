@@ -1,21 +1,27 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 
 export default function Layout() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <Stack
       screenOptions={{
         headerShown: true,
-        headerTransparent: true,
+        headerTransparent: false,
+        headerShadowVisible: false,
         contentStyle: { backgroundColor: "white" },
         headerTitle: "",
         headerLeft: () => (
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t("common.close")}
+            hitSlop={16}
             onPressIn={() => router.replace("/")}
-            className="ml-4 p-3 "
+            className="ml-1 p-3"
           >
             <FontAwesome name="close" size={15} color="black" />
           </Pressable>

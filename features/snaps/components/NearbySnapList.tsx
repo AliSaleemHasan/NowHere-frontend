@@ -43,9 +43,9 @@ export default function NearbySnapList({
       data={snaps}
       keyExtractor={(item) => getSnapId(item) ?? item.id}
       contentContainerClassName={
-        snaps.length === 0 ? "flex-grow justify-center px-5 pb-24 pt-28" : "p-4 pb-28"
+        snaps.length === 0 ? "flex-grow justify-center px-5 pb-8" : "p-4 pb-8"
       }
-      ListEmptyComponent={empty ? <>{empty}</> : null}
+      ListEmptyComponent={empty ? <View>{empty}</View> : null}
       renderItem={({ item }) => {
         const id = getSnapId(item);
         if (!id) return null;

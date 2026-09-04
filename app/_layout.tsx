@@ -29,8 +29,10 @@ const queryClient = new QueryClient({
 });
 
 export const unstable_settings = {
+  anchor: "(tabs)",
   initialRouteName: "(tabs)",
 };
+
 export default function RootLayout() {
   const { isReady } = useAuthSession();
   if (!isReady) {
@@ -53,23 +55,27 @@ function LocationDependentContent() {
   const locationConsentAt = useLocation((state) => state.locationConsentAt);
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const consented = hasLocationConsent(locationConsentAt);
+  const initialRouteName = !boarding
+    ? "onboarding"
+    : !consented
+      ? "location-consent"
+      : "(tabs)";
 
   return (
-    <Stack>
+    <Stack initialRouteName={initialRouteName}>
       <Stack.Protected guard={boarding && consented}>
-        <Stack.Protected guard={isLoggedIn}>
-          <Stack.Screen
-            name="(snaps)"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
-        </Stack.Protected>
-
         <Stack.Screen
           name="(tabs)"
           options={{
             headerShown: false,
           }}
         />
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen
+            name="(snaps)"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+        </Stack.Protected>
         <Stack.Protected guard={!isLoggedIn}>
           <Stack.Screen
             name="(auth)"
@@ -97,6 +103,7 @@ function LocationDependentContent() {
         name="(legal)"
         options={{ headerShown: false, presentation: "modal" }}
       />
+      <Stack.Screen name="+not-found" options={{ headerShown: true }} />
     </Stack>
   );
 }

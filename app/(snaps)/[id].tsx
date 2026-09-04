@@ -40,20 +40,22 @@ import {
   type SnapBookmark,
 } from "@/features/users/types/bookmark-api-type";
 import { haversineDistanceMeters } from "@/lib/geo";
+import { leaveToHome } from "@/lib/navigation";
 import { formatUserDisplayName } from "@/types/api";
 import { displayTag, getErrorMessage } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Redirect, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Text, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export const ErrorBoundary = NowHereError;
 
 function SnapUnavailable() {
   const { t } = useTranslation();
+  const router = useRouter();
   return (
     <View
       testID="snap-unavailable"
@@ -68,6 +70,15 @@ function SnapUnavailable() {
       <Text className="mt-2 text-center text-sm leading-5 text-gray-500">
         {t("snaps.details.unavailableBody")}
       </Text>
+      <TouchableOpacity
+        testID="snap-unavailable-home"
+        accessibilityRole="button"
+        accessibilityLabel={t("common.backToMap")}
+        onPress={() => leaveToHome(router)}
+        className="mt-6 rounded-full bg-primary px-6 py-3"
+      >
+        <Text className="font-semibold text-white">{t("common.backToMap")}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -77,6 +88,8 @@ const SnapDetails = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{ id: string }>();
+  const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id = typeof rawId === "string" ? rawId.trim() : "";
   const hideSnap = useHiddenSnaps((state) => state.hideSnap);
   const [reportOpen, setReportOpen] = useState(false);
   const [foundOpen, setFoundOpen] = useState(false);
@@ -84,7 +97,7 @@ const SnapDetails = () => {
     data: snapPayload,
     isLoading: isSnapLoading,
     isError: isSnapError,
-  } = useSnapById(params.id);
+  } = useSnapById(id);
   const snap = snapPayload?.snap;
   const images = snapPayload?.imageKeys ?? [];
   const snapCreatorId = snap?._userId;
@@ -97,10 +110,7 @@ const SnapDetails = () => {
   const isOwnSnap = Boolean(
     viewerId && snapCreatorId && viewerId === snapCreatorId,
   );
-  const persistedSaved = isSnapBookmarked(
-    bookmarksQuery.data ?? [],
-    params.id,
-  );
+  const persistedSaved = isSnapBookmarked(bookmarksQuery.data ?? [], id);
 
   const deleteMutation = useMutation({
     mutationFn: deleteSnap,
@@ -112,7 +122,7 @@ const SnapDetails = () => {
         text1: t("snaps.delete.successTitle"),
         text2: t("snaps.delete.successBody"),
       });
-      router.back();
+      leaveToHome(router);
     },
     onError: (err: unknown) => {
       Toast.show({
@@ -200,14 +210,14 @@ const SnapDetails = () => {
 
   const reportMutation = useMutation({
     mutationFn: ({
-      id,
+      id: snapId,
       reason,
       details,
     }: {
       id: string;
       reason: ReportReason;
       details?: string;
-    }) => reportSnap(id, { reason, details }),
+    }) => reportSnap(snapId, { reason, details }),
     onSuccess: () => {
       setReportOpen(false);
       Toast.show({
@@ -235,8 +245,8 @@ const SnapDetails = () => {
   });
 
   const foundMutation = useMutation({
-    mutationFn: ({ id, note }: { id: string; note?: string }) =>
-      markSnapFound(id, note),
+    mutationFn: ({ id: snapId, note }: { id: string; note?: string }) =>
+      markSnapFound(snapId, note),
     onSuccess: (updated) => {
       patchCachedSnap(queryClient, updated);
       invalidateSnapQueries(queryClient);
@@ -282,10 +292,10 @@ const SnapDetails = () => {
       {
         text: t("snaps.details.delete"),
         style: "destructive",
-        onPress: () => deleteMutation.mutate(params.id),
+        onPress: () => deleteMutation.mutate(id),
       },
     ]);
-  }, [deleteMutation, params.id, t]);
+  }, [deleteMutation, id, t]);
 
   const handleHide = useCallback(() => {
     Alert.alert(t("snaps.hide.confirmTitle"), t("snaps.hide.confirmBody"), [
@@ -293,38 +303,42 @@ const SnapDetails = () => {
       {
         text: t("snaps.details.hide"),
         onPress: () => {
-          hideSnap(params.id);
-          evictSnapFromCache(queryClient, params.id);
+          hideSnap(id);
+          evictSnapFromCache(queryClient, id);
           invalidateSnapQueries(queryClient);
           Toast.show({
             type: "success",
             text1: t("snaps.hide.successTitle"),
             text2: t("snaps.hide.successBody"),
           });
-          router.back();
+          leaveToHome(router);
         },
       },
     ]);
-  }, [hideSnap, params.id, queryClient, router, t]);
+  }, [hideSnap, id, queryClient, router, t]);
 
   const handleToggleSave = useCallback(() => {
-    if (!params.id) return;
+    if (!id) return;
     if (persistedSaved) {
-      unsaveMutation.mutate(params.id);
+      unsaveMutation.mutate(id);
     } else {
-      saveMutation.mutate(params.id);
+      saveMutation.mutate(id);
     }
-  }, [persistedSaved, params.id, saveMutation, unsaveMutation]);
+  }, [persistedSaved, id, saveMutation, unsaveMutation]);
 
   const handleReopen = useCallback(() => {
     Alert.alert(t("snaps.reopen.confirmTitle"), t("snaps.reopen.confirmBody"), [
       { text: t("snaps.actions.cancel"), style: "cancel" },
       {
         text: t("snaps.details.reopen"),
-        onPress: () => reopenMutation.mutate(params.id),
+        onPress: () => reopenMutation.mutate(id),
       },
     ]);
-  }, [params.id, reopenMutation, t]);
+  }, [id, reopenMutation, t]);
+
+  if (!id) {
+    return <Redirect href="/" />;
+  }
 
   if (isSnapLoading) {
     return <Loading cause={t("snaps.details.loading")} />;
@@ -391,14 +405,14 @@ const SnapDetails = () => {
         onClose={() => setReportOpen(false)}
         isSubmitting={reportMutation.isPending}
         onSubmit={({ reason, details }) =>
-          reportMutation.mutate({ id: params.id, reason, details })
+          reportMutation.mutate({ id, reason, details })
         }
       />
       <FoundSnapSheet
         visible={foundOpen}
         onClose={() => setFoundOpen(false)}
         isSubmitting={foundMutation.isPending}
-        onSubmit={(note) => foundMutation.mutate({ id: params.id, note })}
+        onSubmit={(note) => foundMutation.mutate({ id, note })}
       />
     </>
   );

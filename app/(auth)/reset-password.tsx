@@ -6,7 +6,7 @@ export const ErrorBoundary = NowHereError;
 
 const ResetPassword = () => {
   return (
-    <AvoidKeyboard>
+    <AvoidKeyboard edges={["bottom"]}>
       <ResetPasswordForm />
     </AvoidKeyboard>
   );

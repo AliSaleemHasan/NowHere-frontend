@@ -1,7 +1,8 @@
+import { SafeAreaView } from "@/components/SafeScreen";
+import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SafeAreaView, Text, TouchableOpacity } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { Text, TouchableOpacity } from "react-native";
 
 export interface CameraPermissionViewProps {
   onRequestPermission: () => void | Promise<unknown>;
