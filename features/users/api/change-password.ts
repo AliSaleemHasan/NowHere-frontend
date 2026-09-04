@@ -1,13 +1,9 @@
 import { apiAuthFetch } from "@/lib/fetch-api";
 
-export type ChangePasswordPayload = {
+export async function changePassword(payload: {
   currentPassword: string;
   newPassword: string;
-};
-
-export async function changePassword(
-  payload: ChangePasswordPayload,
-): Promise<void> {
+}): Promise<void> {
   await apiAuthFetch<unknown>({
     api: "users",
     url: "me/password",

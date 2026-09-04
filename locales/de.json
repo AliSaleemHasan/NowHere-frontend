@@ -66,7 +66,18 @@
       "editSubtitle": "Name und Bio",
       "passwordTitle": "Passwort ändern",
       "passwordSubtitle": "Anmeldepasswort aktualisieren",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "logoutConfirmTitle": "Bei NowHere abmelden?",
+      "logoutConfirmBody": "Du kannst dich jederzeit wieder anmelden.",
+      "logoutCancel": "Abbrechen",
+      "photo": {
+        "updated": "Profilfoto aktualisiert",
+        "updateError": "Foto konnte nicht aktualisiert werden",
+        "takeNew": "Neues Foto aufnehmen",
+        "close": "Schließen",
+        "viewA11y": "Profilfoto anzeigen",
+        "changeA11y": "Profilfoto ändern"
+      }
     },
     "edit": {
       "title": "Profil bearbeiten",

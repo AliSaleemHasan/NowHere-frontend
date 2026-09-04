@@ -66,7 +66,18 @@
       "editSubtitle": "Name and bio",
       "passwordTitle": "Change password",
       "passwordSubtitle": "Update your sign-in password",
-      "logout": "Log out"
+      "logout": "Log out",
+      "logoutConfirmTitle": "Log out of NowHere?",
+      "logoutConfirmBody": "You can sign back in at any time.",
+      "logoutCancel": "Cancel",
+      "photo": {
+        "updated": "Profile photo updated",
+        "updateError": "Could not update photo",
+        "takeNew": "Take a new photo",
+        "close": "Close",
+        "viewA11y": "View profile photo",
+        "changeA11y": "Change profile photo"
+      }
     },
     "edit": {
       "title": "Edit profile",

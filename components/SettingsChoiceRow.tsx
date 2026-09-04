@@ -2,7 +2,7 @@ import { cn } from "@/utils";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-export type SettingsChoiceRowProps<T extends number> = {
+type SettingsChoiceRowProps<T extends number> = {
   label: string;
   description: string;
   options: readonly T[];

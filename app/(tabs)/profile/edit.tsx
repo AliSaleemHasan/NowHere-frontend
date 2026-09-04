@@ -12,11 +12,12 @@ import {
   updateProfileSchema,
   type UpdateProfileForm,
 } from "@/features/users/validation/profile-schema";
+import type { GetUserResponse } from "@/types/api";
 import { getApiValidationErrors, getErrorMessage } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Keyboard, Text, View } from "react-native";
@@ -37,7 +38,7 @@ export default function EditProfile() {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid, isSubmitting, isDirty },
   } = useForm<UpdateProfileForm>({
     defaultValues: {
       firstName: user?.firstName ?? "",
@@ -48,15 +49,18 @@ export default function EditProfile() {
     mode: "onChange",
   });
 
+  const didHydrate = useRef(false);
   useEffect(() => {
     const profile = userQuery.data?.user;
-    if (!profile) return;
+    if (!profile || didHydrate.current) return;
+    didHydrate.current = true;
+    if (isDirty) return;
     reset({
       firstName: profile.firstName ?? "",
       lastName: profile.lastName ?? "",
       bio: profile.bio ?? "",
     });
-  }, [userQuery.data?.user, reset]);
+  }, [userQuery.data?.user, isDirty, reset]);
 
   const mutation = useMutation({
     mutationFn: updateProfile,
@@ -66,13 +70,19 @@ export default function EditProfile() {
     Keyboard.dismiss();
     mutation.mutate(values, {
       onSuccess: (data) => {
-        patchUser(values);
-        if (data && "user" in data && data.user) {
-          patchUser({
-            ...data.user,
-            userImage: data.userImage || data.user.image,
-          });
-        }
+        const saved = data ?? values;
+        patchUser(saved);
+        queryClient.setQueryData<GetUserResponse>(
+          userQueryKeys.detail(userId),
+          (old) =>
+            old
+              ? {
+                  ...old,
+                  user: { ...old.user, ...saved },
+                  userImage: old.userImage || data?.image || "",
+                }
+              : old,
+        );
         queryClient.invalidateQueries({
           queryKey: userQueryKeys.detail(userId),
         });

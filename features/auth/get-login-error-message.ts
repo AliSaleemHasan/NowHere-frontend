@@ -1,8 +1,8 @@
 import { isApiError } from "@/lib/http/api-error";
 import { getErrorMessage } from "@/utils";
 
-export const ACCOUNT_LOCKED_CODE = "ACCOUNT_LOCKED";
-export const ACCOUNT_LOCKED_STATUS = 423;
+const ACCOUNT_LOCKED_CODE = "ACCOUNT_LOCKED";
+const ACCOUNT_LOCKED_STATUS = 423;
 
 export function isAccountLockedError(error: unknown): boolean {
   return (

@@ -1,13 +1,11 @@
 import { apiAuthFetch } from "@/lib/fetch-api";
-import type { GetUserResponse, UserProfile } from "@/types/api";
+import type { UserProfile } from "@/types/api";
 import type { UpdateProfileForm } from "../validation/profile-schema";
 
-export type UpdateProfilePayload = UpdateProfileForm;
-
 export async function updateProfile(
-  payload: UpdateProfilePayload,
-): Promise<GetUserResponse | UserProfile | undefined> {
-  const response = await apiAuthFetch<GetUserResponse | UserProfile>({
+  payload: UpdateProfileForm,
+): Promise<UserProfile | undefined> {
+  const response = await apiAuthFetch<UserProfile>({
     api: "users",
     url: "me",
     options: {
