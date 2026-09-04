@@ -28,6 +28,104 @@
         "lastName": "Last name is required",
         "passwordMismatch": "Passwords don't match"
       }
+    },
+    "login": {
+      "title": "Sign in",
+      "welcome": "Welcome To NowHere",
+      "emailPlaceholder": "Email..",
+      "passwordPlaceholder": "Password..",
+      "submit": "Login",
+      "noAccount": "Don't have an Account",
+      "signUp": "Sign up",
+      "toastSuccessTitle": "Signed in successfully",
+      "toastSuccessBody": "Welcome back!",
+      "toastErrorTitle": "Sign in failed",
+      "toastErrorFallback": "Please check your email and password.",
+      "lockout": "Too many failed attempts. Try again in 15 minutes.",
+      "errors": {
+        "email": "Enter a valid email",
+        "passwordRequired": "Password is required"
+      }
+    }
+  },
+  "users": {
+    "profile": {
+      "title": "Profile",
+      "yourProfile": "Your profile",
+      "sessionMissingTitle": "Session not found",
+      "sessionMissingBody": "Please sign in again to view your profile.",
+      "finishing": "Finishing your profile…",
+      "roleAdmin": "Admin",
+      "roleMember": "Member",
+      "emptyBio": "Share what’s around you — snaps nearby, just for now.",
+      "refreshError": "Could not refresh profile",
+      "fallbackName": "NowHere explorer",
+      "settingsTitle": "Visibility settings",
+      "settingsSubtitle": "Radius, posting distance, lifetime",
+      "editTitle": "Edit profile",
+      "editSubtitle": "Name and bio",
+      "passwordTitle": "Change password",
+      "passwordSubtitle": "Update your sign-in password",
+      "logout": "Log out"
+    },
+    "edit": {
+      "title": "Edit profile",
+      "firstNamePlaceholder": "First name",
+      "lastNamePlaceholder": "Last name",
+      "bioPlaceholder": "A short bio",
+      "submit": "Save",
+      "toastSuccessTitle": "Profile updated",
+      "toastSuccessBody": "Your name and bio were saved.",
+      "toastErrorTitle": "Could not update profile",
+      "toastErrorFallback": "Please try again.",
+      "errors": {
+        "firstName": "First name is required",
+        "lastName": "Last name is required"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "intro": "These values control how far you can see snaps, how far you must move before posting again, and how long snaps stay nearby.",
+      "save": "Save settings",
+      "loading": "Loading your visibility settings…",
+      "notReadyTitle": "Settings aren’t ready yet",
+      "notReadyFallback": "Your profile is still being created. Try again in a moment.",
+      "tryAgain": "Try again",
+      "toastSuccessTitle": "Settings saved",
+      "toastErrorTitle": "Could not save settings",
+      "toastErrorFallback": "Please try again.",
+      "invalidPreset": "Choose one of the available options",
+      "meters": "{{count}} m",
+      "km": "{{count}} km",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "maxDistance": {
+        "title": "Visibility radius",
+        "description": "How far around you nearby snaps can appear on the map."
+      },
+      "newSnapDistance": {
+        "title": "Posting distance",
+        "description": "How far you need to move before you can share another snap in a new area."
+      },
+      "snapDisappearTime": {
+        "title": "Snap lifetime",
+        "description": "How long a snap stays visible to people nearby."
+      }
+    },
+    "password": {
+      "title": "Change password",
+      "currentPlaceholder": "Current password",
+      "newPlaceholder": "New password",
+      "confirmPlaceholder": "Confirm new password",
+      "submit": "Update password",
+      "toastSuccessTitle": "Password updated",
+      "toastSuccessBody": "Use your new password next time you sign in.",
+      "toastErrorTitle": "Could not change password",
+      "toastErrorFallback": "Please try again.",
+      "errors": {
+        "currentRequired": "Current password is required",
+        "mismatch": "Passwords don't match"
+      }
     }
   }
 }

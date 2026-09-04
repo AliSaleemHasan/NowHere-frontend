@@ -28,6 +28,104 @@
         "lastName": "Nachname ist erforderlich",
         "passwordMismatch": "Passwörter stimmen nicht überein"
       }
+    },
+    "login": {
+      "title": "Anmelden",
+      "welcome": "Willkommen bei NowHere",
+      "emailPlaceholder": "E-Mail..",
+      "passwordPlaceholder": "Passwort..",
+      "submit": "Anmelden",
+      "noAccount": "Du hast noch kein Konto?",
+      "signUp": "Registrieren",
+      "toastSuccessTitle": "Anmeldung erfolgreich",
+      "toastSuccessBody": "Willkommen zurück!",
+      "toastErrorTitle": "Anmeldung fehlgeschlagen",
+      "toastErrorFallback": "Bitte prüfe E-Mail und Passwort.",
+      "lockout": "Zu viele Fehlversuche. Versuche es in 15 Minuten erneut.",
+      "errors": {
+        "email": "Gib eine gültige E-Mail-Adresse ein",
+        "passwordRequired": "Passwort ist erforderlich"
+      }
+    }
+  },
+  "users": {
+    "profile": {
+      "title": "Profil",
+      "yourProfile": "Dein Profil",
+      "sessionMissingTitle": "Sitzung nicht gefunden",
+      "sessionMissingBody": "Bitte melde dich erneut an, um dein Profil zu sehen.",
+      "finishing": "Dein Profil wird eingerichtet…",
+      "roleAdmin": "Admin",
+      "roleMember": "Mitglied",
+      "emptyBio": "Erzähl, was um dich herum passiert — Snaps in der Nähe, nur für den Moment.",
+      "refreshError": "Profil konnte nicht aktualisiert werden",
+      "fallbackName": "NowHere-Entdecker",
+      "settingsTitle": "Sichtbarkeitseinstellungen",
+      "settingsSubtitle": "Radius, Mindestabstand, Lebensdauer",
+      "editTitle": "Profil bearbeiten",
+      "editSubtitle": "Name und Bio",
+      "passwordTitle": "Passwort ändern",
+      "passwordSubtitle": "Anmeldepasswort aktualisieren",
+      "logout": "Abmelden"
+    },
+    "edit": {
+      "title": "Profil bearbeiten",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "bioPlaceholder": "Kurze Bio",
+      "submit": "Speichern",
+      "toastSuccessTitle": "Profil aktualisiert",
+      "toastSuccessBody": "Name und Bio wurden gespeichert.",
+      "toastErrorTitle": "Profil konnte nicht gespeichert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "firstName": "Vorname ist erforderlich",
+        "lastName": "Nachname ist erforderlich"
+      }
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "intro": "Diese Werte steuern, wie weit du Snaps siehst, wie weit du dich bewegen musst, bevor du erneut postest, und wie lange Snaps in der Nähe bleiben.",
+      "save": "Einstellungen speichern",
+      "loading": "Sichtbarkeitseinstellungen werden geladen…",
+      "notReadyTitle": "Einstellungen sind noch nicht bereit",
+      "notReadyFallback": "Dein Profil wird noch erstellt. Versuche es gleich noch einmal.",
+      "tryAgain": "Erneut versuchen",
+      "toastSuccessTitle": "Einstellungen gespeichert",
+      "toastErrorTitle": "Einstellungen konnten nicht gespeichert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "invalidPreset": "Wähle eine der verfügbaren Optionen",
+      "meters": "{{count}} m",
+      "km": "{{count}} km",
+      "days_one": "{{count}} Tag",
+      "days_other": "{{count}} Tage",
+      "maxDistance": {
+        "title": "Sichtbarkeitsradius",
+        "description": "Wie weit um dich herum Snaps auf der Karte erscheinen können."
+      },
+      "newSnapDistance": {
+        "title": "Mindestabstand",
+        "description": "Wie weit du dich bewegen musst, bevor du einen weiteren Snap in einem neuen Gebiet teilen kannst."
+      },
+      "snapDisappearTime": {
+        "title": "Snap-Lebensdauer",
+        "description": "Wie lange ein Snap für Personen in der Nähe sichtbar bleibt."
+      }
+    },
+    "password": {
+      "title": "Passwort ändern",
+      "currentPlaceholder": "Aktuelles Passwort",
+      "newPlaceholder": "Neues Passwort",
+      "confirmPlaceholder": "Neues Passwort bestätigen",
+      "submit": "Passwort aktualisieren",
+      "toastSuccessTitle": "Passwort aktualisiert",
+      "toastSuccessBody": "Nutze beim nächsten Anmelden dein neues Passwort.",
+      "toastErrorTitle": "Passwort konnte nicht geändert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "currentRequired": "Aktuelles Passwort ist erforderlich",
+        "mismatch": "Passwörter stimmen nicht überein"
+      }
     }
   }
 }

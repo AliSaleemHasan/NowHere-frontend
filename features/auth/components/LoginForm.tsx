@@ -1,25 +1,24 @@
 import FormButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
-import { getApiValidationErrors, getErrorMessage } from "@/utils";
+import { getApiValidationErrors } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Keyboard, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-import * as z from "zod";
+import { getLoginErrorMessage } from "../get-login-error-message";
 import { useLogin } from "../hooks/use-auth-mutations";
+import {
+  loginSchema,
+  type LoginFormData,
+} from "../validation/login-schema";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 
-const LoginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginFormData = z.infer<typeof LoginSchema>;
-
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const mutation = useLogin();
 
@@ -32,9 +31,12 @@ export const LoginForm = () => {
       email: "",
       password: "",
     },
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
+
+  const lockoutMessage = t("auth.login.lockout");
+  const fallbackMessage = t("auth.login.toastErrorFallback");
 
   const onSubmit = (values: LoginFormData) => {
     Keyboard.dismiss();
@@ -42,19 +44,16 @@ export const LoginForm = () => {
       onSuccess: () => {
         Toast.show({
           type: "success",
-          text1: "Signed in successfully",
-          text2: "Welcome back!",
+          text1: t("auth.login.toastSuccessTitle"),
+          text2: t("auth.login.toastSuccessBody"),
         });
         router.replace("/");
       },
       onError: (err: unknown) => {
         Toast.show({
           type: "error",
-          text1: "Sign in failed",
-          text2: getErrorMessage(
-            err,
-            "Please check your email and password.",
-          ),
+          text1: t("auth.login.toastErrorTitle"),
+          text2: getLoginErrorMessage(err, lockoutMessage, fallbackMessage),
         });
       },
     });
@@ -62,23 +61,23 @@ export const LoginForm = () => {
 
   return (
     <View className="h-full w-full items-center justify-center gap-4">
-      <Text className="text-center text-xl">Sign in</Text>
-      <Text>Welcome To NowHere</Text>
+      <Text className="text-center text-xl">{t("auth.login.title")}</Text>
+      <Text>{t("auth.login.welcome")}</Text>
 
       <View className="h-2/3 w-5/6 gap-4">
         <Input
           control={control}
           name="email"
-          placeholder="Email.."
+          placeholder={t("auth.login.emailPlaceholder")}
           keyboardType="email-address"
           autoComplete="email"
           textContentType="emailAddress"
         />
         {errors.email?.message && (
-          <FormError message={errors.email.message} />
+          <FormError message={t(errors.email.message)} />
         )}
         <Input
-          placeholder="Password.."
+          placeholder={t("auth.login.passwordPlaceholder")}
           name="password"
           control={control}
           secureTextEntry
@@ -86,25 +85,29 @@ export const LoginForm = () => {
           textContentType="password"
         />
         {errors.password?.message && (
-          <FormError message={errors.password.message} />
+          <FormError message={t(errors.password.message)} />
         )}
         <FormButton
           onSubmit={handleSubmit(onSubmit)}
           disabled={!isValid}
-          text="Login"
+          text={t("auth.login.submit")}
           isLoading={isLoading || isSubmitting || mutation.isPending}
         />
 
         {mutation.error && (
           <FormError
-            message={getErrorMessage(mutation.error)}
+            message={getLoginErrorMessage(
+              mutation.error,
+              lockoutMessage,
+              fallbackMessage,
+            )}
             errors={getApiValidationErrors(mutation.error)}
           />
         )}
 
         <AuthRedirectPrompt
-          linkText="Sign up"
-          promptText="Don't have an Account"
+          linkText={t("auth.login.signUp")}
+          promptText={t("auth.login.noAccount")}
           onPress={() => {
             router.navigate("/signup");
           }}
