@@ -25,6 +25,7 @@ module.exports = defineConfig([
             "utils/**/*",
             "components/**/*",
             "lib/**/*",
+            "locales/**/*",
             "assets/**/*",
             "hooks/**/*",
             "types/**/*",

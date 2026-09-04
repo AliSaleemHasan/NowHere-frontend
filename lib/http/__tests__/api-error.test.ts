@@ -36,4 +36,27 @@ describe("ApiError", () => {
   it("uses a generic session message for 401, not login copy", () => {
     expect(ApiError.getDefaultStatusMessage(401)).toMatch(/session has expired/i);
   });
+
+  it("exposes code from problem+json", () => {
+    const error = ApiError.fromResponse(423, {
+      title: "Locked",
+      status: 423,
+      detail: "Too many failed login attempts",
+      code: "ACCOUNT_LOCKED",
+    });
+
+    expect(error.code).toBe("ACCOUNT_LOCKED");
+    expect(error.problemDetails?.code).toBe("ACCOUNT_LOCKED");
+    expect(error.message).toBe("Too many failed login attempts");
+  });
+
+  it("leaves code undefined when problem+json has none", () => {
+    const error = ApiError.fromResponse(401, {
+      title: "Unauthorized",
+      status: 401,
+      detail: "Invalid email or password",
+    });
+
+    expect(error.code).toBeUndefined();
+  });
 });

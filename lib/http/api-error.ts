@@ -30,6 +30,10 @@ export class ApiError extends Error {
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 
+  get code(): string | undefined {
+    return this.problemDetails?.code;
+  }
+
   public static fromResponse(
     statusCode: number,
     data: unknown,
@@ -66,6 +70,7 @@ export class ApiError extends Error {
       errors: Array.isArray(data.errors)
         ? data.errors.filter((item): item is string => typeof item === "string")
         : undefined,
+      code: typeof data.code === "string" ? data.code : undefined,
     };
   }
 

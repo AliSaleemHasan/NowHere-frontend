@@ -6,34 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Keyboard, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-import * as z from "zod";
 import { useSignup } from "../hooks/use-auth-mutations";
+import { signupSchema, type SignupFormData } from "../validation/signup-schema";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
 
-const SignUpSchema = z
-  .object({
-    email: z.email(),
-    password: z
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .regex(/[a-z]/, "One lowercase letter is required")
-      .regex(/[A-Z]/, "One uppercase letter is required")
-      .regex(/\d/, "One number is required")
-      .regex(/[^A-Za-z0-9]/, "One symbol is required"),
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    confirm: z.string(),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
-    path: ["confirm"],
-  });
-
-type SignupFormData = z.infer<typeof SignUpSchema>;
-
 export const SignupForm = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const mutation = useSignup();
 
@@ -49,7 +30,7 @@ export const SignupForm = () => {
       lastName: "",
       confirm: "",
     },
-    resolver: zodResolver(SignUpSchema),
+    resolver: zodResolver(signupSchema),
     mode: "onChange",
   });
 
@@ -62,84 +43,85 @@ export const SignupForm = () => {
       lastName: values.lastName,
     };
 
-    mutation.mutate(data,
-      {
-        onSuccess: () => {
-          Toast.show({
-            type: "success",
-            text1: "Welcome to NowHere!",
-            text2: "Your account has been created.",
-          });
-          router.replace("/");
-        },
-        onError: (err: unknown) => {
-          Toast.show({
-            type: "error",
-            text1: "Sign up failed",
-            text2: getErrorMessage(
-              err,
-              "Please check the form and try again.",
-            ),
-          });
-        },
+    mutation.mutate(data, {
+      onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: t("auth.signup.toastSuccessTitle"),
+          text2: t("auth.signup.toastSuccessBody"),
+        });
+        router.replace("/");
       },
-    );
+      onError: (err: unknown) => {
+        Toast.show({
+          type: "error",
+          text1: t("auth.signup.toastErrorTitle"),
+          text2: getErrorMessage(err, t("auth.signup.toastErrorFallback")),
+        });
+      },
+    });
   };
 
   return (
     <View className="h-full w-full items-center justify-center gap-2">
-      <Text className="text-center text-xl">Sign up</Text>
-      <Text>Welcome To NowHere</Text>
+      <Text className="text-center text-xl">{t("auth.signup.title")}</Text>
+      <Text>{t("auth.signup.welcome")}</Text>
 
       <View className="h-2/3 w-5/6 gap-4">
         <Input
           control={control}
           name="email"
-          placeholder="Email.."
+          placeholder={t("auth.signup.emailPlaceholder")}
           keyboardType="email-address"
           autoComplete="email"
           textContentType="emailAddress"
         />
         {errors.email?.message && (
-          <FormError message={errors.email.message} />
+          <FormError message={t(errors.email.message)} />
         )}
         <View className="w-full flex-row gap-3">
           <Input
             control={control}
             name="firstName"
-            placeholder="First Name.."
+            placeholder={t("auth.signup.firstNamePlaceholder")}
             className={`flex-1 ${errors.firstName ? "border-2 border-error" : ""}`}
           />
           <Input
             control={control}
             name="lastName"
-            placeholder="Last Name.."
+            placeholder={t("auth.signup.lastNamePlaceholder")}
             className={`flex-1 ${errors.lastName ? "border-2 border-error" : ""}`}
           />
         </View>
+        {errors.firstName?.message && (
+          <FormError message={t(errors.firstName.message)} />
+        )}
+        {errors.lastName?.message && (
+          <FormError message={t(errors.lastName.message)} />
+        )}
         <Input
           control={control}
           name="password"
-          placeholder="Password.."
+          placeholder={t("auth.signup.passwordPlaceholder")}
           secureTextEntry
           textContentType="password"
         />
         {errors.password?.message && (
-          <FormError message={errors.password.message} />
+          <FormError message={t(errors.password.message)} />
         )}
         <Input
           control={control}
           name="confirm"
-          placeholder="Confirm Password.."
+          placeholder={t("auth.signup.confirmPasswordPlaceholder")}
           textContentType="password"
           secureTextEntry
         />
         {errors.confirm?.message && (
-          <FormError message={errors.confirm.message} />
+          <FormError message={t(errors.confirm.message)} />
         )}
         <FormButton
           onSubmit={handleSubmit(onSubmit)}
-          text="Signup"
+          text={t("auth.signup.submit")}
           isLoading={isLoading || isSubmitting || mutation.isPending}
           disabled={!isValid}
         />
@@ -151,8 +133,8 @@ export const SignupForm = () => {
         )}
 
         <AuthRedirectPrompt
-          linkText="Log in"
-          promptText="Have an Account!"
+          linkText={t("auth.signup.logIn")}
+          promptText={t("auth.signup.haveAccount")}
           onPress={() => {
             router.replace("/login");
           }}

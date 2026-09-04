@@ -1,0 +1,40 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "loading": "Loading..."
+  },
+  "auth": {
+    "password": {
+      "minLength": "Password must be at least 8 characters",
+      "lowercase": "One lowercase letter is required",
+      "uppercase": "One uppercase letter is required",
+      "number": "One number is required",
+      "symbol": "One symbol is required"
+    },
+    "signup": {
+      "title": "Sign up",
+      "welcome": "Welcome To NowHere",
+      "emailPlaceholder": "Email..",
+      "firstNamePlaceholder": "First Name..",
+      "lastNamePlaceholder": "Last Name..",
+      "passwordPlaceholder": "Password..",
+      "confirmPasswordPlaceholder": "Confirm Password..",
+      "submit": "Signup",
+      "haveAccount": "Have an Account!",
+      "logIn": "Log in",
+      "toastSuccessTitle": "Welcome to NowHere!",
+      "toastSuccessBody": "Your account has been created.",
+      "toastErrorTitle": "Sign up failed",
+      "toastErrorFallback": "Please check the form and try again.",
+      "errors": {
+        "email": "Enter a valid email",
+        "firstName": "First name is required",
+        "lastName": "Last name is required",
+        "passwordMismatch": "Passwords don't match"
+      }
+    }
+  }
+}

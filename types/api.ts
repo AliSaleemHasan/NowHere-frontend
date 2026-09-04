@@ -11,6 +11,7 @@ export interface ApiProblemDetails {
   instance: string;
   timestamp: string;
   errors?: string[];
+  code?: string;
 }
 
 export type HeaderContentType = "json" | "files" | "text" | "html";
