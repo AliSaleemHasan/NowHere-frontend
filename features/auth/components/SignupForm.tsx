@@ -127,7 +127,10 @@ export const SignupForm = () => {
         />
         {mutation.isError && (
           <FormError
-            message={getErrorMessage(mutation.error)}
+            message={getErrorMessage(
+              mutation.error,
+              t("auth.signup.toastErrorFallback"),
+            )}
             errors={getApiValidationErrors(mutation.error)}
           />
         )}

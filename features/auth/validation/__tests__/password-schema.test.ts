@@ -2,7 +2,12 @@ import { passwordSchema } from "../password-schema";
 
 describe("passwordSchema", () => {
   it("rejects a 6-character password", () => {
-    expect(passwordSchema.safeParse("Abc1!x").success).toBe(false);
+    const result = passwordSchema.safeParse("Abc1!x");
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(result.error.issues.map((issue) => issue.message)).toContain(
+      "auth.password.minLength",
+    );
   });
 
   it("rejects passwords missing complexity", () => {

@@ -1,11 +1,4 @@
 {
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "error": "Something went wrong",
-    "retry": "Retry",
-    "loading": "Loading..."
-  },
   "auth": {
     "password": {
       "minLength": "Password must be at least 8 characters",

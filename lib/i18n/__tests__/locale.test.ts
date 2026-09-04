@@ -48,7 +48,7 @@ describe("locale", () => {
     const { result } = renderHook(() => useLocale(), { wrapper });
 
     await act(async () => {
-      result.current.setLocale("de");
+      await result.current.setLocale("de");
     });
 
     expect(readLocaleOverride()).toBe("de");
@@ -59,5 +59,23 @@ describe("locale", () => {
   it("reads the persisted override from MMKV", () => {
     persistLocale("de");
     expect(readLocaleOverride()).toBe("de");
+  });
+
+  it("init uses persisted de over device en", () => {
+    jest.isolateModules(() => {
+      const Localization = require("expo-localization") as {
+        getLocales: jest.Mock;
+      };
+      Localization.getLocales.mockReturnValue([
+        { languageCode: "en", languageTag: "en-US" },
+      ]);
+
+      const { persistLocale: persist } =
+        require("../locale-storage") as typeof import("../locale-storage");
+      persist("de");
+
+      const { i18n: booted } = require("../init") as typeof import("../init");
+      expect(booted.language).toBe("de");
+    });
   });
 });

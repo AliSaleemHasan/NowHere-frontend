@@ -9,7 +9,7 @@ export function useLocale() {
   const setLocale = useCallback(
     (locale: AppLocale) => {
       persistLocale(locale);
-      void i18n.changeLanguage(locale);
+      return i18n.changeLanguage(locale);
     },
     [i18n],
   );
