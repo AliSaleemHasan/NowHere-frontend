@@ -1,14 +1,14 @@
-import LocationRequired from "@/components/LocationRequired";
 import Modal from "@/components/Modal";
 import ModalPage from "@/components/ModalPage";
-import { useLocation } from "@/features/snaps/context/location-store";
+import { LocationConsentView } from "@/features/snaps/components/LocationConsentView";
 import React from "react";
-import { View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Onboarding() {
   const insets = useSafeAreaInsets();
-  const fetchLocation = useLocation((state) => state.fetchLocation);
+  const { t } = useTranslation();
 
   return (
     <View
@@ -19,26 +19,34 @@ export default function Onboarding() {
     >
       <Modal pagesNumber={4}>
         <ModalPage
-          description="Your window for what's near."
-          title="Welcome to NowHere"
+          description={t("onboarding.welcomeBody")}
+          title={t("onboarding.welcomeTitle")}
           imageSource={require("@/assets/images/onboarding/welcome.png")}
         />
         <ModalPage
-          description="Stay connected with your surroundings — discover real-time updates, share valuable info, and explore nearby opportunities effortlessly."
-          title="Keep up with everything near!"
+          description={t("onboarding.featuresBody")}
+          title={t("onboarding.featuresTitle")}
           imageSource={require("@/assets/images/onboarding/features.jpg")}
         />
         <ModalPage
-          description="See nearby snaps within your range for 24 hours. Search by tags, post once per area daily, and unlock extended reach and duration with premium."
-          title="How It Works"
+          description={t("onboarding.howBody")}
+          title={t("onboarding.howTitle")}
           imageSource={require("@/assets/images/onboarding/how-it-work.png")}
         />
         <ModalPage
-          description="NowHere is about what’s around you. Allow location so we can show nearby snaps and attach your photos to this place."
-          title="Location is required"
+          description={t("onboarding.locationBody")}
+          title={t("onboarding.locationTitle")}
           imageSource={require("@/assets/images/onboarding/location-required.png")}
         >
-          <LocationRequired onGranted={fetchLocation} />
+          <View className="w-full flex-1 items-center justify-center gap-3 px-2">
+            <Text className="text-center font-semibold">
+              {t("onboarding.locationTitle")}
+            </Text>
+            <Text className="text-center font-light">
+              {t("onboarding.locationBody")}
+            </Text>
+            <LocationConsentView />
+          </View>
         </ModalPage>
       </Modal>
     </View>

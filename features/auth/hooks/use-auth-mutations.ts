@@ -1,10 +1,18 @@
 import { setUser } from "@/features/users/context/user-store";
 import { useMutation } from "@tanstack/react-query";
-import { authUserToProfile, loginApi, signupApi } from "../api/auth-api";
+import {
+  authUserToProfile,
+  forgotPasswordApi,
+  loginApi,
+  resetPasswordApi,
+  signupApi,
+} from "../api/auth-api";
 import { useAuth } from "../context/auth-store";
 import type {
   AuthSuccessData,
+  ForgotPasswordRequest,
   LoginRequest,
+  ResetPasswordRequest,
   SignupRequest,
 } from "../types/auth-api.types";
 
@@ -32,5 +40,17 @@ export function useSignup() {
       await persistAuthSession(data);
       return data;
     },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (inputs: ForgotPasswordRequest) => forgotPasswordApi(inputs),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (inputs: ResetPasswordRequest) => resetPasswordApi(inputs),
   });
 }

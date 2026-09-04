@@ -3,8 +3,11 @@ import { ApiError } from "@/lib/http/api-error";
 import type { AuthUser } from "@/types/api";
 import type {
   AuthSuccessData,
+  ForgotPasswordRequest,
+  ForgotPasswordResult,
   LoginRequest,
   MeResponse,
+  ResetPasswordRequest,
   SignupRequest,
   Tokens,
 } from "../types/auth-api.types";
@@ -106,3 +109,30 @@ export function authUserToProfile(user: AuthUser) {
     lastLoginAt: user.lastLoginAt ?? null,
   };
 }
+
+export const forgotPasswordApi = async (
+  payload: ForgotPasswordRequest,
+): Promise<ForgotPasswordResult> => {
+  await apiFetch<ForgotPasswordResult>({
+    api: "auth",
+    url: "forgot-password",
+    options: {
+      method: "POST",
+      body: payload,
+    },
+  });
+  return { accepted: true };
+};
+
+export const resetPasswordApi = async (
+  payload: ResetPasswordRequest,
+): Promise<void> => {
+  await apiFetch({
+    api: "auth",
+    url: "reset-password",
+    options: {
+      method: "POST",
+      body: payload,
+    },
+  });
+};

@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/http/api-error";
+import { i18n } from "@/lib/i18n";
 import {
   isValidGeoPoint,
   toGeoPoint,
@@ -23,14 +24,14 @@ export const askLocationPermission = async () => {
 
   if (status !== PermissionStatus.GRANTED) {
     Alert.alert(
-      "Location Permission",
-      "You’ve denied location access. Please enable it in Settings to continue.",
+      i18n.t("location.permissionTitle"),
+      i18n.t("location.permissionBody"),
       [
         {
-          text: "Open Settings",
+          text: i18n.t("location.openSettings"),
           onPress: () => Linking.openSettings(),
         },
-        { text: "Cancel", style: "cancel" },
+        { text: i18n.t("location.cancel"), style: "cancel" },
       ],
     );
   }

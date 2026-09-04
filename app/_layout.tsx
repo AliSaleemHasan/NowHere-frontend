@@ -1,6 +1,9 @@
 import { useAuth } from "@/features/auth/context/auth-store";
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
-import { useLocation } from "@/features/snaps/context/location-store";
+import {
+  hasLocationConsent,
+  useLocation,
+} from "@/features/snaps/context/location-store";
 import { i18n } from "@/lib/i18n";
 import {
   retryDelayBackoff,
@@ -47,11 +50,17 @@ export default function RootLayout() {
 
 function LocationDependentContent() {
   const boarding = useLocation((state) => state.boarding);
+  const locationConsentAt = useLocation((state) => state.locationConsentAt);
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
+  const consented = hasLocationConsent(locationConsentAt);
 
   return (
     <Stack>
-      <Stack.Protected guard={boarding}>
+      <Stack.Screen
+        name="(legal)"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
+      <Stack.Protected guard={boarding && consented}>
         <Stack.Protected guard={isLoggedIn}>
           <Stack.Screen
             name="(snaps)"
@@ -71,6 +80,14 @@ function LocationDependentContent() {
             options={{ headerShown: false, presentation: "modal" }}
           />
         </Stack.Protected>
+      </Stack.Protected>
+      <Stack.Protected guard={boarding && !consented}>
+        <Stack.Screen
+          name="location-consent"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={!boarding}>
         <Stack.Screen

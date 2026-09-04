@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Keyboard, Text, View } from "react-native";
+import { Keyboard, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { getLoginErrorMessage } from "../get-login-error-message";
 import { useLogin } from "../hooks/use-auth-mutations";
@@ -87,6 +87,14 @@ export const LoginForm = () => {
         {errors.password?.message && (
           <FormError message={t(errors.password.message)} />
         )}
+        <TouchableOpacity
+          onPress={() => {
+            router.navigate("/forgot-password");
+          }}
+          className="self-end p-1"
+        >
+          <Text className="text-xs text-gray-600">{t("auth.login.forgot")}</Text>
+        </TouchableOpacity>
         <FormButton
           onSubmit={handleSubmit(onSubmit)}
           disabled={!isValid}

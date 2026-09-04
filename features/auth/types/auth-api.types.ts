@@ -20,3 +20,16 @@ export type AuthSuccessData = {
 };
 
 export type MeResponse = AuthIdentity;
+
+export type ForgotPasswordRequest = {
+  email: string;
+};
+
+export type ForgotPasswordResult = {
+  accepted: true;
+};
+
+export type ResetPasswordRequest = {
+  token: string;
+  newPassword: string;
+};

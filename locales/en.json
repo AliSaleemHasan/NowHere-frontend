@@ -37,6 +37,7 @@
       "submit": "Login",
       "noAccount": "Don't have an Account",
       "signUp": "Sign up",
+      "forgot": "Forgot password?",
       "toastSuccessTitle": "Signed in successfully",
       "toastSuccessBody": "Welcome back!",
       "toastErrorTitle": "Sign in failed",
@@ -45,6 +46,36 @@
       "errors": {
         "email": "Enter a valid email",
         "passwordRequired": "Password is required"
+      }
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "intro": "Enter your email. If an account exists, we will send a reset link.",
+      "emailPlaceholder": "Email..",
+      "submit": "Send reset link",
+      "successTitle": "Check your email",
+      "successBody": "If an account exists for that address, we sent a link to choose a new password.",
+      "haveAccount": "Remembered your password?",
+      "backToLogin": "Log in",
+      "toastErrorFallback": "Please try again in a moment.",
+      "errors": {
+        "email": "Enter a valid email"
+      }
+    },
+    "reset": {
+      "title": "Reset password",
+      "intro": "Choose a new password for your account.",
+      "newPlaceholder": "New password",
+      "confirmPlaceholder": "Confirm new password",
+      "submit": "Save new password",
+      "invalidToken": "This reset link is invalid or has expired.",
+      "successTitle": "Password updated",
+      "successBody": "You can sign in with your new password.",
+      "haveAccount": "Ready to sign in?",
+      "backToLogin": "Log in",
+      "toastErrorFallback": "Please try again.",
+      "errors": {
+        "mismatch": "Passwords don't match"
       }
     }
   },
@@ -121,7 +152,32 @@
       "snapDisappearTime": {
         "title": "Snap lifetime",
         "description": "How long a snap stays visible to people nearby."
-      }
+      },
+      "languageTitle": "Language",
+      "languageDescription": "Choose English or German. This is stored on this device.",
+      "languageEn": "English",
+      "languageDe": "Deutsch",
+      "privacyTitle": "Privacy notice",
+      "privacySubtitle": "How this app handles your data",
+      "exportTitle": "Export my data",
+      "exportDescription": "Download a JSON copy of your account, settings, snaps, bookmarks, and reports.",
+      "exportButton": "Share JSON export",
+      "exportShareTitle": "NowHere data export",
+      "exportSuccessTitle": "Export ready",
+      "exportErrorTitle": "Could not export data",
+      "exportErrorFallback": "Please try again.",
+      "deleteTitle": "Delete account",
+      "deleteDescription": "This removes your profile, snaps, and photos. Type your password to continue.",
+      "deletePasswordPlaceholder": "Password",
+      "deleteButton": "Delete account",
+      "deleteConfirmTitle": "Delete your account?",
+      "deleteConfirmBody": "This cannot be undone. Your profile, snaps, and stored photos will be removed.",
+      "deleteConfirmAction": "Delete",
+      "deleteCancel": "Cancel",
+      "deleteIncomplete": "Your account was disabled but deletion did not finish. Try again.",
+      "deleteSuccessTitle": "Account deleted",
+      "deleteErrorTitle": "Could not delete account",
+      "deleteErrorFallback": "Please try again."
     },
     "password": {
       "title": "Change password",
@@ -302,5 +358,51 @@
     "signInTitle": "Sign in to see snaps nearby",
     "signInBody": "Nearby and opened feeds are available after you log in.",
     "signIn": "Sign in"
+  },
+  "tabs": {
+    "map": "Map",
+    "addSnap": "Add Snap",
+    "profile": "Profile"
+  },
+  "onboarding": {
+    "welcomeTitle": "Welcome to NowHere",
+    "welcomeBody": "Your window for what's near.",
+    "featuresTitle": "Keep up with everything near",
+    "featuresBody": "See what people around you share, post a snap from where you are, and browse nearby moments while they last.",
+    "howTitle": "How it works",
+    "howBody": "Nearby snaps stay visible for a limited time. Filter by tags, and share one snap per area until you move on.",
+    "locationTitle": "Location is required",
+    "locationBody": "NowHere is about what’s around you. Allow location so we can show nearby snaps and attach your photos to this place."
+  },
+  "consent": {
+    "checkbox": "I agree that NowHere may use my location to show nearby snaps and to attach snaps I post to this place.",
+    "privacyLink": "Read the privacy notice",
+    "upgradeTitle": "Location consent",
+    "upgradeBody": "Before this app uses GPS again, please agree to location processing. We do not request your position until you check the box."
+  },
+  "location": {
+    "grantBody": "To continue, allow location access with the button below.",
+    "grantButton": "Grant location access",
+    "permissionTitle": "Location permission",
+    "permissionBody": "Location access is off. Enable it in Settings to continue.",
+    "openSettings": "Open Settings",
+    "cancel": "Cancel"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "heading": "Privacy notice",
+    "intro": "NowHere is a personal project and portfolio app. It is not a company or a GmbH, and there is no data protection officer.",
+    "whoTitle": "Who holds the data",
+    "whoBody": "Data lives on the machine that runs this app’s docker compose stack (databases, object storage, and mail). Whoever operates that machine is the one holding the data. There is no separate cloud product or third-party controller for this project.",
+    "dataTitle": "What is stored",
+    "dataBody": "An account stores email, name, bio, a password hash, and an optional profile photo. We also store visibility settings, snaps you post (photo object keys, caption, tag, and location), snaps you have opened, bookmarks, and reports you send. Photo files are object-storage keys, not public website URLs.",
+    "locationTitle": "Location",
+    "locationBody": "Location is used only after you agree: to show snaps near you and to attach a snap you post to that place. The app does not request GPS until that checkbox is ticked. Location is not sold.",
+    "mailTitle": "Password reset mail",
+    "mailBody": "Reset messages go through the mail host configured on this compose stack. In development that is a local inbox (Mailhog), not a production email provider.",
+    "rightsTitle": "Export and deletion",
+    "rightsBody": "From Settings you can export a JSON copy of your account data and delete your account. Deletion removes your profile, snaps, and stored photos. If a deletion is interrupted, the account stays disabled so you can retry.",
+    "contactTitle": "Contact",
+    "contactBody": "There is no company support desk. Contact the person who runs this compose stack."
   }
 }

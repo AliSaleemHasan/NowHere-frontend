@@ -1,11 +1,14 @@
 import FormButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
-import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
 import { SettingsChoiceRow } from "@/components/SettingsChoiceRow";
+import { useAuth } from "@/features/auth/context/auth-store";
+import { useHiddenSnaps } from "@/features/snaps/context/hidden-snaps-store";
 import { updateUserSettings } from "@/features/users/api/update-settings";
 import { userQueryKeys } from "@/features/users/api/user-query";
 import { useUserSettings } from "@/features/users/api/useUserSettings";
+import { DeleteAccountSection } from "@/features/users/components/DeleteAccountSection";
+import { ExportAccountSection } from "@/features/users/components/ExportAccountSection";
 import {
   MAX_DISTANCE_PRESETS,
   NEW_SNAP_DISTANCE_PRESETS,
@@ -16,15 +19,23 @@ import {
   userSettingsSchema,
   type UserSettingsForm,
 } from "@/features/users/validation/settings-schema";
-import { getApiValidationErrors, getErrorMessage } from "@/utils";
+import { useLocale, type AppLocale } from "@/lib/i18n";
+import { cn, getApiValidationErrors, getErrorMessage } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 
 export const ErrorBoundary = NowHereError;
@@ -64,7 +75,87 @@ function toFormValues(settings: UserSetting): UserSettingsForm {
   };
 }
 
-function SettingsForm({ settings }: { settings: UserSetting }) {
+function LanguageSection() {
+  const { t } = useTranslation();
+  const { locale, setLocale } = useLocale();
+
+  return (
+    <View className="rounded-3xl bg-white p-5 shadow-sm">
+      <View className="flex-row items-start gap-3">
+        <SettingsFieldIcon name="language-outline" />
+        <View className="flex-1">
+          <Text className="text-base font-semibold text-primary">
+            {t("users.settings.languageTitle")}
+          </Text>
+          <Text className="mt-1 text-sm leading-5 text-gray-500">
+            {t("users.settings.languageDescription")}
+          </Text>
+        </View>
+      </View>
+      <View className="mt-4 flex-row flex-wrap gap-2">
+        {(["en", "de"] as const satisfies readonly AppLocale[]).map(
+          (option) => {
+            const selected = locale === option;
+            return (
+              <TouchableOpacity
+                key={option}
+                testID={`locale-${option}`}
+                onPress={() => {
+                  void setLocale(option);
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                className={cn(
+                  "rounded-full px-4 py-2",
+                  selected ? "bg-primary" : "bg-gray-100",
+                )}
+              >
+                <Text
+                  className={cn(
+                    "text-sm font-medium",
+                    selected ? "text-white" : "text-primary",
+                  )}
+                >
+                  {option === "en"
+                    ? t("users.settings.languageEn")
+                    : t("users.settings.languageDe")}
+                </Text>
+              </TouchableOpacity>
+            );
+          },
+        )}
+      </View>
+    </View>
+  );
+}
+
+function PrivacyRow() {
+  const { t } = useTranslation();
+  const router = useRouter();
+
+  return (
+    <TouchableOpacity
+      testID="settings-privacy"
+      onPress={() => router.push("/privacy")}
+      className="mt-5 flex-row items-center justify-between rounded-3xl bg-white px-5 py-4 shadow-sm"
+    >
+      <View className="flex-row items-center gap-3">
+        <SettingsFieldIcon name="document-text-outline" />
+        <View>
+          <Text className="text-base font-semibold text-primary">
+            {t("users.settings.privacyTitle")}
+          </Text>
+          <Text className="text-sm text-gray-500">
+            {t("users.settings.privacySubtitle")}
+          </Text>
+        </View>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+    </TouchableOpacity>
+  );
+}
+
+function VisibilityForm({ settings }: { settings: UserSetting }) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -110,14 +201,8 @@ function SettingsForm({ settings }: { settings: UserSetting }) {
   const saving = isSubmitting || mutation.isPending;
 
   return (
-    <ScrollView
-      className="flex-1 bg-gray-50"
-      contentContainerClassName="p-5 pb-10"
-    >
-      <Text className="text-2xl font-semibold text-primary">
-        {t("users.settings.title")}
-      </Text>
-      <Text className="mt-2 text-sm leading-5 text-gray-500">
+    <View className="mt-5">
+      <Text className="text-sm leading-5 text-gray-500">
         {t("users.settings.intro")}
       </Text>
 
@@ -203,21 +288,28 @@ function SettingsForm({ settings }: { settings: UserSetting }) {
           errors={getApiValidationErrors(mutation.error)}
         />
       ) : null}
-    </ScrollView>
+    </View>
   );
 }
 
-export default function Settings() {
+function VisibilityBlock() {
   const { t } = useTranslation();
   const query = useUserSettings();
 
   if (query.isLoading) {
-    return <Loading cause={t("users.settings.loading")} />;
+    return (
+      <View className="mt-5 items-center py-8">
+        <ActivityIndicator size={28} color="#0f0d23" />
+        <Text className="mt-3 text-xs text-gray-600">
+          {t("users.settings.loading")}
+        </Text>
+      </View>
+    );
   }
 
   if (query.isError || !query.data) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-50 px-6">
+      <View className="mt-5 items-center rounded-3xl bg-white px-6 py-8 shadow-sm">
         <View className="h-14 w-14 items-center justify-center rounded-full bg-red-50">
           <Ionicons name="cloud-offline-outline" size={24} color="#ef4444" />
         </View>
@@ -239,5 +331,35 @@ export default function Settings() {
     );
   }
 
-  return <SettingsForm settings={query.data} />;
+  return <VisibilityForm settings={query.data} />;
+}
+
+export default function Settings() {
+  const { t } = useTranslation();
+  const logout = useAuth((state) => state.logout);
+  const queryClient = useQueryClient();
+  const hiddenSnapIds = useHiddenSnaps((state) => state.hiddenSnapIds);
+
+  return (
+    <ScrollView
+      className="flex-1 bg-gray-50"
+      contentContainerClassName="p-5 pb-10"
+    >
+      <Text className="text-2xl font-semibold text-primary">
+        {t("users.settings.title")}
+      </Text>
+      <View className="mt-5">
+        <LanguageSection />
+      </View>
+      <VisibilityBlock />
+      <PrivacyRow />
+      <ExportAccountSection extra={{ hiddenSnapIds }} />
+      <DeleteAccountSection
+        onDeleted={async () => {
+          queryClient.clear();
+          await logout();
+        }}
+      />
+    </ScrollView>
+  );
 }

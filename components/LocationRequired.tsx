@@ -1,14 +1,20 @@
 import { askLocationPermission } from "@/lib/location";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   withErrorImage?: boolean;
+  disabled?: boolean;
   onGranted: () => void | Promise<void>;
 }
 
 const LocationRequired = (props: Props) => {
+  const { t } = useTranslation();
+  const disabled = Boolean(props.disabled);
+
   const handleLocationPermission = async () => {
+    if (disabled) return;
     const granted = await askLocationPermission();
     if (!granted) return;
     await props.onGranted();
@@ -26,14 +32,15 @@ const LocationRequired = (props: Props) => {
         </View>
       )}
       <View className="items-center gap-5 p-4">
-        <Text className="text-center text-sm">
-          To continue, please allow location access by tapping the button below.
-        </Text>
+        <Text className="text-center text-sm">{t("location.grantBody")}</Text>
         <TouchableOpacity
+          testID="grant-location-access"
           onPress={handleLocationPermission}
-          className="rounded-md bg-alert p-4"
+          disabled={disabled}
+          accessibilityState={{ disabled }}
+          className={`rounded-md p-4 ${disabled ? "bg-disabled" : "bg-alert"}`}
         >
-          <Text className="text-sm text-white">Grant Location Access</Text>
+          <Text className="text-sm text-white">{t("location.grantButton")}</Text>
         </TouchableOpacity>
       </View>
     </View>

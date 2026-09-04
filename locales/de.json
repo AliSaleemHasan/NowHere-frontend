@@ -37,6 +37,7 @@
       "submit": "Anmelden",
       "noAccount": "Du hast noch kein Konto?",
       "signUp": "Registrieren",
+      "forgot": "Passwort vergessen?",
       "toastSuccessTitle": "Anmeldung erfolgreich",
       "toastSuccessBody": "Willkommen zurück!",
       "toastErrorTitle": "Anmeldung fehlgeschlagen",
@@ -45,6 +46,36 @@
       "errors": {
         "email": "Gib eine gültige E-Mail-Adresse ein",
         "passwordRequired": "Passwort ist erforderlich"
+      }
+    },
+    "forgot": {
+      "title": "Passwort vergessen",
+      "intro": "Gib deine E-Mail-Adresse ein. Wenn ein Konto existiert, schicken wir einen Link zum Zurücksetzen.",
+      "emailPlaceholder": "E-Mail..",
+      "submit": "Link senden",
+      "successTitle": "Prüfe dein Postfach",
+      "successBody": "Wenn ein Konto mit dieser Adresse existiert, haben wir einen Link geschickt, mit dem du ein neues Passwort setzen kannst.",
+      "haveAccount": "Passwort wieder eingefallen?",
+      "backToLogin": "Anmelden",
+      "toastErrorFallback": "Bitte versuche es gleich noch einmal.",
+      "errors": {
+        "email": "Gib eine gültige E-Mail-Adresse ein"
+      }
+    },
+    "reset": {
+      "title": "Passwort zurücksetzen",
+      "intro": "Wähle ein neues Passwort für dein Konto.",
+      "newPlaceholder": "Neues Passwort",
+      "confirmPlaceholder": "Neues Passwort bestätigen",
+      "submit": "Neues Passwort speichern",
+      "invalidToken": "Dieser Link ist ungültig oder abgelaufen.",
+      "successTitle": "Passwort aktualisiert",
+      "successBody": "Du kannst dich mit dem neuen Passwort anmelden.",
+      "haveAccount": "Bereit zum Anmelden?",
+      "backToLogin": "Anmelden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "mismatch": "Passwörter stimmen nicht überein"
       }
     }
   },
@@ -121,7 +152,32 @@
       "snapDisappearTime": {
         "title": "Snap-Lebensdauer",
         "description": "Wie lange ein Snap für Personen in der Nähe sichtbar bleibt."
-      }
+      },
+      "languageTitle": "Sprache",
+      "languageDescription": "Wähle Englisch oder Deutsch. Die Auswahl bleibt auf diesem Gerät gespeichert.",
+      "languageEn": "English",
+      "languageDe": "Deutsch",
+      "privacyTitle": "Datenschutzhinweis",
+      "privacySubtitle": "Wie diese App mit deinen Daten umgeht",
+      "exportTitle": "Meine Daten exportieren",
+      "exportDescription": "Teile eine JSON-Kopie deines Kontos, der Einstellungen, Snaps, Lesezeichen und Meldungen.",
+      "exportButton": "JSON-Export teilen",
+      "exportShareTitle": "NowHere-Datenexport",
+      "exportSuccessTitle": "Export bereit",
+      "exportErrorTitle": "Daten konnten nicht exportiert werden",
+      "exportErrorFallback": "Bitte versuche es erneut.",
+      "deleteTitle": "Konto löschen",
+      "deleteDescription": "Damit werden Profil, Snaps und Fotos entfernt. Gib dein Passwort ein, um fortzufahren.",
+      "deletePasswordPlaceholder": "Passwort",
+      "deleteButton": "Konto löschen",
+      "deleteConfirmTitle": "Konto wirklich löschen?",
+      "deleteConfirmBody": "Das lässt sich nicht rückgängig machen. Profil, Snaps und gespeicherte Fotos werden entfernt.",
+      "deleteConfirmAction": "Löschen",
+      "deleteCancel": "Abbrechen",
+      "deleteIncomplete": "Dein Konto wurde deaktiviert, aber das Löschen ist nicht durchgelaufen. Versuche es erneut.",
+      "deleteSuccessTitle": "Konto gelöscht",
+      "deleteErrorTitle": "Konto konnte nicht gelöscht werden",
+      "deleteErrorFallback": "Bitte versuche es erneut."
     },
     "password": {
       "title": "Passwort ändern",
@@ -302,5 +358,51 @@
     "signInTitle": "Melde dich an, um Snaps in der Nähe zu sehen",
     "signInBody": "Die Feeds in der Nähe und bereits geöffnet sind nach dem Anmelden verfügbar.",
     "signIn": "Anmelden"
+  },
+  "tabs": {
+    "map": "Karte",
+    "addSnap": "Snap",
+    "profile": "Profil"
+  },
+  "onboarding": {
+    "welcomeTitle": "Willkommen bei NowHere",
+    "welcomeBody": "Dein Fenster für das, was in der Nähe passiert.",
+    "featuresTitle": "Bleib nah dran",
+    "featuresBody": "Sieh, was Menschen um dich herum teilen, poste einen Snap von deinem Ort und entdecke Momente in der Nähe, solange sie da sind.",
+    "howTitle": "So funktioniert’s",
+    "howBody": "Snaps in der Nähe bleiben nur eine begrenzte Zeit sichtbar. Filter nach Tags und teile einen Snap pro Gebiet, bis du weiterziehst.",
+    "locationTitle": "Standort ist nötig",
+    "locationBody": "NowHere dreht sich um deine Umgebung. Erlaube den Standort, damit wir Snaps in der Nähe zeigen und deine Fotos an diesen Ort hängen können."
+  },
+  "consent": {
+    "checkbox": "Ich stimme zu, dass NowHere meinen Standort nutzen darf, um Snaps in der Nähe zu zeigen und Snaps, die ich poste, an diesen Ort zu knüpfen.",
+    "privacyLink": "Datenschutzhinweis lesen",
+    "upgradeTitle": "Einwilligung zum Standort",
+    "upgradeBody": "Bevor die App GPS wieder nutzt, stimme bitte der Standortverarbeitung zu. Deine Position wird erst abgefragt, wenn du das Kästchen setzt."
+  },
+  "location": {
+    "grantBody": "Tippe auf die Schaltfläche unten, um den Standortzugriff zu erlauben.",
+    "grantButton": "Standortzugriff erlauben",
+    "permissionTitle": "Standortberechtigung",
+    "permissionBody": "Der Standortzugriff ist aus. Aktiviere ihn in den Einstellungen, um weiterzumachen.",
+    "openSettings": "Einstellungen öffnen",
+    "cancel": "Abbrechen"
+  },
+  "privacy": {
+    "title": "Datenschutz",
+    "heading": "Datenschutzhinweis",
+    "intro": "NowHere ist ein persönliches Projekt und eine Portfolio-App. Es ist keine Firma und keine GmbH, und es gibt keinen Datenschutzbeauftragten.",
+    "whoTitle": "Wer die Daten hält",
+    "whoBody": "Die Daten liegen auf dem Rechner, der diesen docker-compose-Stack der App betreibt (Datenbanken, Objektspeicher und Mail). Wer diese Maschine betreibt, hält die Daten. Es gibt kein separates Cloud-Produkt und keine weitere verantwortliche Stelle für dieses Projekt.",
+    "dataTitle": "Was gespeichert wird",
+    "dataBody": "Ein Konto speichert E-Mail, Name, Bio, einen Passwort-Hash und optional ein Profilfoto. Außerdem speichern wir Sichtbarkeitseinstellungen, Snaps, die du teilst (Objekt-Schlüssel der Fotos, Text, Tag und Ort), Snaps, die du geöffnet hast, Lesezeichen und Meldungen, die du sendest. Fotos sind Objektspeicher-Schlüssel, keine öffentlichen Website-URLs.",
+    "locationTitle": "Standort",
+    "locationBody": "Der Standort wird nur nach deiner Zustimmung genutzt: um Snaps in der Nähe zu zeigen und einen Snap, den du postest, an diesen Ort zu knüpfen. Die App fragt GPS erst an, wenn das Kästchen gesetzt ist. Standortdaten werden nicht verkauft.",
+    "mailTitle": "Mails zum Zurücksetzen",
+    "mailBody": "Nachrichten zum Zurücksetzen laufen über den Mail-Host, der in diesem Compose-Stack steht. In der Entwicklung ist das ein lokales Postfach (Mailhog), kein Produktions-Mailanbieter.",
+    "rightsTitle": "Export und Löschung",
+    "rightsBody": "Unter Einstellungen kannst du eine JSON-Kopie deiner Kontodaten exportieren und dein Konto löschen. Die Löschung entfernt Profil, Snaps und gespeicherte Fotos. Wenn eine Löschung abbricht, bleibt das Konto deaktiviert, damit du es erneut versuchen kannst.",
+    "contactTitle": "Kontakt",
+    "contactBody": "Es gibt keinen Firmensupport. Wende dich an die Person, die diesen Compose-Stack betreibt."
   }
 }

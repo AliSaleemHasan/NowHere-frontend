@@ -12,6 +12,7 @@ interface Props {
   isLoading?: boolean;
   text: string;
   onSubmit: (event: GestureResponderEvent) => void;
+  testID?: string;
 }
 
 export default function FormButton(props: Props) {
@@ -19,11 +20,13 @@ export default function FormButton(props: Props) {
 
   return (
     <TouchableOpacity
+      testID={props.testID}
       onPress={props.onSubmit}
       onPressIn={() => {
         Keyboard.dismiss();
       }}
       disabled={disabled}
+      accessibilityState={{ disabled }}
       className={`${disabled ? "bg-disabled" : "bg-primary"} h-12 w-full items-center justify-center rounded-2xl`}
     >
       {props.isLoading ? (

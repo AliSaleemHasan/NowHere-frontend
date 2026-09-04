@@ -1,24 +1,35 @@
 import LocationRequired from "@/components/LocationRequired";
 import { useAuth } from "@/features/auth/context/auth-store";
-import { useLocation } from "@/features/snaps/context/location-store";
+import {
+  hasLocationConsent,
+  useLocation,
+} from "@/features/snaps/context/location-store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const TabsLayout = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const fetchLocation = useLocation((state) => state.fetchLocation);
+  const locationConsentAt = useLocation((state) => state.locationConsentAt);
 
   const isLocationError = useLocation((state) => state.error);
 
   useEffect(() => {
-    fetchLocation();
-  }, [fetchLocation]);
+    if (!hasLocationConsent(locationConsentAt)) return;
+    void fetchLocation();
+  }, [fetchLocation, locationConsentAt]);
 
   if (isLocationError) {
     return (
-      <LocationRequired withErrorImage onGranted={fetchLocation} />
+      <LocationRequired
+        withErrorImage
+        disabled={!hasLocationConsent(locationConsentAt)}
+        onGranted={fetchLocation}
+      />
     );
   }
 
@@ -28,7 +39,7 @@ const TabsLayout = () => {
         name="index"
         options={{
           headerShown: false,
-          tabBarLabel: "Map",
+          tabBarLabel: t("tabs.map"),
           tabBarIcon: ({ color }) => (
             <FontAwesome size={20} name="map" color={color} />
           ),
@@ -50,7 +61,7 @@ const TabsLayout = () => {
           },
         }}
         options={{
-          tabBarLabel: "Add Snap",
+          tabBarLabel: t("tabs.addSnap"),
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
@@ -61,7 +72,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="profile"
           options={{
-            tabBarLabel: "Profile",
+            tabBarLabel: t("tabs.profile"),
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <FontAwesome name="user" size={20} color={color} />
