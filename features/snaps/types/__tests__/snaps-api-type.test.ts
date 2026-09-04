@@ -17,8 +17,30 @@ describe("normalizeSnap", () => {
       id: "snap-1",
       tag: Tags.SOCIAL,
       status: "SUCCESS",
+      resolution: "OPEN",
       snaps: ["key.jpg"],
       location: { type: "Point", coordinates: [13.4, 52.5] },
+    });
+  });
+
+  it("keeps FOUND resolution, note, and expiresAt", () => {
+    const snap = normalizeSnap({
+      id: "snap-found",
+      _userId: "user-1",
+      description: "Keys",
+      snaps: ["key.jpg"],
+      location: { type: "Point", coordinates: [13.4, 52.5] },
+      tag: Tags.LOST,
+      resolution: "FOUND",
+      resolutionNote: "Under the bench",
+      expiresAt: "2026-09-10T00:00:00.000Z",
+    });
+
+    expect(snap).toMatchObject({
+      id: "snap-found",
+      resolution: "FOUND",
+      resolutionNote: "Under the bench",
+      expiresAt: "2026-09-10T00:00:00.000Z",
     });
   });
 

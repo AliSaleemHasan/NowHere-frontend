@@ -18,6 +18,7 @@ export type UnifiedMarkerProps = {
   coordinate: MapCoordinate;
   title?: string;
   pinColor?: string;
+  badge?: string;
   onPress?: () => void;
 };
 export type UnifiedMapViewProps = {

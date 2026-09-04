@@ -11,7 +11,10 @@ import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapDraft } from "@/features/snaps/context/snap-store";
 import { MAX_SNAP_IMAGES } from "@/lib/image-upload";
 import { requireSnapLocation } from "@/lib/location";
-import { snapQueryKeys, upsertNearSnap } from "@/features/snaps/api/snap-query";
+import {
+  invalidateSnapQueries,
+  upsertNearSnap,
+} from "@/features/snaps/api/snap-query";
 import { isValidSnapLocation } from "@/features/snaps/types/snaps-api-type";
 import { getApiValidationErrors, getErrorMessage, SELECTABLE_TAGS } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -64,7 +67,7 @@ export default function SnapInputs() {
     mutationFn: (input: CreateSnapInput) => createSnapWithDirectUpload(input),
     onSuccess: (created) => {
       upsertNearSnap(queryClient, created);
-      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.near });
+      invalidateSnapQueries(queryClient);
 
       Toast.show({
         type: "success",
@@ -82,7 +85,7 @@ export default function SnapInputs() {
       const alreadyPosted = /already posted/i.test(message);
 
       if (alreadyPosted) {
-        void queryClient.invalidateQueries({ queryKey: snapQueryKeys.near });
+        invalidateSnapQueries(queryClient);
         Toast.show({
           type: "info",
           text1: "Already shared here today",

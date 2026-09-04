@@ -14,6 +14,12 @@ export const SNAP_STATUSES = [
 
 export type SnapStatus = (typeof SNAP_STATUSES)[number];
 
+export const SNAP_RESOLUTIONS = ["OPEN", "FOUND"] as const;
+
+export type SnapResolution = (typeof SNAP_RESOLUTIONS)[number];
+
+export const MAX_RESOLUTION_NOTE = 280;
+
 export type SnapLocation = GeoPoint;
 export const isValidSnapLocation = isValidGeoPoint;
 export const toSnapLocation = toGeoPoint;
@@ -22,6 +28,13 @@ export function isSnapStatus(value: unknown): value is SnapStatus {
   return (
     typeof value === "string" &&
     (SNAP_STATUSES as readonly string[]).includes(value)
+  );
+}
+
+function isSnapResolution(value: unknown): value is SnapResolution {
+  return (
+    typeof value === "string" &&
+    (SNAP_RESOLUTIONS as readonly string[]).includes(value)
   );
 }
 
@@ -41,6 +54,9 @@ export type Snap = {
   location: SnapLocation;
   tag: Tags;
   status?: SnapStatus;
+  resolution?: SnapResolution;
+  resolutionNote?: string;
+  expiresAt?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -85,6 +101,10 @@ export function normalizeSnap(input: unknown): Snap | undefined {
   if (!isValidGeoPoint(locationPoint)) return undefined;
 
   const rawTag = typeof snap.tag === "string" ? snap.tag : "";
+  const resolutionNote =
+    typeof snap.resolutionNote === "string" && snap.resolutionNote.trim()
+      ? snap.resolutionNote
+      : undefined;
 
   return {
     id,
@@ -97,6 +117,12 @@ export function normalizeSnap(input: unknown): Snap | undefined {
     location: locationPoint,
     tag: isTag(rawTag) ? rawTag : Tags.SOCIAL,
     status: isSnapStatus(snap.status) ? snap.status : undefined,
+    resolution: isSnapResolution(snap.resolution)
+      ? snap.resolution
+      : "OPEN",
+    resolutionNote,
+    expiresAt:
+      typeof snap.expiresAt === "string" ? snap.expiresAt : undefined,
     createdAt:
       typeof snap.createdAt === "string" ? snap.createdAt : undefined,
     updatedAt:

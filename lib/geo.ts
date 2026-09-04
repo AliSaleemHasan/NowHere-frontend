@@ -22,13 +22,21 @@ export function haversineDistanceMeters(
   return EARTH_RADIUS_METERS * c;
 }
 
-export function formatDistanceAway(meters: number): string {
+export type DistanceFormatStyle = "long" | "short";
+
+export function formatDistanceAway(
+  meters: number,
+  style: DistanceFormatStyle = "long",
+): string {
   if (!Number.isFinite(meters) || meters < 0) return "Nearby";
   if (meters < 15) return "Right here";
-  if (meters < 1000) return `${Math.round(meters)} m away`;
+  if (meters < 1000) {
+    const value = `${Math.round(meters)} m`;
+    return style === "short" ? value : `${value} away`;
+  }
   const km = meters / 1000;
-  if (km >= 10) return `${Math.round(km)} km away`;
-  return `${km.toFixed(1)} km away`;
+  const value = km >= 10 ? `${Math.round(km)} km` : `${km.toFixed(1)} km`;
+  return style === "short" ? value : `${value} away`;
 }
 
 export function formatLatLng(lat: number, lng: number): string {

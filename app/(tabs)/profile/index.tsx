@@ -23,6 +23,7 @@ function ProfileMenuRow({
   subtitle,
   onPress,
   danger,
+  testID,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   iconBg: string;
@@ -31,9 +32,11 @@ function ProfileMenuRow({
   subtitle?: string;
   onPress: () => void;
   danger?: boolean;
+  testID?: string;
 }) {
   return (
     <TouchableOpacity
+      testID={testID}
       onPress={onPress}
       className="flex-row items-center justify-between px-5 py-4"
     >
@@ -169,6 +172,26 @@ export default function Profile() {
             title={t("users.profile.editTitle")}
             subtitle={t("users.profile.editSubtitle")}
             onPress={() => router.push("/(tabs)/profile/edit")}
+          />
+          <View className="h-px bg-gray-100" />
+          <ProfileMenuRow
+            testID="profile-my-snaps"
+            icon="images-outline"
+            iconBg="bg-gray-100"
+            iconColor="#0f0d23"
+            title={t("snaps.mySnaps.title")}
+            subtitle={t("profile.mySnapsSubtitle")}
+            onPress={() => router.push("/(tabs)/profile/my-snaps")}
+          />
+          <View className="h-px bg-gray-100" />
+          <ProfileMenuRow
+            testID="profile-saved"
+            icon="bookmark-outline"
+            iconBg="bg-gray-100"
+            iconColor="#0f0d23"
+            title={t("snaps.saved.title")}
+            subtitle={t("profile.savedSubtitle")}
+            onPress={() => router.push("/(tabs)/profile/saved")}
           />
           <View className="h-px bg-gray-100" />
           <ProfileMenuRow

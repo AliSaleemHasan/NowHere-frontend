@@ -50,6 +50,12 @@ describe("formatDistanceAway", () => {
     expect(formatDistanceAway(1500)).toBe("1.5 km away");
     expect(formatDistanceAway(12500)).toBe("13 km away");
   });
+
+  it("omits the away suffix in short style", () => {
+    expect(formatDistanceAway(240, "short")).toBe("240 m");
+    expect(formatDistanceAway(1500, "short")).toBe("1.5 km");
+    expect(formatDistanceAway(12500, "short")).toBe("13 km");
+  });
 });
 
 describe("formatLatLng", () => {
