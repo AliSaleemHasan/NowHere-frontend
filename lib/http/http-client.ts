@@ -1,19 +1,62 @@
-import type { ApiResponse, HeaderContentType } from "@/types/api";
+import type { ApiResponse, HeaderContentType, Tokens } from "@/types/api";
 import { APIS, getApiURL } from "@/utils";
 import { ApiError } from "./api-error";
+import { isRecord } from "./is-record";
 import type { ITokenProvider } from "../token-provider";
 
 export type AuthMode = boolean | "optional";
 
-export interface RequestConfig extends Omit<RequestInit, "headers"> {
+export interface RequestConfig extends Omit<RequestInit, "headers" | "body"> {
   headers?: Record<string, string>;
   contentType?: HeaderContentType;
   api?: APIS;
   auth?: AuthMode;
   skipRetry?: boolean;
+  body?: unknown;
+}
+
+function isApiSuccessEnvelope<T>(value: unknown): value is ApiResponse<T> {
+  return isRecord(value) && value.success === true && "data" in value;
+}
+
+function toBodyInit(
+  body: unknown,
+  contentType: HeaderContentType,
+): BodyInit | undefined {
+  if (body == null) return undefined;
+  if (typeof body === "string") return body;
+  if (typeof FormData !== "undefined" && body instanceof FormData) return body;
+  if (typeof Blob !== "undefined" && body instanceof Blob) return body;
+  if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+    return body as BodyInit;
+  }
+  if (
+    typeof URLSearchParams !== "undefined" &&
+    body instanceof URLSearchParams
+  ) {
+    return body;
+  }
+  if (contentType === "json") {
+    return JSON.stringify(body);
+  }
+  return String(body);
+}
+
+function networkErrorMessage(error: unknown): string {
+  const message =
+    error instanceof Error ? error.message : "Network request failed";
+  if (
+    error instanceof TypeError ||
+    message.toLowerCase().includes("network request failed")
+  ) {
+    return "Unable to connect to the server. Please check your internet connection.";
+  }
+  return message;
 }
 
 export class HttpClient {
+  private refreshPromise: Promise<Tokens> | null = null;
+
   constructor(
     private readonly getBaseUrl: (api?: APIS) => string | undefined = getApiURL,
     private readonly tokenProvider?: ITokenProvider,
@@ -34,7 +77,6 @@ export class HttpClient {
     } else if (contentType === "text") {
       headers["Content-Type"] = "text/plain";
     }
-    // When contentType === 'files', omit Content-Type so fetch automatically sets the multipart boundary
 
     if (authToken) {
       headers["Authorization"] = `Bearer ${authToken}`;
@@ -43,8 +85,40 @@ export class HttpClient {
     return headers;
   }
 
+  private resolveUrl(endpoint: string = "", api?: APIS): string {
+    const rawBaseUrl = (this.getBaseUrl(api) || "").trim().replace(/\/+$/, "");
+    let cleanEndpoint = (endpoint || "").trim().replace(/^\/+/, "");
+
+    if (api && (cleanEndpoint === api || cleanEndpoint.startsWith(`${api}/`))) {
+      cleanEndpoint = cleanEndpoint.slice(api.length).replace(/^\/+/, "");
+    }
+
+    if (!rawBaseUrl) {
+      return cleanEndpoint.startsWith("http://") ||
+        cleanEndpoint.startsWith("https://")
+        ? cleanEndpoint
+        : `/${cleanEndpoint}`;
+    }
+
+    return cleanEndpoint ? `${rawBaseUrl}/${cleanEndpoint}` : rawBaseUrl;
+  }
+
+  private async refreshAccessToken(refreshToken: string): Promise<Tokens> {
+    if (!this.tokenProvider) {
+      throw new ApiError("Session expired. Please sign in again.", 401);
+    }
+    if (!this.refreshPromise) {
+      this.refreshPromise = this.tokenProvider
+        .refreshToken(refreshToken)
+        .finally(() => {
+          this.refreshPromise = null;
+        });
+    }
+    return this.refreshPromise;
+  }
+
   public async request<T>(
-    endpoint: string,
+    endpoint: string = "",
     config: RequestConfig = {},
   ): Promise<ApiResponse<T>> {
     const {
@@ -53,16 +127,22 @@ export class HttpClient {
       auth = false,
       skipRetry = false,
       headers: customHeaders = {},
+      body,
       ...requestOptions
     } = config;
 
     const tokens = this.tokenProvider?.getTokens();
     let authToken: string | undefined;
 
-    if (auth === true) {
+    if (customHeaders["Authorization"]) {
+      authToken = customHeaders["Authorization"].replace(/^Bearer\s+/i, "");
+    } else if (auth === true) {
       if (!tokens?.accessToken || !tokens?.refreshToken) {
         await this.tokenProvider?.clearTokens();
-        throw new ApiError("User is not authorized to access this resource.", 401);
+        throw new ApiError(
+          "User is not authorized to access this resource.",
+          401,
+        );
       }
       authToken = tokens.accessToken;
     } else if (auth === "optional") {
@@ -75,30 +155,60 @@ export class HttpClient {
       ...customHeaders,
     };
 
-    const baseUrl = this.getBaseUrl(api) || "";
-    const url = baseUrl ? `${baseUrl}/${endpoint}` : endpoint;
-    const response = await fetch(url, {
-      ...requestOptions,
-      headers: finalHeaders,
-    });
+    const url = this.resolveUrl(endpoint, api);
 
-    let data: any;
-    const rawText = await response.text();
+    let response: Response;
     try {
-      data = JSON.parse(rawText);
-    } catch {
-      data = response.ok
-        ? { success: true, data: rawText }
-        : { success: false, detail: rawText || response.statusText };
+      response = await fetch(url, {
+        ...requestOptions,
+        method: requestOptions.method,
+        credentials: "include",
+        headers: finalHeaders,
+        body: toBodyInit(body, contentType),
+      });
+    } catch (networkError: unknown) {
+      console.warn(`Network request failed: ${url}`);
+      throw new ApiError(
+        networkErrorMessage(networkError),
+        0,
+        undefined,
+        networkError,
+      );
     }
 
-    // Handle HTTP Errors & 401 Token Refresh Interception
-    if (!response.ok || (data && typeof data === "object" && data.success === false)) {
-      const statusCode = response.status || data?.status || data?.statusCode || 500;
+    const rawText = await response.text();
+    let parsed: unknown = rawText;
+    if (rawText) {
+      try {
+        parsed = JSON.parse(rawText);
+      } catch {
+        parsed = rawText;
+      }
+    } else {
+      parsed = null;
+    }
 
-      if (statusCode === 401 && auth && !skipRetry && tokens?.refreshToken && this.tokenProvider) {
+    const envelopeFailed =
+      isRecord(parsed) && parsed.success === false;
+    if (!response.ok || envelopeFailed) {
+      const statusFromBody = isRecord(parsed)
+        ? typeof parsed.status === "number"
+          ? parsed.status
+          : typeof parsed.statusCode === "number"
+            ? parsed.statusCode
+            : undefined
+        : undefined;
+      const statusCode = response.status || statusFromBody || 500;
+
+      if (
+        statusCode === 401 &&
+        auth &&
+        !skipRetry &&
+        tokens?.refreshToken &&
+        this.tokenProvider
+      ) {
         try {
-          const refreshed = await this.tokenProvider.refreshToken(tokens.refreshToken);
+          const refreshed = await this.refreshAccessToken(tokens.refreshToken);
           return await this.request<T>(endpoint, {
             ...config,
             skipRetry: true,
@@ -113,27 +223,29 @@ export class HttpClient {
         }
       }
 
-      throw ApiError.fromResponse(statusCode, data, response.statusText);
+      throw ApiError.fromResponse(statusCode, parsed, response.statusText);
     }
 
-    // Normalize uniform ApiResponse envelope: { success: true, data: T }
-    if (data && typeof data === "object" && "success" in data && "data" in data) {
-      return data as ApiResponse<T>;
+    if (isApiSuccessEnvelope<T>(parsed)) {
+      return parsed;
     }
 
     return {
       success: true,
-      data: data as T,
+      data: parsed as T,
     };
   }
 
-  public get<T>(endpoint: string, config?: Omit<RequestConfig, "method">): Promise<ApiResponse<T>> {
+  public get<T>(
+    endpoint: string,
+    config?: Omit<RequestConfig, "method">,
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: "GET" });
   }
 
   public post<T>(
     endpoint: string,
-    body?: any,
+    body?: unknown,
     config?: Omit<RequestConfig, "method" | "body">,
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: "POST", body });
@@ -141,7 +253,7 @@ export class HttpClient {
 
   public put<T>(
     endpoint: string,
-    body?: any,
+    body?: unknown,
     config?: Omit<RequestConfig, "method" | "body">,
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: "PUT", body });

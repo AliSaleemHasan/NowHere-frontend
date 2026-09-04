@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# NowHere (Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Local-first nearby snaps. Pair this app with the backend `docker-compose.dev.yml` stack (gateway, snaps, Mailhog, MinIO). There is no hosted production URL.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Use a **development build** (`npx expo run:android` / `npx expo run:ios`). Nearby maps and camera need native modules that Expo Go does not include.
 
-## Learn more
+Point the app at the compose gateway and snaps socket (simulator defaults; on a phone use your machine’s LAN IP instead of `localhost`):
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+export EXPO_PUBLIC_GATEWAY_URL=http://localhost:3005
+export EXPO_PUBLIC_SNAPS_SOCKET_URL=http://localhost:3000
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Start the backend with `docker compose -f docker-compose.dev.yml up` from the backend repo.
 
-## Join the community
+## Demo notes
 
-Join our community of developers creating universal apps.
+- **Location consent** — onboarding (and a one-shot upgrade screen) must be checked before GPS runs. Settings → Privacy notice explains what is stored.
+- **Language** — Settings has an English / Deutsch toggle. It is stored on this device (MMKV), not on the server.
+- **Password reset** — request a reset in the app, then open Mailhog at `http://localhost:8025` (SMTP `:1025` on the dev compose file). There is no production mail provider.
+- **Export / delete** — Settings can share a JSON export and delete the account (password required). Data lives on the machine that runs compose.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Checks
+
+```bash
+npm run lint
+npm run typecheck
+npm test -- --ci --forceExit
+# or
+npm run check
+```
+
+CI (`.github/workflows/frontend.yml`) runs lint, typecheck, and unit tests. It does not deploy, does not use secrets, and does not run Detox or Playwright.

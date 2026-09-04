@@ -1,6 +1,7 @@
 import React from "react";
 import {
   ActivityIndicator,
+  GestureResponderEvent,
   Keyboard,
   Text,
   TouchableOpacity,
@@ -10,22 +11,28 @@ interface Props {
   disabled?: boolean;
   isLoading?: boolean;
   text: string;
-  onSubmit: (...input: any) => any;
+  onSubmit: (event: GestureResponderEvent) => void;
+  testID?: string;
 }
-export default function FromButton(props: Props) {
+
+export default function FormButton(props: Props) {
+  const disabled = Boolean(props.disabled || props.isLoading);
+
   return (
     <TouchableOpacity
-      onPress={props.onSubmit} // run after layout stabilizes
+      testID={props.testID}
+      onPress={props.onSubmit}
       onPressIn={() => {
         Keyboard.dismiss();
       }}
-      disabled={props.disabled}
-      className={`${!props.disabled ? "bg-primary" : "bg-disabled"}   w-full h-12 items-center justify-center`}
+      disabled={disabled}
+      accessibilityState={{ disabled }}
+      className={`${disabled ? "bg-disabled" : "bg-primary"} h-12 w-full items-center justify-center rounded-2xl`}
     >
       {props.isLoading ? (
-        <ActivityIndicator size={20} color={"primary"} />
+        <ActivityIndicator size={20} color="#ffffff" />
       ) : (
-        <Text className="text-center text-light ">{props.text}</Text>
+        <Text className="text-center font-semibold text-light">{props.text}</Text>
       )}
     </TouchableOpacity>
   );

@@ -1,72 +1,88 @@
 import LocationRequired from "@/components/LocationRequired";
+import { SafeScreen } from "@/components/SafeScreen";
 import { useAuth } from "@/features/auth/context/auth-store";
-import { useLocation } from "@/features/snaps/context/location-store";
+import {
+  hasLocationConsent,
+  useLocation,
+} from "@/features/snaps/context/location-store";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Pressable } from "react-native";
+import { useTranslation } from "react-i18next";
+
+export const unstable_settings = {
+  initialRouteName: "index",
+};
 
 const TabsLayout = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
-  const fetchLocation = useLocation((state) => state.featchLocation);
+  const fetchLocation = useLocation((state) => state.fetchLocation);
+  const locationConsentAt = useLocation((state) => state.locationConsentAt);
 
   const isLocationError = useLocation((state) => state.error);
 
   useEffect(() => {
-    fetchLocation();
-  }, []);
+    if (!hasLocationConsent(locationConsentAt)) return;
+    void fetchLocation();
+  }, [fetchLocation, locationConsentAt]);
 
-  if (isLocationError) return <LocationRequired withErrorImage />;
-
-  // if (isLocationLoading)
-  //   return (
-  //     <Loading
-  //       cause={`Location is loading ${isLocationError && "with this error" + isLocationError} `}
-  //     />
-  //   );
+  if (isLocationError) {
+    return (
+      <SafeScreen edges={["top", "bottom"]} className="bg-white">
+        <LocationRequired
+          withErrorImage
+          disabled={!hasLocationConsent(locationConsentAt)}
+          onGranted={fetchLocation}
+        />
+      </SafeScreen>
+    );
+  }
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
+    <Tabs
+      initialRouteName="index"
+      screenOptions={{ tabBarActiveTintColor: "black" }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           headerShown: false,
-          tabBarLabel: "Map",
+          tabBarLabel: t("tabs.map"),
           tabBarIcon: ({ color }) => (
             <FontAwesome size={20} name="map" color={color} />
           ),
         }}
-      ></Tabs.Screen>
+      />
 
       <Tabs.Screen
         name="add-snap"
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+
+            if (!isLoggedIn) {
+              router.push("/(auth)/login");
+              return;
+            }
+
+            router.push("/(snaps)/snaps-capture");
+          },
+        }}
         options={{
-          tabBarLabel: "Add Snap",
+          tabBarLabel: t("tabs.addSnap"),
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome name="camera" size={20} color={color} />
           ),
-          tabBarButton: (props) => {
-            const { ref: _ref, ...rest } = props as any;
-            return (
-              <Pressable
-                {...rest}
-                onPress={() => {
-                  router.push(
-                    isLoggedIn ? "/(snaps)/snaps-capture" : "/(auth)/login",
-                  );
-                }}
-              />
-            );
-          },
         }}
       />
       <Tabs.Protected guard={isLoggedIn}>
         <Tabs.Screen
           name="profile"
           options={{
-            tabBarLabel: "Profile",
+            tabBarLabel: t("tabs.profile"),
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <FontAwesome name="user" size={20} color={color} />

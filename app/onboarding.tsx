@@ -1,12 +1,14 @@
-import LocationRequired from "@/components/LocationRequired";
 import Modal from "@/components/Modal";
 import ModalPage from "@/components/ModalPage";
+import { LocationConsentView } from "@/features/snaps/components/LocationConsentView";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function onBoarding() {
+export default function Onboarding() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View
@@ -17,30 +19,29 @@ export default function onBoarding() {
     >
       <Modal pagesNumber={4}>
         <ModalPage
-          description="Your window for what's near."
-          title="Welcome to NowHere"
+          description={t("onboarding.welcomeBody")}
+          title={t("onboarding.welcomeTitle")}
           imageSource={require("@/assets/images/onboarding/welcome.png")}
         />
         <ModalPage
-          description="Stay connected with your surroundings — discover real-time updates, share valuable info, and explore nearby opportunities effortlessly."
-          title="Keep up with everything near!"
+          description={t("onboarding.featuresBody")}
+          title={t("onboarding.featuresTitle")}
           imageSource={require("@/assets/images/onboarding/features.jpg")}
         />
         <ModalPage
-          description="See nearby snaps within your range for 24 hours. Search by tags, post once per area daily, and unlock extended reach and duration with premium."
-          title="How It Works"
+          description={t("onboarding.howBody")}
+          title={t("onboarding.howTitle")}
           imageSource={require("@/assets/images/onboarding/how-it-work.png")}
         />
         <ModalPage
-          description="See nearby snaps within your range for 24 hours. Search by tags, post once per area daily, and unlock extended reach and duration with premium."
-          title="How It Works"
+          largeContent
+          description={t("onboarding.locationBody")}
+          title={t("onboarding.locationTitle")}
           imageSource={require("@/assets/images/onboarding/location-required.png")}
         >
-          <LocationRequired />
+          <LocationConsentView />
         </ModalPage>
       </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

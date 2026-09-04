@@ -1,4 +1,4 @@
-import type { Tokens } from "@/features/auth/types/auth-api.types";
+import type { Tokens } from "@/types/api";
 
 /**
  * Interface responsible solely for reading, writing, and clearing tokens in state/storage.

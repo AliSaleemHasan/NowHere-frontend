@@ -1,124 +1,138 @@
 import { apiAuthFetch, apiFetch } from "@/lib/fetch-api";
-import type { ApiResponse } from "@/types/api";
+import { ApiError } from "@/lib/http/api-error";
+import type { AuthUser } from "@/types/api";
 import type {
   AuthSuccessData,
-  LoginFormProps,
+  ForgotPasswordRequest,
+  ForgotPasswordResult,
   LoginRequest,
+  MeResponse,
+  ResetPasswordRequest,
   SignupRequest,
   Tokens,
-  ValidateTokenData,
 } from "../types/auth-api.types";
 
-export const loginApi = async (
-  inputs: LoginFormProps,
-): Promise<AuthSuccessData> => {
-  // Support both flat { email, password } and legacy { user: { email, password } }
-  const payload: LoginRequest =
-    "user" in inputs && inputs.user ? inputs.user : (inputs as LoginRequest);
-
+async function postAuth(
+  url: "login" | "signup",
+  payload: LoginRequest | SignupRequest,
+  incompleteMessage: string,
+): Promise<AuthSuccessData> {
   const response = await apiFetch<AuthSuccessData>({
     api: "auth",
-    url: "auth/login",
+    url,
     options: {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: payload,
     },
   });
 
-  const authData = response?.data;
-
-  if (!authData?.tokens || !authData?.user) {
-    throw new Error("Failed to log in: Invalid response structure");
+  if (!response.data?.tokens?.accessToken || !response.data?.user) {
+    throw new ApiError(incompleteMessage, 500, undefined, response.data);
   }
 
-  return authData;
-};
+  return response.data;
+}
 
-export const signupApi = async (
-  inputs: SignupRequest,
-): Promise<AuthSuccessData> => {
-  const payload: SignupRequest = {
-    email: inputs.email,
-    password: inputs.password,
-    firstName: inputs.firstName,
-    lastName: inputs.lastName,
-    ...(inputs.username ? { username: inputs.username } : {}),
-  };
-
-  const response = await apiFetch<AuthSuccessData>({
-    api: "auth",
-    url: "auth/signup",
-    options: {
-      method: "POST",
-      body: JSON.stringify(payload),
-    },
-  });
-
-  const authData = response?.data;
-
-  if (!authData?.tokens || !authData?.user) {
-    throw new Error("Failed to sign up: Invalid response structure");
-  }
-
-  return authData;
-};
-
-export const validateTokenApi = async (
-  accessToken: string,
-): Promise<ApiResponse<ValidateTokenData>> => {
-  return await apiAuthFetch<ValidateTokenData>({
-    api: "auth",
-    url: "auth/validate",
-    options: {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  });
-};
-
-export const refreshTokensApi = async (refreshToken: string): Promise<Tokens> => {
-  const response = await fetch(
-    `${process.env.EXPO_PUBLIC_AUTH_URL}/auth/refresh`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json, application/problem+json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    },
+export const loginApi = (payload: LoginRequest): Promise<AuthSuccessData> =>
+  postAuth(
+    "login",
+    payload,
+    "Failed to login: Incomplete authentication data received from server",
   );
 
-  const rawText = await response.text();
-  let data: any;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = response.ok ? { success: true, data: rawText } : { success: false, detail: rawText };
-  }
+export const signupApi = (payload: SignupRequest): Promise<AuthSuccessData> =>
+  postAuth(
+    "signup",
+    payload,
+    "Failed to signup: Incomplete authentication data received from server",
+  );
 
-  if (!response.ok || (data && typeof data === "object" && data.success === false)) {
-    throw new Error(data?.detail || data?.message || "Failed to refresh authentication token");
-  }
+export const getMeApi = async (accessToken?: string): Promise<MeResponse> => {
+  const response = await apiAuthFetch<MeResponse>({
+    api: "auth",
+    url: "me",
+    options: {
+      method: "GET",
+      ...(accessToken
+        ? {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        : {}),
+    },
+  });
 
-  const payload = data && typeof data === "object" && "data" in data ? data.data : data;
-  const newAccessToken =
-    typeof payload === "string"
-      ? payload
-      : payload?.token || payload?.accessToken || payload?.tokens?.accessToken;
-  const newRefreshToken =
-    payload?.refreshToken || payload?.tokens?.refreshToken || refreshToken;
-
-  if (!newAccessToken) {
-    throw new Error("Invalid refresh response: missing access token");
+  if (!response.data?.id || !response.data?.email) {
+    throw new ApiError("Failed to load session identity", 500);
   }
 
   return {
-    accessToken: newAccessToken,
-    refreshToken: newRefreshToken,
+    id: response.data.id,
+    email: response.data.email,
+    role: response.data.role ?? "USER",
   };
 };
 
+export const refreshTokensApi = async (
+  refreshToken: string,
+): Promise<Tokens> => {
+  const response = await apiFetch<AuthSuccessData>({
+    api: "auth",
+    url: "refresh",
+    options: {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    },
+  });
 
+  if (!response.data?.tokens?.accessToken) {
+    throw new ApiError(
+      "Failed to refresh session: Missing access token from server",
+      401,
+      undefined,
+      response.data,
+    );
+  }
+
+  return response.data.tokens;
+};
+
+export function authUserToProfile(user: AuthUser) {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    isActive: user.isActive,
+    lastLoginAt: user.lastLoginAt ?? null,
+  };
+}
+
+export const forgotPasswordApi = async (
+  payload: ForgotPasswordRequest,
+): Promise<ForgotPasswordResult> => {
+  await apiFetch<ForgotPasswordResult>({
+    api: "auth",
+    url: "forgot-password",
+    options: {
+      method: "POST",
+      body: payload,
+    },
+  });
+  return { accepted: true };
+};
+
+export const resetPasswordApi = async (
+  payload: ResetPasswordRequest,
+): Promise<void> => {
+  await apiFetch({
+    api: "auth",
+    url: "reset-password",
+    options: {
+      method: "POST",
+      body: payload,
+    },
+  });
+};

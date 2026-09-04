@@ -1,11 +1,28 @@
-export const getErrorMessage = (err: unknown): string => {
-  let message;
-  if (err instanceof TypeError) {
-    message = `Network Error: ${err.message}`;
-  } else if (err instanceof Error) {
-    message = `General Error: ${err.message}`;
-  } else {
-    message = `Unknown Error: ${err}`;
+import { ApiError } from "@/lib/http/api-error";
+import { i18n } from "@/lib/i18n";
+
+export const getErrorMessage = (
+  err: unknown,
+  fallback = i18n.t("errors.generic"),
+): string => {
+  if (err instanceof ApiError) {
+    if (err.statusCode === 429) {
+      return i18n.t("errors.tooManyAttempts");
+    }
+    return err.message || fallback;
   }
-  return message;
+  if (err instanceof TypeError) {
+    return i18n.t("errors.network");
+  }
+  if (err instanceof Error && err.message.trim().length > 0) {
+    return err.message;
+  }
+  return fallback;
+};
+
+export const getApiValidationErrors = (err: unknown): string[] | undefined => {
+  if (err instanceof ApiError && err.problemDetails?.errors?.length) {
+    return err.problemDetails.errors;
+  }
+  return undefined;
 };

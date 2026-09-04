@@ -1,3 +1,4 @@
+import MapPinMark from "../components/MapPinMark";
 import React from "react";
 import MapView, { Marker, Region } from "react-native-maps";
 import { IMapStrategy, UnifiedMapViewProps, UnifiedMarkerProps } from "./types";
@@ -33,7 +34,9 @@ export class ReactNativeMapsStrategy implements IMapStrategy {
         title={props.title}
         pinColor={props.pinColor}
         onPress={props.onPress}
-      />
+      >
+        <MapPinMark pinColor={props.pinColor} badge={props.badge} />
+      </Marker>
     );
   }
 }

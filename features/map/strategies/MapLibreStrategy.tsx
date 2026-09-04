@@ -1,15 +1,12 @@
-import React from "react";
-import { View } from "react-native";
+import MapPinMark from "../components/MapPinMark";
 import {
   MapView,
   Camera,
   PointAnnotation,
   UserLocation,
 } from "@maplibre/maplibre-react-native";
-import { cssInterop } from "nativewind";
+import React from "react";
 import { IMapStrategy, UnifiedMapViewProps, UnifiedMarkerProps } from "./types";
-
-cssInterop(MapView, { className: "style" });
 
 export const DEFAULT_MAPLIBRE_STYLE_URL =
   "https://tiles.openfreemap.org/styles/liberty";
@@ -24,12 +21,10 @@ export class MapLibreStrategy implements IMapStrategy {
       props.region.latitude,
     ];
 
-    const StyledMapView = MapView as React.ComponentType<any>;
-
     return (
-      <StyledMapView
+      <MapView
         key={DEFAULT_MAPLIBRE_STYLE_URL}
-        className="flex-1 w-full h-full"
+        style={{ flex: 1, width: "100%", height: "100%" }}
         mapStyle={DEFAULT_MAPLIBRE_STYLE_URL}
       >
         <Camera
@@ -40,7 +35,7 @@ export class MapLibreStrategy implements IMapStrategy {
         />
         {props.showUserLocation && <UserLocation visible={true} />}
         {props.children}
-      </StyledMapView>
+      </MapView>
     );
   }
 
@@ -58,14 +53,7 @@ export class MapLibreStrategy implements IMapStrategy {
         title={props.title}
         onSelected={props.onPress}
       >
-        <View
-          className="w-6 h-6 rounded-full border-2 border-white shadow-md items-center justify-center"
-          style={
-            props.pinColor
-              ? { backgroundColor: props.pinColor }
-              : { backgroundColor: "#FF3B30" }
-          }
-        />
+        <MapPinMark pinColor={props.pinColor} badge={props.badge} />
       </PointAnnotation>
     );
   }

@@ -1,47 +1,48 @@
+import { patchUser } from "@/features/users/context/user-store";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import { validateTokenApi } from "../api/auth-api";
+import { getMeApi } from "../api/auth-api";
 import { useAuth } from "../context/auth-store";
+import { ApiError } from "@/lib/http/api-error";
 
 export const useAuthSession = () => {
   const hasHydrated = useAuth((state) => state._hasHydrated);
   const tokens = useAuth((state) => state.tokens);
+  const isLoggedIn = useAuth((state) => state.isLoggedIn);
   const logout = useAuth((state) => state.logout);
   const hydrate = useAuth((state) => state.hydrate);
 
   const [isValidating, setIsValidating] = useState(true);
 
-  // 1. Tell the store to hydrate from disk on mount
   useEffect(() => {
     hydrate();
-  }, []);
+  }, [hydrate]);
 
-  // 2. Once hydrated, validate the session
   useEffect(() => {
     if (!hasHydrated) return;
 
+    let cancelled = false;
+
     const verifySession = async () => {
+      if (!isLoggedIn || !tokens?.accessToken) {
+        if (!cancelled) setIsValidating(false);
+        await SplashScreen.hideAsync();
+        return;
+      }
+
       try {
-        if (!tokens?.accessToken) {
-          await logout();
-          return;
-        }
-
-        // Validate token against backend
-        const validation = await validateTokenApi(tokens.accessToken);
-
-        // If successful, mark the user as logged in and preserve userId
-        const validatedUserId = validation.data?.userId;
-        useAuth.setState((state) => ({
-          isLoggedIn: true,
-          user: validatedUserId || state.user,
-          userId: validatedUserId || state.user,
-        }));
-      } catch (err: any) {
-        if (
-          err?.statusCode === 401 ||
-          err?.message?.toLowerCase().includes("unauthorized")
-        ) {
+        const me = await getMeApi(tokens.accessToken);
+        if (cancelled) return;
+        patchUser({
+          id: me.id,
+          email: me.email,
+          role: me.role,
+        });
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const unauthorized =
+          err instanceof ApiError && err.statusCode === 401;
+        if (unauthorized) {
           console.warn("Session expired or invalid, logging out:", err);
           await logout();
         } else {
@@ -49,16 +50,18 @@ export const useAuthSession = () => {
             "Could not reach auth server, keeping offline session:",
             err,
           );
-          useAuth.setState({ isLoggedIn: true });
         }
       } finally {
-        setIsValidating(false);
+        if (!cancelled) setIsValidating(false);
         await SplashScreen.hideAsync();
       }
     };
 
     verifySession();
-  }, [hasHydrated]); // Only runs after hydrate() finishes
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHydrated, isLoggedIn, tokens?.accessToken, logout]);
 
   return { isReady: hasHydrated && !isValidating };
 };

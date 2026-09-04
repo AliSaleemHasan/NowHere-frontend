@@ -1,3 +1,4 @@
+import type { ReactElement, ReactNode } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 
 export type MapCoordinate = {
@@ -17,18 +18,19 @@ export type UnifiedMarkerProps = {
   coordinate: MapCoordinate;
   title?: string;
   pinColor?: string;
+  badge?: string;
   onPress?: () => void;
 };
 export type UnifiedMapViewProps = {
   region: MapRegion;
   showUserLocation?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
 export interface IMapStrategy {
   readonly id: string;
   readonly name: string;
-  renderMap(props: UnifiedMapViewProps): React.ReactElement;
-  renderMarker(props: UnifiedMarkerProps): React.ReactElement;
+  renderMap(props: UnifiedMapViewProps): ReactElement;
+  renderMarker(props: UnifiedMarkerProps): ReactElement;
 }

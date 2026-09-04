@@ -1,31 +1,65 @@
-import HeaderLogooutButton from "@/components/HeaderLogooutButton";
-import { Ionicons } from "@expo/vector-icons";
-import { Link, Stack } from "expo-router";
+import LogoutButton from "@/features/auth/components/LogoutButton";
+import { Stack } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileLayout() {
+  const { t } = useTranslation();
+
   return (
     <Stack>
       <Stack.Screen
         name="index"
         options={{
-          title: "Welcome Back",
-          headerTitleStyle: { fontSize: 12, fontWeight: "100" },
-
-          headerRight: () => (
-            <Link href={"/(tabs)/profile/settings"}>
-              <Ionicons name="settings" size={20}></Ionicons>
-            </Link>
-          ),
+          headerShown: false,
         }}
-      ></Stack.Screen>
+      />
+
+      <Stack.Screen
+        name="my-snaps"
+        options={{
+          title: t("snaps.mySnaps.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+        }}
+      />
+
+      <Stack.Screen
+        name="saved"
+        options={{
+          title: t("snaps.saved.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+        }}
+      />
 
       <Stack.Screen
         name="settings"
         options={{
-          headerRight: () => <HeaderLogooutButton />,
+          title: t("users.settings.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+          headerRight: () => <LogoutButton />,
         }}
-      ></Stack.Screen>
+      />
+
+      <Stack.Screen
+        name="edit"
+        options={{
+          title: t("users.edit.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+        }}
+      />
+
+      <Stack.Screen
+        name="change-password"
+        options={{
+          title: t("users.password.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+        }}
+      />
     </Stack>
   );
 }

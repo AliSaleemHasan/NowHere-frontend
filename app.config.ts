@@ -18,7 +18,7 @@ const SCHEME = "app-scheme";
 export default ({ config }: ConfigContext): ExpoConfig => {
   console.log(
     "⚙️ Building app with endpoint",
-    process.env.EXPO_PUBLIC_SNAPS_URL
+    process.env.EXPO_PUBLIC_GATEWAY_URL
   );
   const { name, bundleIdentifier, icon, adaptiveIcon, packageName, scheme } =
     getDynamicAppConfig(
@@ -103,10 +103,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       [
-        "expo-image-picker",
+        "expo-camera",
         {
-          photosPermission:
-            "The app accesses your photos to let you share them with your friends.",
+          cameraPermission:
+            "Allow $(PRODUCT_NAME) to access your camera to capture snaps.",
         },
       ],
       "expo-router",

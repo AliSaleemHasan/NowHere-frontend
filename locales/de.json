@@ -1,0 +1,521 @@
+{
+  "auth": {
+    "brandA11y": "NowHere",
+    "password": {
+      "minLength": "Das Passwort muss mindestens 8 Zeichen haben",
+      "lowercase": "Ein Kleinbuchstabe ist erforderlich",
+      "uppercase": "Ein Großbuchstabe ist erforderlich",
+      "number": "Eine Zahl ist erforderlich",
+      "symbol": "Ein Sonderzeichen ist erforderlich"
+    },
+    "signup": {
+      "title": "Registrieren",
+      "welcome": "Willkommen bei NowHere",
+      "emailPlaceholder": "E-Mail..",
+      "firstNamePlaceholder": "Vorname..",
+      "lastNamePlaceholder": "Nachname..",
+      "passwordPlaceholder": "Passwort..",
+      "confirmPasswordPlaceholder": "Passwort bestätigen..",
+      "submit": "Registrieren",
+      "haveAccount": "Du hast schon ein Konto?",
+      "logIn": "Anmelden",
+      "toastSuccessTitle": "Willkommen bei NowHere!",
+      "toastSuccessBody": "Dein Konto wurde erstellt.",
+      "toastErrorTitle": "Registrierung fehlgeschlagen",
+      "toastErrorFallback": "Bitte prüfe das Formular und versuche es erneut.",
+      "errors": {
+        "email": "Gib eine gültige E-Mail-Adresse ein",
+        "firstName": "Vorname ist erforderlich",
+        "lastName": "Nachname ist erforderlich",
+        "passwordMismatch": "Passwörter stimmen nicht überein"
+      }
+    },
+    "login": {
+      "title": "Anmelden",
+      "welcome": "Willkommen bei NowHere",
+      "emailPlaceholder": "E-Mail..",
+      "passwordPlaceholder": "Passwort..",
+      "submit": "Anmelden",
+      "noAccount": "Du hast noch kein Konto?",
+      "signUp": "Registrieren",
+      "forgot": "Passwort vergessen?",
+      "toastSuccessTitle": "Anmeldung erfolgreich",
+      "toastSuccessBody": "Willkommen zurück!",
+      "toastErrorTitle": "Anmeldung fehlgeschlagen",
+      "toastErrorFallback": "Bitte prüfe E-Mail und Passwort.",
+      "lockout": "Zu viele Fehlversuche. Versuche es in 15 Minuten erneut.",
+      "errors": {
+        "email": "Gib eine gültige E-Mail-Adresse ein",
+        "passwordRequired": "Passwort ist erforderlich"
+      }
+    },
+    "forgot": {
+      "title": "Passwort vergessen",
+      "intro": "Gib deine E-Mail-Adresse ein. Wenn ein Konto existiert, schicken wir einen Link zum Zurücksetzen.",
+      "emailPlaceholder": "E-Mail..",
+      "submit": "Link senden",
+      "successTitle": "Prüfe dein Postfach",
+      "successBody": "Wenn ein Konto mit dieser Adresse existiert, haben wir einen Link geschickt, mit dem du ein neues Passwort setzen kannst.",
+      "haveAccount": "Passwort wieder eingefallen?",
+      "backToLogin": "Anmelden",
+      "toastErrorFallback": "Bitte versuche es gleich noch einmal.",
+      "errors": {
+        "email": "Gib eine gültige E-Mail-Adresse ein"
+      }
+    },
+    "reset": {
+      "title": "Passwort zurücksetzen",
+      "intro": "Wähle ein neues Passwort für dein Konto.",
+      "newPlaceholder": "Neues Passwort",
+      "confirmPlaceholder": "Neues Passwort bestätigen",
+      "submit": "Neues Passwort speichern",
+      "invalidToken": "Dieser Link ist ungültig oder abgelaufen.",
+      "successTitle": "Passwort aktualisiert",
+      "successBody": "Du kannst dich mit dem neuen Passwort anmelden.",
+      "haveAccount": "Bereit zum Anmelden?",
+      "backToLogin": "Anmelden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "mismatch": "Passwörter stimmen nicht überein"
+      }
+    }
+  },
+  "users": {
+    "profile": {
+      "title": "Profil",
+      "yourProfile": "Dein Profil",
+      "sessionMissingTitle": "Sitzung nicht gefunden",
+      "sessionMissingBody": "Bitte melde dich erneut an, um dein Profil zu sehen.",
+      "finishing": "Dein Profil wird eingerichtet…",
+      "roleAdmin": "Admin",
+      "roleMember": "Mitglied",
+      "emptyBio": "Erzähl, was um dich herum passiert — Snaps in der Nähe, nur für den Moment.",
+      "refreshError": "Profil konnte nicht aktualisiert werden",
+      "fallbackName": "NowHere-Entdecker",
+      "settingsTitle": "Sichtbarkeitseinstellungen",
+      "settingsSubtitle": "Radius, Mindestabstand, Lebensdauer",
+      "editTitle": "Profil bearbeiten",
+      "editSubtitle": "Name und Bio",
+      "passwordTitle": "Passwort ändern",
+      "passwordSubtitle": "Anmeldepasswort aktualisieren",
+      "logout": "Abmelden",
+      "logoutConfirmTitle": "Bei NowHere abmelden?",
+      "logoutConfirmBody": "Du kannst dich jederzeit wieder anmelden.",
+      "logoutCancel": "Abbrechen",
+      "photo": {
+        "updated": "Profilfoto aktualisiert",
+        "updateError": "Foto konnte nicht aktualisiert werden",
+        "takeNew": "Neues Foto aufnehmen",
+        "close": "Schließen",
+        "viewA11y": "Profilfoto anzeigen",
+        "changeA11y": "Profilfoto ändern"
+      }
+    },
+    "edit": {
+      "title": "Profil bearbeiten",
+      "firstNamePlaceholder": "Vorname",
+      "lastNamePlaceholder": "Nachname",
+      "bioPlaceholder": "Kurze Bio",
+      "submit": "Speichern",
+      "toastSuccessTitle": "Profil aktualisiert",
+      "toastSuccessBody": "Name und Bio wurden gespeichert.",
+      "toastErrorTitle": "Profil konnte nicht gespeichert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "firstName": "Vorname ist erforderlich",
+        "lastName": "Nachname ist erforderlich"
+      }
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "intro": "Diese Werte steuern, wie weit du Snaps siehst, wie weit du dich bewegen musst, bevor du erneut postest, und wie lange Snaps in der Nähe bleiben.",
+      "save": "Einstellungen speichern",
+      "loading": "Sichtbarkeitseinstellungen werden geladen…",
+      "notReadyTitle": "Einstellungen sind noch nicht bereit",
+      "notReadyFallback": "Dein Profil wird noch erstellt. Versuche es gleich noch einmal.",
+      "tryAgain": "Erneut versuchen",
+      "toastSuccessTitle": "Einstellungen gespeichert",
+      "toastErrorTitle": "Einstellungen konnten nicht gespeichert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "invalidPreset": "Wähle eine der verfügbaren Optionen",
+      "meters": "{{count}} m",
+      "km": "{{count}} km",
+      "days_one": "{{count}} Tag",
+      "days_other": "{{count}} Tage",
+      "maxDistance": {
+        "title": "Sichtbarkeitsradius",
+        "description": "Wie weit um dich herum Snaps auf der Karte erscheinen können."
+      },
+      "newSnapDistance": {
+        "title": "Mindestabstand",
+        "description": "Wie weit du dich bewegen musst, bevor du einen weiteren Snap in einem neuen Gebiet teilen kannst."
+      },
+      "snapDisappearTime": {
+        "title": "Snap-Lebensdauer",
+        "description": "Wie lange ein Snap für Personen in der Nähe sichtbar bleibt."
+      },
+      "languageTitle": "Sprache",
+      "languageDescription": "Wähle Englisch oder Deutsch. Die Auswahl bleibt auf diesem Gerät gespeichert.",
+      "languageEn": "English",
+      "languageDe": "Deutsch",
+      "privacyTitle": "Datenschutzhinweis",
+      "privacySubtitle": "Wie diese App mit deinen Daten umgeht",
+      "exportTitle": "Meine Daten exportieren",
+      "exportDescription": "Teile eine JSON-Kopie deines Kontos, der Einstellungen, Snaps, Lesezeichen und Meldungen.",
+      "exportButton": "JSON-Export teilen",
+      "exportShareTitle": "NowHere-Datenexport",
+      "exportSuccessTitle": "Export bereit",
+      "exportErrorTitle": "Daten konnten nicht exportiert werden",
+      "exportErrorFallback": "Bitte versuche es erneut.",
+      "deleteTitle": "Konto löschen",
+      "deleteDescription": "Damit werden Profil, Snaps und Fotos entfernt. Gib dein Passwort ein, um fortzufahren.",
+      "deletePasswordPlaceholder": "Passwort",
+      "deleteButton": "Konto löschen",
+      "deleteConfirmTitle": "Konto wirklich löschen?",
+      "deleteConfirmBody": "Das lässt sich nicht rückgängig machen. Profil, Snaps und gespeicherte Fotos werden entfernt.",
+      "deleteConfirmAction": "Löschen",
+      "deleteCancel": "Abbrechen",
+      "deleteIncomplete": "Dein Konto wurde deaktiviert, aber das Löschen ist nicht durchgelaufen. Versuche es erneut.",
+      "deleteSuccessTitle": "Konto gelöscht",
+      "deleteErrorTitle": "Konto konnte nicht gelöscht werden",
+      "deleteErrorFallback": "Bitte versuche es erneut."
+    },
+    "password": {
+      "title": "Passwort ändern",
+      "currentPlaceholder": "Aktuelles Passwort",
+      "newPlaceholder": "Neues Passwort",
+      "confirmPlaceholder": "Neues Passwort bestätigen",
+      "submit": "Passwort aktualisieren",
+      "toastSuccessTitle": "Passwort aktualisiert",
+      "toastSuccessBody": "Nutze beim nächsten Anmelden dein neues Passwort.",
+      "toastErrorTitle": "Passwort konnte nicht geändert werden",
+      "toastErrorFallback": "Bitte versuche es erneut.",
+      "errors": {
+        "currentRequired": "Aktuelles Passwort ist erforderlich",
+        "mismatch": "Passwörter stimmen nicht überein"
+      }
+    }
+  },
+  "profile": {
+    "mySnapsSubtitle": "Snaps ansehen und löschen, die du geteilt hast",
+    "savedSubtitle": "Snaps, die du später wiederfinden willst"
+  },
+  "snaps": {
+    "actions": {
+      "cancel": "Abbrechen"
+    },
+    "mySnaps": {
+      "title": "Meine Snaps",
+      "loading": "Deine Snaps werden geladen…",
+      "emptyTitle": "Noch keine Snaps",
+      "emptyBody": "Teile einen Moment über die Kamera.",
+      "errorTitle": "Deine Snaps konnten nicht geladen werden",
+      "errorBody": "Zieh zum Aktualisieren oder versuch es gleich noch einmal.",
+      "retry": "Erneut versuchen"
+    },
+    "saved": {
+      "title": "Gespeichert",
+      "loading": "Gespeicherte Snaps werden geladen…",
+      "emptyTitle": "Noch nichts gespeichert",
+      "emptyBody": "Tippe bei einem Snap auf Speichern, um ihn hier zu behalten.",
+      "errorTitle": "Gespeicherte Snaps konnten nicht geladen werden",
+      "errorBody": "Zieh zum Aktualisieren oder versuch es gleich noch einmal.",
+      "retry": "Erneut versuchen"
+    },
+    "resolution": {
+      "found": "Gefunden"
+    },
+    "list": {
+      "noCaption": "Kein Text",
+      "openA11y": "Snap öffnen"
+    },
+    "details": {
+      "screenTitle": "Snap",
+      "you": "Du",
+      "anonymous": "Anonym",
+      "loadingAuthor": "Profil wird geladen…",
+      "ownFallbackBio": "Dein Moment an diesem Ort.",
+      "otherFallbackBio": "In der Nähe geteilt, nur für jetzt.",
+      "distance": "Entfernung",
+      "nearby": "In der Nähe",
+      "posted": "Geteilt",
+      "recently": "Kürzlich",
+      "photos": "Fotos",
+      "caption": "Beschreibung",
+      "noCaption": "Keine Beschreibung — nur die Szene.",
+      "openMaps": "In Karten öffnen",
+      "openMapsA11y": "Diesen Ort in Karten öffnen",
+      "mapsErrorTitle": "Karten konnten nicht geöffnet werden",
+      "mapsErrorBody": "Versuch es noch einmal oder kopiere die Koordinaten aus der Standortkarte.",
+      "statusFailedTitle": "Fotos möglicherweise unvollständig",
+      "statusFailedBody": "Dieser Snap wurde nicht fertig hochgeladen. Einige Bilder könnten fehlen.",
+      "statusProcessingTitle": "Wird noch verarbeitet",
+      "statusProcessingBody": "Dieser Snap wird gerade fertiggestellt. Fotos können gleich erscheinen.",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht…",
+      "hide": "Ausblenden",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "saving": "Wird gespeichert…",
+      "unsaving": "Wird entfernt…",
+      "report": "Melden",
+      "markFound": "Als gefunden markieren",
+      "reopen": "Wieder öffnen",
+      "unavailableTitle": "Dieser Snap ist nicht verfügbar",
+      "unavailableBody": "Er ist in der Nähe abgelaufen, oder der Link gilt nicht mehr.",
+      "loading": "Snap wird geöffnet…"
+    },
+    "delete": {
+      "confirmTitle": "Diesen Snap löschen?",
+      "confirmBody": "Der Snap und seine Fotos werden entfernt. Das lässt sich nicht rückgängig machen.",
+      "successTitle": "Snap gelöscht",
+      "successBody": "Er ist von der Karte und aus deinen Snaps verschwunden.",
+      "errorTitle": "Snap konnte nicht gelöscht werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "hide": {
+      "confirmTitle": "Diesen Snap ausblenden?",
+      "confirmBody": "Du siehst ihn nicht mehr auf der Karte oder in der Liste in der Nähe.",
+      "successTitle": "Snap ausgeblendet",
+      "successBody": "Er taucht in deiner Umgebung nicht mehr auf."
+    },
+    "bookmark": {
+      "saveSuccessTitle": "Snap gespeichert",
+      "saveSuccessBody": "Du findest ihn unter Profil → Gespeichert.",
+      "unsaveSuccessTitle": "Speichern aufgehoben",
+      "unsaveSuccessBody": "Dieser Snap ist nicht mehr in deiner Liste.",
+      "errorTitle": "Gespeicherte Snaps konnten nicht aktualisiert werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "report": {
+      "title": "Diesen Snap melden",
+      "body": "Was stimmt mit diesem Snap nicht?",
+      "detailsLabel": "Details (optional)",
+      "detailsPlaceholder": "Was sollten wir wissen?",
+      "submit": "Meldung senden",
+      "closeA11y": "Meldung schließen",
+      "successTitle": "Meldung gesendet",
+      "successBody": "Danke. Wir haben deine Meldung gespeichert.",
+      "duplicateTitle": "Bereits gemeldet",
+      "duplicateBody": "Du hast diesen Snap schon gemeldet.",
+      "errorTitle": "Meldung fehlgeschlagen",
+      "errorFallback": "Bitte versuch es noch einmal.",
+      "reasons": {
+        "spam": "Spam",
+        "inappropriate": "Unangemessen",
+        "wrong_place": "Falscher Ort",
+        "other": "Sonstiges"
+      }
+    },
+    "found": {
+      "title": "Als gefunden markieren?",
+      "body": "Damit sehen Leute in der Nähe, dass der Gegenstand gefunden wurde. Du kannst eine kurze Notiz hinterlassen.",
+      "noteLabel": "Notiz (optional)",
+      "notePlaceholder": "Wo oder wie es gefunden wurde",
+      "submit": "Als gefunden markieren",
+      "closeA11y": "Schließen",
+      "successTitle": "Als gefunden markiert",
+      "successBody": "Dieser Snap zeigt jetzt ein Gefunden-Abzeichen.",
+      "errorTitle": "Konnte nicht als gefunden markiert werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "reopen": {
+      "confirmTitle": "Diesen Snap wieder öffnen?",
+      "confirmBody": "Er gilt dann wieder als offen statt als gefunden.",
+      "successTitle": "Snap wieder geöffnet",
+      "successBody": "Das Gefunden-Abzeichen ist weg.",
+      "errorTitle": "Konnte nicht wieder geöffnet werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "hero": {
+      "viewFullScreen": "Foto im Vollbild anzeigen",
+      "noPhotos": "Keine Fotos bei diesem Snap",
+      "tapToExpand": "Tippen zum Vergrößern",
+      "photoCount": "{{current}} / {{total}}",
+      "photoOf": "{{current}} von {{total}}",
+      "closeGallery": "Galerie schließen",
+      "photoA11y": "Foto {{index}}"
+    },
+    "visibility": {
+      "expired": "Nicht mehr in deinem Umkreis",
+      "lessThanHour": "Noch weniger als eine Stunde sichtbar",
+      "hours_one": "Noch etwa {{count}} Stunde sichtbar",
+      "hours_other": "Noch etwa {{count}} Stunden sichtbar",
+      "days_one": "Noch etwa {{count}} Tag sichtbar",
+      "days_other": "Noch etwa {{count}} Tage sichtbar"
+    },
+    "capture": {
+      "next": "Weiter",
+      "addMore": "Mehr hinzufügen",
+      "limitReached": "Limit erreicht",
+      "limitToast": "Du kannst bis zu {{count}} Fotos hinzufügen"
+    },
+    "compose": {
+      "title": "Neuer Snap",
+      "add": "Hinzufügen",
+      "description": "Beschreibung",
+      "placeholder": "Was passiert hier?",
+      "tag": "Tag",
+      "tagHelp": "Damit sehen Leute in der Nähe, worum es geht.",
+      "sharingAt": "Teilen bei {{lat}}, {{lng}}. Ein Snap pro Gebiet und Tag.",
+      "needLocation": "Beim Teilen hängen wir deinen aktuellen GPS-Standort an. Standort ist erforderlich.",
+      "submit": "Snap teilen",
+      "toastSuccessTitle": "Snap geteilt",
+      "toastSuccessBody": "Leute in der Nähe können ihn jetzt entdecken.",
+      "toastAlreadyTitle": "Hier heute schon geteilt",
+      "toastAlreadyBody": "Dein Snap für dieses Gebiet ist auf der Karte. Beweg dich weiter weg, um erneut zu posten.",
+      "toastErrorTitle": "Snap konnte nicht geteilt werden",
+      "toastErrorFallback": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+      "toastLocationTitle": "Standort erforderlich",
+      "toastLocationFallback": "Aktiviere GPS, um einen Snap von hier zu teilen.",
+      "errors": {
+        "descriptionRequired": "Schreib eine kurze Beschreibung",
+        "descriptionMax": "Maximal 280 Zeichen"
+      },
+      "discard": "Verwerfen",
+      "discardTitle": "Diesen Snap verwerfen?",
+      "discardBody": "Wenn du fortfährst, gehen der aktuelle Snap und alle Änderungen verloren.",
+      "discardConfirm": "Verwerfen"
+    },
+    "add": {
+      "title": "Einen Snap aufnehmen",
+      "body": "Melde dich an, um festzuhalten, was um dich herum passiert, und es mit Leuten in der Nähe zu teilen.",
+      "signIn": "Anmelden, um fortzufahren"
+    }
+  },
+  "map": {
+    "toggleMap": "Karte",
+    "toggleList": "Liste",
+    "toggleA11y": "Karten- oder Listenansicht",
+    "listTitle": "Snaps in der Nähe",
+    "locating": "Standort wird ermittelt…",
+    "loadErrorTitle": "Snaps in der Nähe konnten nicht geladen werden",
+    "loadErrorBody": "Komm auf diesen Tab zurück oder versuch es erneut. Dein Snap ist gespeichert, wenn du ihn schon geteilt hast.",
+    "retry": "Erneut versuchen",
+    "emptyUnseenTitle": "Keine neuen Snaps in der Nähe",
+    "emptyUnseenBody": "Neue Snaps, die du noch nicht geöffnet hast, erscheinen hier. Unter „Bereits geöffnet“ siehst du Snaps, die du schon angesehen hast.",
+    "emptySeenTitle": "Keine geöffneten Snaps in der Nähe",
+    "emptySeenBody": "Snaps, die du schon geöffnet hast, erscheinen hier.",
+    "signInTitle": "Melde dich an, um Snaps in der Nähe zu sehen",
+    "signInBody": "Die Feeds in der Nähe und bereits geöffnet sind nach dem Anmelden verfügbar.",
+    "signIn": "Anmelden",
+    "filterTitle": "Snaps nach Typ",
+    "filterClear": "Zurücksetzen",
+    "filterNew": "Neu in der Nähe",
+    "filterOpened": "Bereits geöffnet",
+    "filterSearch": "Suchen",
+    "filterA11y": "Snaps filtern"
+  },
+  "tabs": {
+    "map": "Karte",
+    "addSnap": "Snap",
+    "profile": "Profil"
+  },
+  "onboarding": {
+    "welcomeTitle": "Willkommen bei NowHere",
+    "welcomeBody": "Dein Fenster für das, was in der Nähe passiert.",
+    "featuresTitle": "Bleib nah dran",
+    "featuresBody": "Sieh, was Menschen um dich herum teilen, poste einen Snap von deinem Ort und entdecke Momente in der Nähe, solange sie da sind.",
+    "howTitle": "So funktioniert’s",
+    "howBody": "Snaps in der Nähe bleiben nur eine begrenzte Zeit sichtbar. Filter nach Tags und teile einen Snap pro Gebiet, bis du weiterziehst.",
+    "locationTitle": "Standort ist nötig",
+    "locationBody": "NowHere dreht sich um deine Umgebung. Erlaube den Standort, damit wir Snaps in der Nähe zeigen und deine Fotos an diesen Ort hängen können."
+  },
+  "consent": {
+    "checkbox": "Ich stimme zu, dass NowHere meinen Standort nutzen darf, um Snaps in der Nähe zu zeigen und Snaps, die ich poste, an diesen Ort zu knüpfen.",
+    "privacyLink": "Datenschutzhinweis lesen",
+    "upgradeTitle": "Einwilligung zum Standort",
+    "upgradeBody": "Bevor die App GPS wieder nutzt, stimme bitte der Standortverarbeitung zu. Deine Position wird erst abgefragt, wenn du das Kästchen setzt."
+  },
+  "location": {
+    "grantBody": "Tippe auf die Schaltfläche unten, um den Standortzugriff zu erlauben.",
+    "grantButton": "Standortzugriff erlauben",
+    "permissionTitle": "Standortberechtigung",
+    "permissionBody": "Der Standortzugriff ist aus. Aktiviere ihn in den Einstellungen, um weiterzumachen.",
+    "openSettings": "Einstellungen öffnen",
+    "cancel": "Abbrechen",
+    "permissionRequired": "Standortberechtigung ist erforderlich.",
+    "unavailable": "Standort konnte nicht ermittelt werden",
+    "invalidGps": "Kein gültiger GPS-Standort",
+    "shareRequired": "Zum Teilen eines Snaps ist der Standort nötig. Aktiviere GPS und versuche es erneut."
+  },
+  "privacy": {
+    "title": "Datenschutz",
+    "close": "Schließen",
+    "heading": "Datenschutzhinweis",
+    "intro": "NowHere ist ein persönliches Projekt und eine Portfolio-App. Es ist keine Firma und keine GmbH, und es gibt keinen Datenschutzbeauftragten.",
+    "whoTitle": "Wer die Daten hält",
+    "whoBody": "Die Daten liegen auf dem Rechner, der diesen docker-compose-Stack der App betreibt (Datenbanken, Objektspeicher und Mail). Wer diese Maschine betreibt, hält die Daten. Es gibt kein separates Cloud-Produkt und keine weitere verantwortliche Stelle für dieses Projekt.",
+    "dataTitle": "Was gespeichert wird",
+    "dataBody": "Ein Konto speichert E-Mail, Name, Bio, einen Passwort-Hash und optional ein Profilfoto. Außerdem speichern wir Sichtbarkeitseinstellungen, Snaps, die du teilst (Objekt-Schlüssel der Fotos, Text, Tag und Ort), Snaps, die du geöffnet hast, Lesezeichen und Meldungen, die du sendest. Fotos sind Objektspeicher-Schlüssel, keine öffentlichen Website-URLs.",
+    "locationTitle": "Standort",
+    "locationBody": "Der Standort wird nur nach deiner Zustimmung genutzt: um Snaps in der Nähe zu zeigen und einen Snap, den du postest, an diesen Ort zu knüpfen. Die App fragt GPS erst an, wenn das Kästchen gesetzt ist. Standortdaten werden nicht verkauft.",
+    "mailTitle": "Mails zum Zurücksetzen",
+    "mailBody": "Nachrichten zum Zurücksetzen laufen über den Mail-Host, der in diesem Compose-Stack steht. In der Entwicklung ist das ein lokales Postfach (Mailhog), kein Produktions-Mailanbieter.",
+    "rightsTitle": "Export und Löschung",
+    "rightsBody": "Unter Einstellungen kannst du eine JSON-Kopie deiner Kontodaten exportieren und dein Konto löschen. Die Löschung entfernt Profil, Snaps und gespeicherte Fotos. Wenn eine Löschung abbricht, bleibt das Konto deaktiviert, damit du es erneut versuchen kannst.",
+    "contactTitle": "Kontakt",
+    "contactBody": "Es gibt keinen Firmensupport. Wende dich an die Person, die diesen Compose-Stack betreibt."
+  },
+  "tags": {
+    "labels": {
+      "PROMOTION": "Aktion",
+      "PROOMOTION": "Aktion",
+      "INTERESTING": "Interessant",
+      "FINDINGS": "Fundstücke",
+      "LOST": "Verloren",
+      "HIDDEN_GEM": "Geheimtipp",
+      "SOCIAL": "Sozial"
+    },
+    "descriptions": {
+      "PROMOTION": "Ein Angebot, Pop-up oder Event in der Nähe.",
+      "PROOMOTION": "Ein Angebot, Pop-up oder Event in der Nähe.",
+      "INTERESTING": "Jemand hat das als sehenswert markiert.",
+      "FINDINGS": "Hier in der Nähe wurde etwas gefunden.",
+      "LOST": "Jemand hat hier in der Nähe etwas verloren.",
+      "HIDDEN_GEM": "Ein lokaler Ort, den man leicht übersieht.",
+      "SOCIAL": "Ein Moment von jemandem in deiner Nähe."
+    }
+  },
+  "time": {
+    "justNow": "Gerade eben",
+    "now": "Jetzt",
+    "minutesAgo_one": "vor {{count}} Minute",
+    "minutesAgo_other": "vor {{count}} Minuten",
+    "minutesAgoShort": "vor {{count}} Min.",
+    "hoursAgo_one": "vor {{count}} Stunde",
+    "hoursAgo_other": "vor {{count}} Stunden",
+    "hoursAgoShort": "vor {{count}} Std.",
+    "daysAgo_one": "vor {{count}} Tag",
+    "daysAgo_other": "vor {{count}} Tagen",
+    "daysAgoShort": "vor {{count}} T."
+  },
+  "geo": {
+    "nearby": "In der Nähe",
+    "rightHere": "Genau hier",
+    "away": "{{value}} entfernt",
+    "meters": "{{count}} m",
+    "kilometers": "{{value}} km",
+    "mapsPin": "NowHere-Snap"
+  },
+  "camera": {
+    "permissionTitle": "Kamerazugriff nötig",
+    "permissionBody": "NowHere braucht Zugriff auf deine Kamera, um Snaps aufzunehmen und zu teilen.",
+    "allow": "Kamera erlauben"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "network": "Keine Verbindung zum Server. Prüfe deine Internetverbindung.",
+    "tooManyAttempts": "Zu viele Versuche. Bitte warte 15 Minuten."
+  },
+  "notFound": {
+    "title": "Diese Seite ist nicht verfügbar",
+    "body": "Sie wurde verschoben, oder der Link gilt nicht mehr."
+  },
+  "common": {
+    "tryAgain": "Erneut versuchen",
+    "error": "Fehler",
+    "close": "Schließen",
+    "backToMap": "Zurück zur Karte"
+  }
+}

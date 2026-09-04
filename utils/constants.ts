@@ -1,6 +1,8 @@
-import { UserSetting } from "@/features/users/types/users-api-type";
+import { i18n } from "@/lib/i18n";
 
 export enum Tags {
+  PROMOTION = "PROMOTION",
+  /** @deprecated typo kept for existing Mongo documents */
   PROOMOTION = "PROOMOTION",
   INTERESTING = "INTERESTING",
   FINDINGS = "FINDINGS",
@@ -9,63 +11,67 @@ export enum Tags {
   SOCIAL = "SOCIAL",
 }
 
-export const TagsColors: { [key in keyof typeof Tags]: string } = {
-  FINDINGS: "red",
-  HIDDEN_GEM: "cyan",
-  INTERESTING: "skyblue",
-  LOST: "purple",
-  PROOMOTION: "green",
-  SOCIAL: "black",
+export const SELECTABLE_TAGS = [
+  Tags.SOCIAL,
+  Tags.INTERESTING,
+  Tags.HIDDEN_GEM,
+  Tags.FINDINGS,
+  Tags.LOST,
+  Tags.PROMOTION,
+] as const;
+
+export type SelectableTag = (typeof SELECTABLE_TAGS)[number];
+
+export function tagDescription(tag: string): string {
+  const key = isTag(tag) ? tag : Tags.SOCIAL;
+  return i18n.t(`tags.descriptions.${key}`);
+}
+
+const TagsColors: Record<Tags, string> = {
+  PROMOTION: "#16a34a",
+  PROOMOTION: "#16a34a",
+  INTERESTING: "#0ea5e9",
+  FINDINGS: "#ef4444",
+  LOST: "#7c3aed",
+  HIDDEN_GEM: "#06b6d4",
+  SOCIAL: "#0f0d23",
 };
+
+export function isTag(value: string): value is Tags {
+  return (Object.values(Tags) as string[]).includes(value);
+}
+
+export function parseTagsParam(
+  raw: string | string[] | undefined,
+): Tags[] {
+  if (!raw) return [];
+  const values = Array.isArray(raw) ? raw : raw.split(",");
+  return values.filter(isTag);
+}
+
+export function displayTag(tag: string): string {
+  return isTag(tag) ? i18n.t(`tags.labels.${tag}`) : tag;
+}
+
+export function tagColor(tag: string): string {
+  return isTag(tag) ? TagsColors[tag] : TagsColors.SOCIAL;
+}
+
+export function expandTagsForQuery(tags: readonly Tags[]): Tags[] {
+  if (tags.includes(Tags.PROMOTION) && !tags.includes(Tags.PROOMOTION)) {
+    return [...tags, Tags.PROOMOTION];
+  }
+  return [...tags];
+}
 
 export type APIS = "users" | "snaps" | "storage" | "auth";
 
 export const getApiURL = (api?: APIS) => {
-  let api_url: string | undefined = "";
-
-  switch (api) {
-    case "users":
-      api_url = process.env.EXPO_PUBLIC_USERS_URL;
-      break;
-
-    case "snaps":
-      api_url = process.env.EXPO_PUBLIC_SNAPS_URL;
-      break;
-
-    case "storage":
-      api_url = process.env.EXPO_PUBLIC_STORAGE_URL;
-      break;
-    case "auth":
-      api_url = process.env.EXPO_PUBLIC_AUTH_URL;
-      break;
-    default:
-      api_url = process.env.EXPO_PUBLIC_SNAPS_URL;
-      break;
-  }
-  return api_url;
+  const base = (process.env.EXPO_PUBLIC_GATEWAY_URL ?? "")
+    .trim()
+    .replace(/\/+$/, "");
+  if (!api) return base;
+  return base ? `${base}/${api}` : api;
 };
 
-export const userUISettings: {
-  [k in keyof UserSetting]: {
-    title: string;
-    description: string;
-    in: string;
-  };
-} = {
-  max_distance: {
-    title: "User Max Visibility Distance ",
-    description:
-      "The distance were that user cannot say snaps after depending on location",
-    in: "Meters",
-  },
-  new_snap_distance: {
-    title: "Allowed range to post new snap ",
-    description: "The minimmum distance for the previous post of the user",
-    in: "Meters",
-  },
-  snapDisappearTime: {
-    title: "Visibility expiration time (Days)",
-    description: "Number of days the snaps will be visible in users locaiton",
-    in: "Days",
-  },
-};
+export const SNAPS_SOCKET_URL = process.env.EXPO_PUBLIC_SNAPS_SOCKET_URL || "";

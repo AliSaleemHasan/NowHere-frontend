@@ -1,5 +1,5 @@
 import { useAuth } from "@/features/auth/context/auth-store";
-import type { Tokens } from "@/features/auth/types/auth-api.types";
+import type { Tokens } from "@/types/api";
 import type { ITokenStorage } from "./token-provider.interface";
 
 /**

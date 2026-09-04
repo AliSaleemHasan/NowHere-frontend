@@ -3,7 +3,7 @@ import { SignupForm } from "@/features/auth/components/SignupForm";
 
 const Signup = () => {
   return (
-    <AvoidKeyboard>
+    <AvoidKeyboard edges={["bottom"]}>
       <SignupForm />
     </AvoidKeyboard>
   );

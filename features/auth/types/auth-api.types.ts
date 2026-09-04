@@ -1,13 +1,10 @@
-import { UserResponse } from "@/types/api";
+import type { AuthIdentity, AuthUser, Tokens } from "@/types/api";
+
+export type { Tokens };
 
 export type LoginRequest = {
   email: string;
   password: string;
-};
-
-// Kept for backward compatibility
-export type LoginFormProps = LoginRequest | {
-  user: LoginRequest;
 };
 
 export type SignupRequest = {
@@ -15,23 +12,24 @@ export type SignupRequest = {
   password: string;
   firstName: string;
   lastName: string;
-  username?: string;
-};
-
-export type Tokens = {
-  accessToken: string;
-  refreshToken: string;
 };
 
 export type AuthSuccessData = {
-  user: UserResponse;
+  user: AuthUser;
   tokens: Tokens;
 };
 
-export type AuthSuccess = AuthSuccessData;
+export type MeResponse = AuthIdentity;
 
-export type ValidateTokenData = {
-  valid: boolean;
-  userId: string;
+export type ForgotPasswordRequest = {
+  email: string;
 };
 
+export type ForgotPasswordResult = {
+  accepted: true;
+};
+
+export type ResetPasswordRequest = {
+  token: string;
+  newPassword: string;
+};

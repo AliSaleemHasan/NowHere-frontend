@@ -25,6 +25,7 @@ module.exports = defineConfig([
             "utils/**/*",
             "components/**/*",
             "lib/**/*",
+            "locales/**/*",
             "assets/**/*",
             "hooks/**/*",
             "types/**/*",
@@ -70,11 +71,7 @@ module.exports = defineConfig([
             },
             {
               from: ["app"],
-              allow: ["shared", "feature"],
-            },
-            {
-              from: ["app"],
-              allow: [["app", { fileName: "*.css" }]],
+              allow: ["shared", "feature", "app"],
             },
             {
               from: ["*"],

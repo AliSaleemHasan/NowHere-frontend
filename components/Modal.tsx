@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 
 const { width: windowWidth } = Dimensions.get("window");
 
@@ -17,13 +17,11 @@ export default function Modal({
   pagesNumber,
   children,
 }: PropsWithChildren<Props>) {
-  const insets = useSafeAreaInsets();
-  // shared value for current page index
   const [currentPage, setCurrentPage] = useState<number>(0);
   const translateX = useSharedValue(0);
 
   const handleNavigation = (next?: boolean) => {
-    if ((currentPage == 0 && !next) || (currentPage == pagesNumber - 1 && next))
+    if ((currentPage === 0 && !next) || (currentPage === pagesNumber - 1 && next))
       return;
     setCurrentPage((currentPage) => (next ? currentPage + 1 : currentPage - 1));
     translateX.value = withSpring(
@@ -52,7 +50,7 @@ export default function Modal({
         className={`flex-row gap-3  w-full px-5 justify-between items-center `}
       >
         <TouchableOpacity
-          className={`bg-primary p-3 rounded-lg ${currentPage == 0 && "opacity-0"}`}
+          className={`rounded-lg bg-primary p-3 ${currentPage === 0 ? "opacity-0" : ""}`}
           onPress={() => handleNavigation()}
         >
           <FontAwesome color={"white"} name="backward"></FontAwesome>

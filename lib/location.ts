@@ -1,6 +1,12 @@
-import { SnapLocation } from "@/features/snaps/types/snaps-api-type";
-import { FetchResponse } from "@/types/api";
+import { ApiError } from "@/lib/http/api-error";
+import { i18n } from "@/lib/i18n";
 import {
+  isValidGeoPoint,
+  toGeoPoint,
+  type GeoPoint,
+} from "@/lib/geo";
+import {
+  Accuracy,
   getCurrentPositionAsync,
   getForegroundPermissionsAsync,
   getLastKnownPositionAsync,
@@ -9,58 +15,98 @@ import {
 } from "expo-location";
 import { Alert, Linking } from "react-native";
 
+export type LocationResult =
+  | { success: true; data: GeoPoint }
+  | { success: false; message: string };
+
 export const askLocationPermission = async () => {
-  let { status, granted } = await requestForegroundPermissionsAsync();
+  const { status, granted } = await requestForegroundPermissionsAsync();
 
   if (status !== PermissionStatus.GRANTED) {
     Alert.alert(
-      "Location Permission",
-      "You’ve denied location access. Please enable it in Settings to continue.",
+      i18n.t("location.permissionTitle"),
+      i18n.t("location.permissionBody"),
       [
         {
-          text: "Open Settings",
+          text: i18n.t("location.openSettings"),
           onPress: () => Linking.openSettings(),
         },
-        { text: "Cancel", style: "cancel" },
+        { text: i18n.t("location.cancel"), style: "cancel" },
       ],
     );
   }
 
   return granted;
-  // if user does'nt accept, it will not show anything until he accepts by clicking the shown button
 };
-export const getUserLocation = async (): Promise<
-  FetchResponse<SnapLocation>
-> => {
+
+export const getUserLocation = async (
+  options: { fresh?: boolean } = {},
+): Promise<LocationResult> => {
   try {
     const { status } = await getForegroundPermissionsAsync();
 
     if (status !== PermissionStatus.GRANTED) {
       return {
         success: false,
-        message: "Location permission is required.",
-        error: "PERMISSION_DENIED",
-        statusCode: 403,
+        message: i18n.t("location.permissionRequired"),
       };
     }
-    let location = await getLastKnownPositionAsync({});
 
-    if (!location) location = await getCurrentPositionAsync({});
+    const currentPositionOptions = {
+      accuracy: Accuracy.Balanced,
+    };
+
+    let location = options.fresh
+      ? await getCurrentPositionAsync(currentPositionOptions)
+      : (await getLastKnownPositionAsync({})) ??
+        (await getCurrentPositionAsync(currentPositionOptions));
+
+    if (!location) {
+      return {
+        success: false,
+        message: i18n.t("location.unavailable"),
+      };
+    }
+
+    const point = toGeoPoint(
+      location.coords.longitude,
+      location.coords.latitude,
+    );
+    if (!isValidGeoPoint(point)) {
+      return {
+        success: false,
+        message: i18n.t("location.invalidGps"),
+      };
+    }
 
     return {
       success: true,
-      data: {
-        type: "Point",
-        coordinates: [location.coords.longitude, location.coords.latitude],
-      },
+      data: point,
     };
-  } catch (e: any) {
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : i18n.t("location.unavailable");
     return {
-      message: e.Error || e.message || "Could not get current location",
       success: false,
-      error: "Location Error",
-      statusCode: 403,
-      path: "/UI",
+      message,
     };
   }
 };
+
+export async function requireSnapLocation(): Promise<GeoPoint> {
+  const fresh = await getUserLocation({ fresh: true });
+  if (fresh.success && isValidGeoPoint(fresh.data)) {
+    return fresh.data;
+  }
+
+  const lastKnown = await getUserLocation({ fresh: false });
+  if (lastKnown.success && isValidGeoPoint(lastKnown.data)) {
+    return lastKnown.data;
+  }
+
+  throw new ApiError(
+    (!fresh.success ? fresh.message : undefined) ||
+      i18n.t("location.shareRequired"),
+    400,
+  );
+}

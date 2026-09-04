@@ -1,25 +1,25 @@
-import FromButton from "@/components/FormButton";
+import FormButton from "@/components/FormButton";
 import FormError from "@/components/FormError";
 import { Input } from "@/components/Input";
+import { getApiValidationErrors } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Keyboard, SafeAreaView, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Keyboard, Text, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
-import * as z from "zod";
-import { useLogin } from "../hooks/use-login";
+import { getLoginErrorMessage } from "../get-login-error-message";
+import { useLogin } from "../hooks/use-auth-mutations";
+import {
+  loginSchema,
+  type LoginFormData,
+} from "../validation/login-schema";
+import { AuthFormShell } from "./AuthFormShell";
 import { AuthRedirectPrompt } from "./AuthRedirectPrompt";
-import SocialNetworksAuth from "./SocialNetworkAuth";
-const LoginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1),
-});
-
-type LoginFormData = z.infer<typeof LoginSchema>;
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const mutation = useLogin();
 
@@ -32,58 +32,94 @@ export const LoginForm = () => {
       email: "",
       password: "",
     },
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
   });
 
-  const onSubmit = async (values: LoginFormData) => {
+  const lockoutMessage = t("auth.login.lockout");
+  const fallbackMessage = t("auth.login.toastErrorFallback");
+
+  const onSubmit = (values: LoginFormData) => {
     Keyboard.dismiss();
     mutation.mutate(values, {
       onSuccess: () => {
         Toast.show({
           type: "success",
-          text1: "Signed in successfully",
+          text1: t("auth.login.toastSuccessTitle"),
+          text2: t("auth.login.toastSuccessBody"),
         });
         router.replace("/");
+      },
+      onError: (err: unknown) => {
+        Toast.show({
+          type: "error",
+          text1: t("auth.login.toastErrorTitle"),
+          text2: getLoginErrorMessage(err, lockoutMessage, fallbackMessage),
+        });
       },
     });
   };
 
   return (
-    <SafeAreaView className="rounded-tl-md h-full   gap-4 w-full  items-center justify-center   ">
-      <Text className="text-center  text-xl "> Signin </Text>
-      <Text>Welcome To NowHere</Text>
+    <AuthFormShell
+      title={t("auth.login.title")}
+      subtitle={t("auth.login.welcome")}
+    >
+      <Input
+        control={control}
+        name="email"
+        placeholder={t("auth.login.emailPlaceholder")}
+        keyboardType="email-address"
+        autoComplete="email"
+        textContentType="emailAddress"
+      />
+      {errors.email?.message && (
+        <FormError message={t(errors.email.message)} />
+      )}
+      <Input
+        placeholder={t("auth.login.passwordPlaceholder")}
+        name="password"
+        control={control}
+        secureTextEntry
+        autoComplete="password"
+        textContentType="password"
+      />
+      {errors.password?.message && (
+        <FormError message={t(errors.password.message)} />
+      )}
+      <TouchableOpacity
+        onPress={() => {
+          router.navigate("/forgot-password");
+        }}
+        className="self-end p-1"
+      >
+        <Text className="text-xs text-gray-600">{t("auth.login.forgot")}</Text>
+      </TouchableOpacity>
+      <FormButton
+        onSubmit={handleSubmit(onSubmit)}
+        disabled={!isValid}
+        text={t("auth.login.submit")}
+        isLoading={isLoading || isSubmitting || mutation.isPending}
+      />
 
-      <View className="flex gap-4   h-2/3 w-5/6 ">
-        <Input control={control} name="email" placeholder="Email.." />
-        <Input
-          placeholder="Password.."
-          name="password"
-          control={control}
-          secureTextEntry
+      {mutation.error && (
+        <FormError
+          message={getLoginErrorMessage(
+            mutation.error,
+            lockoutMessage,
+            fallbackMessage,
+          )}
+          errors={getApiValidationErrors(mutation.error)}
         />
-        <FromButton
-          onSubmit={handleSubmit(onSubmit)}
-          disabled={!isValid}
-          text="Login"
-          isLoading={isLoading || isSubmitting}
-        ></FromButton>
+      )}
 
-        {mutation.error && <FormError message={mutation.error.message} />}
-        <Text className="text-gray-600 text-xs font-thin text-center">
-          Forgot Password?
-        </Text>
-
-        <AuthRedirectPrompt
-          linkText="Sign up"
-          promptText="Don't have an Account"
-          onPress={() => {
-            router.navigate("/signup");
-          }}
-        />
-
-        {/* Social networks auth section */}
-        <SocialNetworksAuth />
-      </View>
-    </SafeAreaView>
+      <AuthRedirectPrompt
+        linkText={t("auth.login.signUp")}
+        promptText={t("auth.login.noAccount")}
+        onPress={() => {
+          router.navigate("/signup");
+        }}
+      />
+    </AuthFormShell>
   );
 };
