@@ -439,6 +439,7 @@
   },
   "privacy": {
     "title": "Privacy",
+    "close": "Close",
     "heading": "Privacy notice",
     "intro": "NowHere is a personal project and portfolio app. It is not a company or a GmbH, and there is no data protection officer.",
     "whoTitle": "Who holds the data",

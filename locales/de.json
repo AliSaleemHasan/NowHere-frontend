@@ -439,6 +439,7 @@
   },
   "privacy": {
     "title": "Datenschutz",
+    "close": "Schließen",
     "heading": "Datenschutzhinweis",
     "intro": "NowHere ist ein persönliches Projekt und eine Portfolio-App. Es ist keine Firma und keine GmbH, und es gibt keinen Datenschutzbeauftragten.",
     "whoTitle": "Wer die Daten hält",

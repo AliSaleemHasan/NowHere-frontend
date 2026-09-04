@@ -56,10 +56,6 @@ function LocationDependentContent() {
 
   return (
     <Stack>
-      <Stack.Screen
-        name="(legal)"
-        options={{ headerShown: false, presentation: "modal" }}
-      />
       <Stack.Protected guard={boarding && consented}>
         <Stack.Protected guard={isLoggedIn}>
           <Stack.Screen
@@ -97,6 +93,10 @@ function LocationDependentContent() {
           }}
         />
       </Stack.Protected>
+      <Stack.Screen
+        name="(legal)"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
     </Stack>
   );
 }
