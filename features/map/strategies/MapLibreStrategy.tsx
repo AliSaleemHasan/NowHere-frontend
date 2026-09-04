@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import {
   MapView,
   Camera,
@@ -53,14 +53,26 @@ export class MapLibreStrategy implements IMapStrategy {
         title={props.title}
         onSelected={props.onPress}
       >
-        <View
-          className="h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md"
-          style={
-            props.pinColor
-              ? { backgroundColor: props.pinColor }
-              : { backgroundColor: "#FF3B30" }
-          }
-        />
+        <View className="items-center" collapsable={false}>
+          <View
+            className="h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md"
+            style={
+              props.pinColor
+                ? { backgroundColor: props.pinColor }
+                : { backgroundColor: "#FF3B30" }
+            }
+          />
+          {props.badge ? (
+            <View
+              testID="map-marker-badge"
+              className="mt-0.5 rounded-full bg-emerald-600 px-1.5 py-0.5"
+            >
+              <Text className="text-[8px] font-bold uppercase text-white">
+                {props.badge}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       </PointAnnotation>
     );
   }

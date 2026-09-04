@@ -2,24 +2,45 @@ import Loading from "@/components/Loading";
 import NowHereError from "@/components/Nowhere-Error";
 import { deleteSnap } from "@/features/snaps/api/delete-snap";
 import {
+  isDuplicateReportError,
+  reportSnap,
+} from "@/features/snaps/api/report-snap";
+import {
   evictSnapFromCache,
   invalidateSnapQueries,
+  patchCachedSnap,
+  snapQueryKeys,
 } from "@/features/snaps/api/snap-query";
+import {
+  markSnapFound,
+  reopenSnap,
+} from "@/features/snaps/api/snap-resolution";
 import { useSnapById } from "@/features/snaps/api/useSnap";
+import FoundSnapSheet from "@/features/snaps/components/FoundSnapSheet";
+import ReportSnapSheet from "@/features/snaps/components/ReportSnapSheet";
 import SnapDetailsView from "@/features/snaps/components/SnapDetailsView";
 import { useHiddenSnaps } from "@/features/snaps/context/hidden-snaps-store";
 import { useLocation } from "@/features/snaps/context/location-store";
+import { snapSafetyActions } from "@/features/snaps/lib/snap-safety-actions";
+import type { ReportReason } from "@/features/snaps/types/report-reasons";
 import { isValidSnapLocation } from "@/features/snaps/types/snaps-api-type";
+import {
+  addBookmark,
+  removeBookmark,
+} from "@/features/users/api/bookmarks";
+import { useBookmarks } from "@/features/users/api/useBookmarks";
+import { userQueryKeys } from "@/features/users/api/user-query";
 import { useUser } from "@/features/users/api/useUser";
 import { useUserSettings } from "@/features/users/api/useUserSettings";
 import { useUserStore } from "@/features/users/context/user-store";
+import { isSnapBookmarked } from "@/features/users/types/bookmark-api-type";
 import { haversineDistanceMeters } from "@/lib/geo";
 import { formatUserDisplayName } from "@/types/api";
 import { displayTag, getErrorMessage } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -52,6 +73,8 @@ const SnapDetails = () => {
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{ id: string }>();
   const hideSnap = useHiddenSnaps((state) => state.hideSnap);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [foundOpen, setFoundOpen] = useState(false);
   const {
     data: snapPayload,
     isLoading: isSnapLoading,
@@ -63,10 +86,15 @@ const SnapDetails = () => {
 
   const { data: userPayload, isLoading: isUserLoading } = useUser(snapCreatorId);
   const { data: settings } = useUserSettings();
+  const bookmarksQuery = useBookmarks();
   const viewerId = useUserStore((state) => state.user?.id);
   const viewerLocation = useLocation((state) => state.location);
   const isOwnSnap = Boolean(
     viewerId && snapCreatorId && viewerId === snapCreatorId,
+  );
+  const persistedSaved = isSnapBookmarked(
+    bookmarksQuery.data ?? [],
+    params.id,
   );
 
   const deleteMutation = useMutation({
@@ -86,6 +114,124 @@ const SnapDetails = () => {
         type: "error",
         text1: t("snaps.delete.errorTitle"),
         text2: getErrorMessage(err, t("snaps.delete.errorFallback")),
+      });
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: addBookmark,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
+      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
+      Toast.show({
+        type: "success",
+        text1: t("snaps.bookmark.saveSuccessTitle"),
+        text2: t("snaps.bookmark.saveSuccessBody"),
+      });
+    },
+    onError: (err: unknown) => {
+      Toast.show({
+        type: "error",
+        text1: t("snaps.bookmark.errorTitle"),
+        text2: getErrorMessage(err, t("snaps.bookmark.errorFallback")),
+      });
+    },
+  });
+
+  const unsaveMutation = useMutation({
+    mutationFn: removeBookmark,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
+      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
+      Toast.show({
+        type: "success",
+        text1: t("snaps.bookmark.unsaveSuccessTitle"),
+        text2: t("snaps.bookmark.unsaveSuccessBody"),
+      });
+    },
+    onError: (err: unknown) => {
+      Toast.show({
+        type: "error",
+        text1: t("snaps.bookmark.errorTitle"),
+        text2: getErrorMessage(err, t("snaps.bookmark.errorFallback")),
+      });
+    },
+  });
+
+  const reportMutation = useMutation({
+    mutationFn: ({
+      id,
+      reason,
+      details,
+    }: {
+      id: string;
+      reason: ReportReason;
+      details?: string;
+    }) => reportSnap(id, { reason, details }),
+    onSuccess: () => {
+      setReportOpen(false);
+      Toast.show({
+        type: "success",
+        text1: t("snaps.report.successTitle"),
+        text2: t("snaps.report.successBody"),
+      });
+    },
+    onError: (err: unknown) => {
+      if (isDuplicateReportError(err)) {
+        setReportOpen(false);
+        Toast.show({
+          type: "error",
+          text1: t("snaps.report.duplicateTitle"),
+          text2: t("snaps.report.duplicateBody"),
+        });
+        return;
+      }
+      Toast.show({
+        type: "error",
+        text1: t("snaps.report.errorTitle"),
+        text2: getErrorMessage(err, t("snaps.report.errorFallback")),
+      });
+    },
+  });
+
+  const foundMutation = useMutation({
+    mutationFn: ({ id, note }: { id: string; note?: string }) =>
+      markSnapFound(id, note),
+    onSuccess: (updated) => {
+      patchCachedSnap(queryClient, updated);
+      invalidateSnapQueries(queryClient);
+      setFoundOpen(false);
+      Toast.show({
+        type: "success",
+        text1: t("snaps.found.successTitle"),
+        text2: t("snaps.found.successBody"),
+      });
+    },
+    onError: (err: unknown) => {
+      Toast.show({
+        type: "error",
+        text1: t("snaps.found.errorTitle"),
+        text2: getErrorMessage(err, t("snaps.found.errorFallback")),
+      });
+    },
+  });
+
+  const reopenMutation = useMutation({
+    mutationFn: reopenSnap,
+    onSuccess: (updated) => {
+      patchCachedSnap(queryClient, updated);
+      invalidateSnapQueries(queryClient);
+      Toast.show({
+        type: "success",
+        text1: t("snaps.reopen.successTitle"),
+        text2: t("snaps.reopen.successBody"),
+      });
+    },
+    onError: (err: unknown) => {
+      Toast.show({
+        type: "error",
+        text1: t("snaps.reopen.errorTitle"),
+        text2: getErrorMessage(err, t("snaps.reopen.errorFallback")),
       });
     },
   });
@@ -121,6 +267,31 @@ const SnapDetails = () => {
     ]);
   }, [hideSnap, params.id, queryClient, router, t]);
 
+  const isSaved = saveMutation.isPending
+    ? true
+    : unsaveMutation.isPending
+      ? false
+      : persistedSaved;
+
+  const handleToggleSave = useCallback(() => {
+    if (!params.id) return;
+    if (isSaved) {
+      unsaveMutation.mutate(params.id);
+    } else {
+      saveMutation.mutate(params.id);
+    }
+  }, [isSaved, params.id, saveMutation, unsaveMutation]);
+
+  const handleReopen = useCallback(() => {
+    Alert.alert(t("snaps.reopen.confirmTitle"), t("snaps.reopen.confirmBody"), [
+      { text: t("snaps.actions.cancel"), style: "cancel" },
+      {
+        text: t("snaps.details.reopen"),
+        onPress: () => reopenMutation.mutate(params.id),
+      },
+    ]);
+  }, [params.id, reopenMutation, t]);
+
   if (isSnapLoading) {
     return <Loading cause={t("snaps.details.loading")} />;
   }
@@ -142,6 +313,11 @@ const SnapDetails = () => {
   const distanceMeters = isValidSnapLocation(viewerLocation)
     ? haversineDistanceMeters(viewerLocation.coordinates, snap.location.coordinates)
     : null;
+  const { showFound, showReopen } = snapSafetyActions({
+    tag: snap.tag,
+    resolution: snap.resolution,
+    isOwnSnap,
+  });
 
   return (
     <>
@@ -161,9 +337,33 @@ const SnapDetails = () => {
         distanceMeters={distanceMeters}
         lifetimeDays={settings?.snapDisappearTime}
         status={snap.status}
+        resolution={snap.resolution}
+        resolutionNote={snap.resolutionNote}
+        isSaved={isSaved}
         isDeleting={deleteMutation.isPending}
+        isSaving={saveMutation.isPending || unsaveMutation.isPending}
+        isReporting={reportMutation.isPending}
+        isResolving={foundMutation.isPending || reopenMutation.isPending}
+        onToggleSave={handleToggleSave}
+        onReport={() => setReportOpen(true)}
+        onFound={showFound ? () => setFoundOpen(true) : undefined}
+        onReopen={showReopen ? handleReopen : undefined}
         onHide={handleHide}
         onDelete={isOwnSnap ? handleDelete : undefined}
+      />
+      <ReportSnapSheet
+        visible={reportOpen}
+        onClose={() => setReportOpen(false)}
+        isSubmitting={reportMutation.isPending}
+        onSubmit={({ reason, details }) =>
+          reportMutation.mutate({ id: params.id, reason, details })
+        }
+      />
+      <FoundSnapSheet
+        visible={foundOpen}
+        onClose={() => setFoundOpen(false)}
+        isSubmitting={foundMutation.isPending}
+        onSubmit={(note) => foundMutation.mutate({ id: params.id, note })}
       />
     </>
   );

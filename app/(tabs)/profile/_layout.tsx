@@ -33,6 +33,15 @@ export default function ProfileLayout() {
       />
 
       <Stack.Screen
+        name="saved"
+        options={{
+          title: t("snaps.saved.title"),
+          headerShadowVisible: false,
+          headerTitleStyle: { fontSize: 16, fontWeight: "600" },
+        }}
+      />
+
+      <Stack.Screen
         name="settings"
         options={{
           title: t("profile.settingsTitle"),

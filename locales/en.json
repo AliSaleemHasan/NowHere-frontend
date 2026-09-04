@@ -47,6 +47,7 @@
     "logoutConfirmTitle": "Log out of NowHere?",
     "logoutConfirmBody": "You can sign back in at any time.",
     "mySnapsSubtitle": "See and delete snaps you’ve posted",
+    "savedSubtitle": "Snaps you want to find again",
     "explorerFallback": "NowHere explorer"
   },
   "snaps": {
@@ -61,6 +62,18 @@
       "errorTitle": "Couldn’t load your snaps",
       "errorBody": "Pull to retry, or try again in a moment.",
       "retry": "Try again"
+    },
+    "saved": {
+      "title": "Saved",
+      "loading": "Loading saved snaps…",
+      "emptyTitle": "Nothing saved yet",
+      "emptyBody": "Tap Save on a snap to keep it here.",
+      "errorTitle": "Couldn’t load saved snaps",
+      "errorBody": "Pull to retry, or try again in a moment.",
+      "retry": "Try again"
+    },
+    "resolution": {
+      "found": "Found"
     },
     "list": {
       "noCaption": "No caption",
@@ -91,6 +104,12 @@
       "delete": "Delete",
       "deleting": "Deleting…",
       "hide": "Hide",
+      "save": "Save",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "report": "Report",
+      "markFound": "Mark as found",
+      "reopen": "Reopen",
       "unavailableTitle": "This snap isn’t available",
       "unavailableBody": "It may have expired nearby, or the link is no longer valid.",
       "loading": "Opening this snap…"
@@ -108,6 +127,54 @@
       "confirmBody": "You won’t see it on the map or nearby list.",
       "successTitle": "Snap hidden",
       "successBody": "It won’t show up around you anymore."
+    },
+    "bookmark": {
+      "saveSuccessTitle": "Snap saved",
+      "saveSuccessBody": "You’ll find it under Profile → Saved.",
+      "unsaveSuccessTitle": "Removed from saved",
+      "unsaveSuccessBody": "This snap is no longer in your list.",
+      "errorTitle": "Couldn’t update saved snaps",
+      "errorFallback": "Please try again."
+    },
+    "report": {
+      "title": "Report this snap",
+      "body": "What’s wrong with this snap?",
+      "detailsLabel": "Details (optional)",
+      "detailsPlaceholder": "Anything we should know?",
+      "submit": "Send report",
+      "closeA11y": "Close report",
+      "successTitle": "Report sent",
+      "successBody": "Thanks. We’ve stored your report.",
+      "duplicateTitle": "Already reported",
+      "duplicateBody": "You already reported this snap.",
+      "errorTitle": "Couldn’t send report",
+      "errorFallback": "Please try again.",
+      "reasons": {
+        "spam": "Spam",
+        "inappropriate": "Inappropriate",
+        "wrong_place": "Wrong place",
+        "other": "Other"
+      }
+    },
+    "found": {
+      "title": "Mark as found?",
+      "body": "This tells people nearby the item was found. You can add a short note.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "Where or how it was found",
+      "submit": "Mark as found",
+      "closeA11y": "Close",
+      "successTitle": "Marked as found",
+      "successBody": "This snap now shows a Found badge.",
+      "errorTitle": "Couldn’t mark as found",
+      "errorFallback": "Please try again."
+    },
+    "reopen": {
+      "confirmTitle": "Reopen this snap?",
+      "confirmBody": "It will show as open again instead of found.",
+      "successTitle": "Snap reopened",
+      "successBody": "The Found badge is gone.",
+      "errorTitle": "Couldn’t reopen this snap",
+      "errorFallback": "Please try again."
     }
   },
   "map": {

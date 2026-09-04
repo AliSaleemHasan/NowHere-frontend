@@ -211,4 +211,63 @@ describe("SnapDetailsView", () => {
     expect(getByLabelText("Deleting…")).toBeTruthy();
     expect(queryByText("Delete")).toBeNull();
   });
+
+  it("shows a FOUND badge and note when resolution is FOUND", () => {
+    const { getByTestId, getByText } = renderDetails({
+      resolution: "FOUND",
+      resolutionNote: "Under the bench.",
+    });
+
+    expect(getByTestId("snap-found-badge")).toBeTruthy();
+    expect(getByText("Found")).toBeTruthy();
+    expect(getByText("Under the bench.")).toBeTruthy();
+  });
+
+  it("shows Found for LOST/FINDINGS via callback, not other tags without one", () => {
+    const onFound = jest.fn();
+    const lost = renderDetails({ tag: "LOST", onFound });
+    expect(lost.getByTestId("snap-found")).toBeTruthy();
+    fireEvent.press(lost.getByTestId("snap-found"));
+    expect(onFound).toHaveBeenCalledTimes(1);
+
+    const social = renderDetails({ tag: "SOCIAL" });
+    expect(social.queryByTestId("snap-found")).toBeNull();
+    expect(social.queryByTestId("snap-reopen")).toBeNull();
+  });
+
+  it("shows Reopen only when that callback is passed", () => {
+    const onReopen = jest.fn();
+    const ownFound = renderDetails({
+      tag: "FINDINGS",
+      resolution: "FOUND",
+      isOwnSnap: true,
+      onReopen,
+    });
+    expect(ownFound.getByTestId("snap-reopen")).toBeTruthy();
+    expect(ownFound.queryByTestId("snap-found")).toBeNull();
+    fireEvent.press(ownFound.getByTestId("snap-reopen"));
+    expect(onReopen).toHaveBeenCalledTimes(1);
+
+    const otherFound = renderDetails({
+      tag: "FINDINGS",
+      resolution: "FOUND",
+      isOwnSnap: false,
+    });
+    expect(otherFound.queryByTestId("snap-reopen")).toBeNull();
+  });
+
+  it("toggles save copy and exposes report", () => {
+    const onToggleSave = jest.fn();
+    const onReport = jest.fn();
+    const unsaved = renderDetails({ onToggleSave, onReport, isSaved: false });
+    expect(unsaved.getByText("Save")).toBeTruthy();
+    fireEvent.press(unsaved.getByTestId("snap-save"));
+    expect(onToggleSave).toHaveBeenCalledTimes(1);
+    fireEvent.press(unsaved.getByTestId("snap-report"));
+    expect(onReport).toHaveBeenCalledTimes(1);
+
+    unsaved.unmount();
+    const saved = renderDetails({ onToggleSave, isSaved: true });
+    expect(saved.getByText("Saved")).toBeTruthy();
+  });
 });

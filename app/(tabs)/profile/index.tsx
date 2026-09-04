@@ -136,6 +136,29 @@ export default function Profile() {
           <View className="h-px bg-gray-100" />
 
           <TouchableOpacity
+            testID="profile-saved"
+            onPress={() => router.push("/(tabs)/profile/saved")}
+            className="flex-row items-center justify-between px-5 py-4"
+          >
+            <View className="flex-row items-center gap-3">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <Ionicons name="bookmark-outline" size={18} color="#0f0d23" />
+              </View>
+              <View>
+                <Text className="text-base font-medium text-primary">
+                  {t("snaps.saved.title")}
+                </Text>
+                <Text className="text-xs text-gray-500">
+                  {t("profile.savedSubtitle")}
+                </Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+          </TouchableOpacity>
+
+          <View className="h-px bg-gray-100" />
+
+          <TouchableOpacity
             onPress={() => router.push("/(tabs)/profile/settings")}
             className="flex-row items-center justify-between px-5 py-4"
           >

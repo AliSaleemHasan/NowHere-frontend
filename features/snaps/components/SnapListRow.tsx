@@ -4,7 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
+import { isFoundResolution } from "../lib/snap-safety-actions";
 import { getSnapId, type Snap } from "../types/snaps-api-type";
+import FoundBadge from "./FoundBadge";
 
 type Props = {
   snap: Snap;
@@ -36,9 +38,19 @@ export default function SnapListRow({ snap, onPress, distanceMeters }: Props) {
         <Ionicons name="location" size={18} color={color} />
       </View>
       <View className="ml-3 flex-1">
-        <Text className="text-base font-medium text-primary" numberOfLines={1}>
-          {displayTag(snap.tag)}
-        </Text>
+        <View className="flex-row items-center">
+          <Text
+            className="flex-shrink text-base font-medium text-primary"
+            numberOfLines={1}
+          >
+            {displayTag(snap.tag)}
+          </Text>
+          {isFoundResolution(snap.resolution) ? (
+            <View className="ml-2">
+              <FoundBadge />
+            </View>
+          ) : null}
+        </View>
         <Text className="mt-0.5 text-xs text-gray-500" numberOfLines={1}>
           {caption || t("snaps.list.noCaption")}
         </Text>

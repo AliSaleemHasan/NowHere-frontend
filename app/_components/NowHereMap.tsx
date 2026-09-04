@@ -162,6 +162,7 @@ const NowHereMap = () => {
                 lat={Number(coordinates[1])}
                 lng={Number(coordinates[0])}
                 tag={snap.tag}
+                resolution={snap.resolution}
                 key={snapId}
               />
             );

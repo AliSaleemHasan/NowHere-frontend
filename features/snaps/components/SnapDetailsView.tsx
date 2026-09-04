@@ -24,7 +24,8 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { SnapStatus } from "../types/snaps-api-type";
+import type { SnapResolution, SnapStatus } from "../types/snaps-api-type";
+import FoundBadge from "./FoundBadge";
 import SnapPhotoHero from "./SnapPhotoHero";
 
 export type SnapDetailsViewProps = {
@@ -42,9 +43,19 @@ export type SnapDetailsViewProps = {
   distanceMeters?: number | null;
   lifetimeDays?: number;
   status?: SnapStatus;
+  resolution?: SnapResolution;
+  resolutionNote?: string;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
+  onReport?: () => void;
+  onFound?: () => void;
+  onReopen?: () => void;
   onDelete?: () => void;
   onHide?: () => void;
   isDeleting?: boolean;
+  isSaving?: boolean;
+  isReporting?: boolean;
+  isResolving?: boolean;
 };
 
 const TAG_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -62,6 +73,52 @@ function initialsFromName(name: string): string {
   if (parts.length === 0) return "?";
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
+
+function ActionRow({
+  testID,
+  icon,
+  iconColor,
+  iconBg,
+  label,
+  onPress,
+  disabled,
+  loading = false,
+}: {
+  testID: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  iconColor: string;
+  iconBg: string;
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
+  return (
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
+      accessibilityLabel={label}
+      className={`flex-row items-center px-4 py-4 ${disabled ? "opacity-60" : ""}`}
+    >
+      <View
+        className="h-10 w-10 items-center justify-center rounded-full"
+        style={{ backgroundColor: iconBg }}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={iconColor} />
+        ) : (
+          <Ionicons name={icon} size={18} color={iconColor} />
+        )}
+      </View>
+      <Text className="ml-3 flex-1 text-base font-medium text-primary">
+        {label}
+      </Text>
+    </Pressable>
+  );
 }
 
 function StatCell({
@@ -108,16 +165,30 @@ export default function SnapDetailsView({
   distanceMeters,
   lifetimeDays,
   status,
+  resolution,
+  resolutionNote,
+  isSaved = false,
+  onToggleSave,
+  onReport,
+  onFound,
+  onReopen,
   onDelete,
   onHide,
   isDeleting = false,
+  isSaving = false,
+  isReporting = false,
+  isResolving = false,
 }: SnapDetailsViewProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showDelete = Boolean(isOwnSnap && onDelete);
-  const showActions = Boolean(onHide || showDelete);
+  const actionsLocked = isDeleting || isSaving || isReporting || isResolving;
+  const showActions = Boolean(
+    onToggleSave || onReport || onFound || onReopen || onHide || showDelete,
+  );
+  const isFound = resolution === "FOUND";
 
   const color = tagColor(tag);
   const postedLong = formatRelativeTime(createdAt, Date.now(), "long");
@@ -262,6 +333,25 @@ export default function SnapDetailsView({
             />
           </View>
 
+          {isFound ? (
+            <View
+              testID="snap-found-banner"
+              className="mt-3 rounded-3xl bg-emerald-50 px-4 py-3"
+            >
+              <View className="flex-row items-center">
+                <FoundBadge />
+              </View>
+              {resolutionNote ? (
+                <Text
+                  testID="snap-resolution-note"
+                  className="mt-2 text-sm leading-5 text-emerald-900"
+                >
+                  {resolutionNote}
+                </Text>
+              ) : null}
+            </View>
+          ) : null}
+
           {statusCopy ? (
             <View className="mt-3 rounded-3xl bg-amber-50 px-4 py-3">
               <Text className="text-sm font-semibold text-amber-900">
@@ -354,37 +444,95 @@ export default function SnapDetailsView({
 
           {showActions ? (
             <View className="mt-3 overflow-hidden rounded-3xl bg-white shadow-sm">
+              {onToggleSave ? (
+                <ActionRow
+                  testID="snap-save"
+                  icon={isSaved ? "bookmark" : "bookmark-outline"}
+                  iconColor="#0f0d23"
+                  iconBg="#f3f4f6"
+                  label={
+                    isSaving
+                      ? t("snaps.details.saving")
+                      : isSaved
+                        ? t("snaps.details.saved")
+                        : t("snaps.details.save")
+                  }
+                  onPress={onToggleSave}
+                  disabled={actionsLocked}
+                  loading={isSaving}
+                />
+              ) : null}
+              {onToggleSave && onReport ? (
+                <View className="h-px bg-gray-100" />
+              ) : null}
+              {onReport ? (
+                <ActionRow
+                  testID="snap-report"
+                  icon="flag-outline"
+                  iconColor="#b45309"
+                  iconBg="#fffbeb"
+                  label={t("snaps.details.report")}
+                  onPress={onReport}
+                  disabled={actionsLocked}
+                  loading={isReporting}
+                />
+              ) : null}
+              {(onToggleSave || onReport) && (onFound || onReopen) ? (
+                <View className="h-px bg-gray-100" />
+              ) : null}
+              {onFound ? (
+                <ActionRow
+                  testID="snap-found"
+                  icon="checkmark-circle-outline"
+                  iconColor="#047857"
+                  iconBg="#ecfdf5"
+                  label={t("snaps.details.markFound")}
+                  onPress={onFound}
+                  disabled={actionsLocked}
+                  loading={isResolving}
+                />
+              ) : null}
+              {onReopen ? (
+                <ActionRow
+                  testID="snap-reopen"
+                  icon="refresh-outline"
+                  iconColor="#0f0d23"
+                  iconBg="#f3f4f6"
+                  label={t("snaps.details.reopen")}
+                  onPress={onReopen}
+                  disabled={actionsLocked}
+                  loading={isResolving}
+                />
+              ) : null}
+              {(onToggleSave || onReport || onFound || onReopen) &&
+              (onHide || showDelete) ? (
+                <View className="h-px bg-gray-100" />
+              ) : null}
               {onHide ? (
-                <Pressable
+                <ActionRow
                   testID="snap-hide"
+                  icon="eye-off-outline"
+                  iconColor="#0f0d23"
+                  iconBg="#f3f4f6"
+                  label={t("snaps.details.hide")}
                   onPress={onHide}
-                  disabled={isDeleting}
-                  accessibilityRole="button"
-                  accessibilityLabel={t("snaps.details.hide")}
-                  className={`flex-row items-center px-4 py-4 ${isDeleting ? "opacity-60" : ""}`}
-                >
-                  <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-                    <Ionicons name="eye-off-outline" size={18} color="#0f0d23" />
-                  </View>
-                  <Text className="ml-3 flex-1 text-base font-medium text-primary">
-                    {t("snaps.details.hide")}
-                  </Text>
-                </Pressable>
+                  disabled={actionsLocked}
+                />
               ) : null}
               {onHide && showDelete ? <View className="h-px bg-gray-100" /> : null}
               {showDelete ? (
                 <Pressable
                   testID="snap-delete"
                   onPress={onDelete}
-                  disabled={isDeleting}
+                  disabled={actionsLocked}
                   accessibilityRole="button"
-                  accessibilityState={{ disabled: isDeleting }}
+                  accessibilityState={{ disabled: actionsLocked }}
                   accessibilityLabel={
                     isDeleting
                       ? t("snaps.details.deleting")
                       : t("snaps.details.delete")
                   }
-                  className={`flex-row items-center px-4 py-4 ${isDeleting ? "opacity-60" : ""}`}
+                  className={`flex-row items-center px-4 py-4 ${actionsLocked ? "opacity-60" : ""}`}
                 >
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-red-50">
                     {isDeleting ? (

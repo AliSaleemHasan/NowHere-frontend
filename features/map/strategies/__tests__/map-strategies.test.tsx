@@ -110,5 +110,14 @@ describe("Map Strategy Pattern", () => {
       fireEvent(marker, "onSelected");
       expect(mockMarkerProps.onPress).toHaveBeenCalledTimes(1);
     });
+
+    test("renders a FOUND badge on the pin when provided", () => {
+      const { getByTestId, getByText } = render(
+        strategy.renderMarker({ ...mockMarkerProps, badge: "Found" }),
+      );
+
+      expect(getByTestId("map-marker-badge")).toBeTruthy();
+      expect(getByText("Found")).toBeTruthy();
+    });
   });
 });

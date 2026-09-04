@@ -47,6 +47,7 @@
     "logoutConfirmTitle": "Von NowHere abmelden?",
     "logoutConfirmBody": "Du kannst dich jederzeit wieder anmelden.",
     "mySnapsSubtitle": "Snaps ansehen und löschen, die du geteilt hast",
+    "savedSubtitle": "Snaps, die du später wiederfinden willst",
     "explorerFallback": "NowHere-Entdecker"
   },
   "snaps": {
@@ -61,6 +62,18 @@
       "errorTitle": "Deine Snaps konnten nicht geladen werden",
       "errorBody": "Zieh zum Aktualisieren oder versuch es gleich noch einmal.",
       "retry": "Erneut versuchen"
+    },
+    "saved": {
+      "title": "Gespeichert",
+      "loading": "Gespeicherte Snaps werden geladen…",
+      "emptyTitle": "Noch nichts gespeichert",
+      "emptyBody": "Tippe bei einem Snap auf Speichern, um ihn hier zu behalten.",
+      "errorTitle": "Gespeicherte Snaps konnten nicht geladen werden",
+      "errorBody": "Zieh zum Aktualisieren oder versuch es gleich noch einmal.",
+      "retry": "Erneut versuchen"
+    },
+    "resolution": {
+      "found": "Gefunden"
     },
     "list": {
       "noCaption": "Kein Text",
@@ -91,6 +104,12 @@
       "delete": "Löschen",
       "deleting": "Wird gelöscht…",
       "hide": "Ausblenden",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "saving": "Wird gespeichert…",
+      "report": "Melden",
+      "markFound": "Als gefunden markieren",
+      "reopen": "Wieder öffnen",
       "unavailableTitle": "Dieser Snap ist nicht verfügbar",
       "unavailableBody": "Er ist in der Nähe abgelaufen, oder der Link gilt nicht mehr.",
       "loading": "Snap wird geöffnet…"
@@ -108,6 +127,54 @@
       "confirmBody": "Du siehst ihn nicht mehr auf der Karte oder in der Liste in der Nähe.",
       "successTitle": "Snap ausgeblendet",
       "successBody": "Er taucht in deiner Umgebung nicht mehr auf."
+    },
+    "bookmark": {
+      "saveSuccessTitle": "Snap gespeichert",
+      "saveSuccessBody": "Du findest ihn unter Profil → Gespeichert.",
+      "unsaveSuccessTitle": "Speichern aufgehoben",
+      "unsaveSuccessBody": "Dieser Snap ist nicht mehr in deiner Liste.",
+      "errorTitle": "Gespeicherte Snaps konnten nicht aktualisiert werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "report": {
+      "title": "Diesen Snap melden",
+      "body": "Was stimmt mit diesem Snap nicht?",
+      "detailsLabel": "Details (optional)",
+      "detailsPlaceholder": "Was sollten wir wissen?",
+      "submit": "Meldung senden",
+      "closeA11y": "Meldung schließen",
+      "successTitle": "Meldung gesendet",
+      "successBody": "Danke. Wir haben deine Meldung gespeichert.",
+      "duplicateTitle": "Bereits gemeldet",
+      "duplicateBody": "Du hast diesen Snap schon gemeldet.",
+      "errorTitle": "Meldung fehlgeschlagen",
+      "errorFallback": "Bitte versuch es noch einmal.",
+      "reasons": {
+        "spam": "Spam",
+        "inappropriate": "Unangemessen",
+        "wrong_place": "Falscher Ort",
+        "other": "Sonstiges"
+      }
+    },
+    "found": {
+      "title": "Als gefunden markieren?",
+      "body": "Damit sehen Leute in der Nähe, dass der Gegenstand gefunden wurde. Du kannst eine kurze Notiz hinterlassen.",
+      "noteLabel": "Notiz (optional)",
+      "notePlaceholder": "Wo oder wie es gefunden wurde",
+      "submit": "Als gefunden markieren",
+      "closeA11y": "Schließen",
+      "successTitle": "Als gefunden markiert",
+      "successBody": "Dieser Snap zeigt jetzt ein Gefunden-Abzeichen.",
+      "errorTitle": "Konnte nicht als gefunden markiert werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "reopen": {
+      "confirmTitle": "Diesen Snap wieder öffnen?",
+      "confirmBody": "Er gilt dann wieder als offen statt als gefunden.",
+      "successTitle": "Snap wieder geöffnet",
+      "successBody": "Das Gefunden-Abzeichen ist weg.",
+      "errorTitle": "Konnte nicht wieder geöffnet werden",
+      "errorFallback": "Bitte versuch es noch einmal."
     }
   },
   "map": {
