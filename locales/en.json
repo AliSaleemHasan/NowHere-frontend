@@ -502,9 +502,11 @@
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
-    "network": "Unable to connect to the server. Please check your internet connection."
+    "network": "Unable to connect to the server. Please check your internet connection.",
+    "tooManyAttempts": "Too many attempts. Try again in 15 minutes."
   },
   "common": {
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "error": "Error"
   }
 }

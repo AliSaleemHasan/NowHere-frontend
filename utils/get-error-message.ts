@@ -7,7 +7,7 @@ export const getErrorMessage = (
 ): string => {
   if (err instanceof ApiError) {
     if (err.statusCode === 429) {
-      return ApiError.getDefaultStatusMessage(429);
+      return i18n.t("errors.tooManyAttempts");
     }
     return err.message || fallback;
   }

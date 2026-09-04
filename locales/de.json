@@ -502,9 +502,11 @@
   },
   "errors": {
     "generic": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "network": "Keine Verbindung zum Server. Prüfe deine Internetverbindung."
+    "network": "Keine Verbindung zum Server. Prüfe deine Internetverbindung.",
+    "tooManyAttempts": "Zu viele Versuche. Bitte warte 15 Minuten."
   },
   "common": {
-    "tryAgain": "Erneut versuchen"
+    "tryAgain": "Erneut versuchen",
+    "error": "Fehler"
   }
 }

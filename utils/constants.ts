@@ -27,7 +27,7 @@ export function tagDescription(tag: string): string {
   return i18n.t(`tags.descriptions.${key}`);
 }
 
-export const TagsColors: Record<Tags, string> = {
+const TagsColors: Record<Tags, string> = {
   PROMOTION: "#16a34a",
   PROOMOTION: "#16a34a",
   INTERESTING: "#0ea5e9",

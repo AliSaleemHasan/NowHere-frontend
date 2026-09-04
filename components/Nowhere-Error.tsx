@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Image, Text, View } from "react-native";
 
-const NowHereError = ({ error, retry }: ErrorBoundaryProps) => {
+const NowHereError = ({ retry }: ErrorBoundaryProps) => {
   const { t } = useTranslation();
   return (
     <View className="flex-1 items-center justify-center max-w-md  gap-4 bg-red-50">
@@ -11,10 +11,10 @@ const NowHereError = ({ error, retry }: ErrorBoundaryProps) => {
         <Image
           className="w-full h-full rounded-full"
           source={require("@/assets/images/logo-error.png")}
-          alt="Error"
+          alt={t("common.error")}
         />
       </View>
-      <Text className=" text-wrap ">{error.message}</Text>
+      <Text className=" text-wrap ">{t("errors.generic")}</Text>
       <Text onPress={retry} className="bg-red-500 color-white p-3 rounded-md">
         {t("common.tryAgain")}
       </Text>
