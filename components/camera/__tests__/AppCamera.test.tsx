@@ -1,8 +1,14 @@
+import { i18n } from "@/lib/i18n";
 import React from "react";
 import { render, fireEvent, act } from "@testing-library/react-native";
+import { I18nextProvider } from "react-i18next";
 import { Text } from "react-native";
 import * as ExpoCamera from "expo-camera";
 import { AppCamera } from "../AppCamera";
+
+function renderCamera(ui: React.ReactElement) {
+  return render(<I18nextProvider i18n={i18n}>{ui}</I18nextProvider>);
+}
 
 const expoCameraMock = ExpoCamera as typeof ExpoCamera & {
   __setMockPermission: (permission: unknown) => void;
@@ -28,7 +34,7 @@ describe("AppCamera Component", () => {
     test("renders loading indicator when permission is undetermined", () => {
       expoCameraMock.__setMockPermission(null);
 
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -38,7 +44,7 @@ describe("AppCamera Component", () => {
     test("renders permission request screen when permission is not granted", () => {
       expoCameraMock.__setMockPermission({ granted: false, canAskAgain: true, status: "denied" });
 
-      const { getByText, getByTestId } = render(
+      const { getByText, getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -49,7 +55,7 @@ describe("AppCamera Component", () => {
     test("calls requestPermission when allow camera button is pressed", async () => {
       expoCameraMock.__setMockPermission({ granted: false, canAskAgain: true, status: "denied" });
 
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -60,7 +66,7 @@ describe("AppCamera Component", () => {
     test("calls onClose when cancel is pressed on permission screen", () => {
       expoCameraMock.__setMockPermission({ granted: false, canAskAgain: true, status: "denied" });
 
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -71,7 +77,7 @@ describe("AppCamera Component", () => {
 
   describe("Camera Controls & Operation", () => {
     test("renders CameraView with default facing and flash props", () => {
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -82,7 +88,7 @@ describe("AppCamera Component", () => {
     });
 
     test("toggles camera facing between back and front", () => {
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -99,7 +105,7 @@ describe("AppCamera Component", () => {
     });
 
     test("cycles flash mode between off, on, and auto", () => {
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -118,7 +124,7 @@ describe("AppCamera Component", () => {
     });
 
     test("calls onClose when close button is pressed", () => {
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -128,7 +134,7 @@ describe("AppCamera Component", () => {
     });
 
     test("captures photo on shutter press and invokes onCapture callback", async () => {
-      const { getByTestId } = render(
+      const { getByTestId } = renderCamera(
         <AppCamera onCapture={onCaptureMock} onClose={onCloseMock} />
       );
 
@@ -147,7 +153,7 @@ describe("AppCamera Component", () => {
     });
 
     test("renders custom topControls and bottomControls when provided", () => {
-      const { getByText } = render(
+      const { getByText } = renderCamera(
         <AppCamera
           onCapture={onCaptureMock}
           onClose={onCloseMock}

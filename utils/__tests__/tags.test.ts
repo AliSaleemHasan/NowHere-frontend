@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import {
   displayTag,
   expandTagsForQuery,
@@ -35,6 +36,14 @@ describe("tags", () => {
     );
     expect(tagDescription("unknown")).toBe(
       "A nearby moment from someone around you.",
+    );
+  });
+
+  it("translates labels and descriptions in German", async () => {
+    await i18n.changeLanguage("de");
+    expect(displayTag(Tags.HIDDEN_GEM)).toBe("Geheimtipp");
+    expect(tagDescription(Tags.HIDDEN_GEM)).toBe(
+      "Ein lokaler Ort, den man leicht übersieht.",
     );
   });
 });

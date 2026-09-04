@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import { Linking, Platform } from "react-native";
 
 const EARTH_RADIUS_METERS = 6_371_000;
@@ -28,15 +29,17 @@ export function formatDistanceAway(
   meters: number,
   style: DistanceFormatStyle = "long",
 ): string {
-  if (!Number.isFinite(meters) || meters < 0) return "Nearby";
-  if (meters < 15) return "Right here";
+  if (!Number.isFinite(meters) || meters < 0) return i18n.t("geo.nearby");
+  if (meters < 15) return i18n.t("geo.rightHere");
   if (meters < 1000) {
-    const value = `${Math.round(meters)} m`;
-    return style === "short" ? value : `${value} away`;
+    const value = i18n.t("geo.meters", { count: Math.round(meters) });
+    return style === "short" ? value : i18n.t("geo.away", { value });
   }
   const km = meters / 1000;
-  const value = km >= 10 ? `${Math.round(km)} km` : `${km.toFixed(1)} km`;
-  return style === "short" ? value : `${value} away`;
+  const formatted =
+    km >= 10 ? String(Math.round(km)) : km.toFixed(1);
+  const value = i18n.t("geo.kilometers", { value: formatted });
+  return style === "short" ? value : i18n.t("geo.away", { value });
 }
 
 export function formatLatLng(lat: number, lng: number): string {
@@ -47,11 +50,12 @@ export function formatLatLng(lat: number, lng: number): string {
 
 export function mapsUrlFor(lat: number, lng: number): string {
   const query = `${lat},${lng}`;
+  const pin = i18n.t("geo.mapsPin");
   if (Platform.OS === "ios") {
-    return `http://maps.apple.com/?ll=${query}&q=${encodeURIComponent("NowHere snap")}`;
+    return `http://maps.apple.com/?ll=${query}&q=${encodeURIComponent(pin)}`;
   }
   if (Platform.OS === "android") {
-    return `geo:${query}?q=${query}(${encodeURIComponent("NowHere snap")})`;
+    return `geo:${query}?q=${query}(${encodeURIComponent(pin)})`;
   }
   return `https://www.google.com/maps?q=${query}`;
 }

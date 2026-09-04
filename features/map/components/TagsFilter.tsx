@@ -14,6 +14,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -21,6 +22,7 @@ const TagsFilter = ({
   children,
   isLoggedIn = false,
 }: PropsWithChildren<{ isLoggedIn?: boolean }>) => {
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{
     tags?: string | string[];
     seen?: string;
@@ -58,6 +60,8 @@ const TagsFilter = ({
       <View className="absolute right-5 top-20 flex gap-4">
         <TouchableOpacity
           onPress={() => bottomSheetRef.current?.expand()}
+          accessibilityRole="button"
+          accessibilityLabel={t("map.filterA11y")}
           className="z-50 items-center rounded-full bg-white px-5 py-6"
         >
           <FontAwesome size={14} name="filter" />
@@ -71,14 +75,16 @@ const TagsFilter = ({
       >
         <BottomSheetView className="flex-1 gap-4 p-4">
           <View className="flex-row items-center gap-4">
-            <Text className="font-medium">Show snaps of type</Text>
+            <Text className="font-medium">{t("map.filterTitle")}</Text>
             {searchTags.length > 0 && (
               <TouchableOpacity
                 className="flex-1"
                 hitSlop={10}
                 onPress={() => setSearchTags([])}
               >
-                <Text className="text-right text-sm font-thin">Clear</Text>
+                <Text className="text-right text-sm font-thin">
+                  {t("map.filterClear")}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -108,7 +114,7 @@ const TagsFilter = ({
                 <Text
                   className={`text-center text-xs font-semibold ${!showSeen ? "text-primary" : "text-gray-500"}`}
                 >
-                  New nearby
+                  {t("map.filterNew")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -118,12 +124,12 @@ const TagsFilter = ({
                 <Text
                   className={`text-center text-xs font-semibold ${showSeen ? "text-primary" : "text-gray-500"}`}
                 >
-                  Already opened
+                  {t("map.filterOpened")}
                 </Text>
               </TouchableOpacity>
             </View>
           )}
-          <FormButton text="Search" onSubmit={handleTagsFilter} />
+          <FormButton text={t("map.filterSearch")} onSubmit={handleTagsFilter} />
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>

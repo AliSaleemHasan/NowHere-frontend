@@ -1,3 +1,5 @@
+import { i18n } from "@/lib/i18n";
+
 export enum Tags {
   PROMOTION = "PROMOTION",
   /** @deprecated typo kept for existing Mongo documents */
@@ -20,28 +22,9 @@ export const SELECTABLE_TAGS = [
 
 export type SelectableTag = (typeof SELECTABLE_TAGS)[number];
 
-export const TagLabels: Record<Tags, string> = {
-  PROMOTION: "Promotion",
-  PROOMOTION: "Promotion",
-  INTERESTING: "Interesting",
-  FINDINGS: "Findings",
-  LOST: "Lost",
-  HIDDEN_GEM: "Hidden gem",
-  SOCIAL: "Social",
-};
-
-export const TagDescriptions: Record<Tags, string> = {
-  PROMOTION: "A nearby offer, pop-up, or event.",
-  PROOMOTION: "A nearby offer, pop-up, or event.",
-  INTERESTING: "Someone flagged this as worth a look.",
-  FINDINGS: "Something was found around this location.",
-  LOST: "Someone lost something near here.",
-  HIDDEN_GEM: "A local spot that is easy to miss.",
-  SOCIAL: "A nearby moment from someone around you.",
-};
-
 export function tagDescription(tag: string): string {
-  return isTag(tag) ? TagDescriptions[tag] : TagDescriptions.SOCIAL;
+  const key = isTag(tag) ? tag : Tags.SOCIAL;
+  return i18n.t(`tags.descriptions.${key}`);
 }
 
 export const TagsColors: Record<Tags, string> = {
@@ -67,7 +50,7 @@ export function parseTagsParam(
 }
 
 export function displayTag(tag: string): string {
-  return isTag(tag) ? TagLabels[tag] : tag;
+  return isTag(tag) ? i18n.t(`tags.labels.${tag}`) : tag;
 }
 
 export function tagColor(tag: string): string {

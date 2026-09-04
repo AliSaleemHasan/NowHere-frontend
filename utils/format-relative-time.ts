@@ -1,11 +1,13 @@
+import { i18n } from "@/lib/i18n";
+
 const MINUTE_MS = 60 * 1000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
 export type RelativeTimeStyle = "long" | "short";
 
-function plural(count: number, noun: string): string {
-  return count === 1 ? `1 ${noun}` : `${count} ${noun}s`;
+function dateLocale(): string {
+  return i18n.language?.startsWith("de") ? "de-DE" : "en-US";
 }
 
 export function formatRelativeTime(
@@ -20,28 +22,35 @@ export function formatRelativeTime(
   const diff = Math.max(0, now - then);
 
   if (diff < 45 * 1000) {
-    return style === "short" ? "Now" : "Just now";
+    return style === "short" ? i18n.t("time.now") : i18n.t("time.justNow");
   }
 
   if (diff < HOUR_MS) {
     const minutes = Math.max(1, Math.round(diff / MINUTE_MS));
-    return style === "short" ? `${minutes}m ago` : `${plural(minutes, "minute")} ago`;
+    return style === "short"
+      ? i18n.t("time.minutesAgoShort", { count: minutes })
+      : i18n.t("time.minutesAgo", { count: minutes });
   }
 
   if (diff < DAY_MS) {
     const hours = Math.max(1, Math.round(diff / HOUR_MS));
-    return style === "short" ? `${hours}h ago` : `${plural(hours, "hour")} ago`;
+    return style === "short"
+      ? i18n.t("time.hoursAgoShort", { count: hours })
+      : i18n.t("time.hoursAgo", { count: hours });
   }
 
   if (diff < 7 * DAY_MS) {
     const days = Math.max(1, Math.round(diff / DAY_MS));
-    return style === "short" ? `${days}d ago` : `${plural(days, "day")} ago`;
+    return style === "short"
+      ? i18n.t("time.daysAgoShort", { count: days })
+      : i18n.t("time.daysAgo", { count: days });
   }
 
   const date = new Date(then);
-  const month = date.toLocaleString("en-US", { month: "short" });
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const sameYear = year === new Date(now).getFullYear();
-  return sameYear ? `${month} ${day}` : `${month} ${day}, ${year}`;
+  const sameYear = date.getFullYear() === new Date(now).getFullYear();
+  return date.toLocaleDateString(dateLocale(), {
+    month: "short",
+    day: "numeric",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
 }

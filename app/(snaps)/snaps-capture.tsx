@@ -4,6 +4,7 @@ import { MAX_SNAP_IMAGES } from "@/lib/image-upload";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   ImageBackground,
@@ -17,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function SnapsCapture() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<"camera" | "review">("camera");
@@ -30,7 +32,7 @@ export default function SnapsCapture() {
     if (snaps.length >= MAX_SNAP_IMAGES) {
       Toast.show({
         type: "info",
-        text1: `You can add up to ${MAX_SNAP_IMAGES} photos`,
+        text1: t("snaps.capture.limitToast", { count: MAX_SNAP_IMAGES }),
       });
       setMode("review");
       return;
@@ -72,14 +74,19 @@ export default function SnapsCapture() {
             </TouchableOpacity>
 
             <Text className="text-sm font-semibold text-white">
-              {galleryIndex + 1} of {snaps.length}
+              {t("snaps.hero.photoOf", {
+                current: galleryIndex + 1,
+                total: snaps.length,
+              })}
             </Text>
 
             <TouchableOpacity
               onPress={handleProceedToInputs}
               className="rounded-full bg-blue-600 px-4 py-2"
             >
-              <Text className="text-sm font-semibold text-white">Next</Text>
+              <Text className="text-sm font-semibold text-white">
+                {t("snaps.capture.next")}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -117,7 +124,9 @@ export default function SnapsCapture() {
             >
               <FontAwesome name="plus" size={16} color="#ffffff" />
               <Text className="text-sm font-medium text-white">
-                {snaps.length >= MAX_SNAP_IMAGES ? "Limit reached" : "Add more"}
+                {snaps.length >= MAX_SNAP_IMAGES
+                  ? t("snaps.capture.limitReached")
+                  : t("snaps.capture.addMore")}
               </Text>
             </TouchableOpacity>
           </View>

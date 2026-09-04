@@ -3,6 +3,7 @@ import { displayTag, tagColor } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Modal,
@@ -26,6 +27,7 @@ function triggerSelectionHaptic() {
 }
 
 export default function SnapPhotoHero({ images, tag, width, height }: Props) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const carouselRef = useRef<ICarouselInstance>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -71,7 +73,7 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
               <Pressable
                 onPress={openGallery}
                 accessibilityRole="imagebutton"
-                accessibilityLabel="View photo full screen"
+                accessibilityLabel={t("snaps.hero.viewFullScreen")}
                 className="h-full w-full"
               >
                 <ImageWithSkeleton uri={item} className="h-full w-full" />
@@ -85,7 +87,7 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
           >
             <Ionicons name="image-outline" size={42} color="#ffffff" />
             <Text className="mt-3 text-sm font-medium text-white/80">
-              No photos on this snap
+              {t("snaps.hero.noPhotos")}
             </Text>
           </View>
         )}
@@ -120,7 +122,10 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
               className="rounded-full bg-black/55 px-2.5 py-1.5"
             >
               <Text className="text-xs font-semibold text-white">
-                {safeIndex + 1} / {images.length}
+                {t("snaps.hero.photoCount", {
+                  current: safeIndex + 1,
+                  total: images.length,
+                })}
               </Text>
             </View>
           </View>
@@ -130,7 +135,7 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
           <View className="absolute bottom-3 right-4 flex-row items-center rounded-full bg-black/45 px-2.5 py-1">
             <Ionicons name="expand-outline" size={12} color="#ffffff" />
             <Text className="ml-1 text-[11px] font-medium text-white">
-              Tap to expand
+              {t("snaps.hero.tapToExpand")}
             </Text>
           </View>
         ) : null}
@@ -147,7 +152,9 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
               <Pressable
                 key={`${uri}-${index}`}
                 onPress={() => jumpTo(index)}
-                accessibilityLabel={`Photo ${index + 1}`}
+                accessibilityLabel={t("snaps.hero.photoA11y", {
+                  index: index + 1,
+                })}
                 className="overflow-hidden rounded-xl"
                 style={{
                   borderWidth: 2,
@@ -173,11 +180,14 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
             className="z-10 flex-row items-center justify-between px-5 pb-2"
           >
             <Text className="text-sm font-semibold text-white">
-              {safeIndex + 1} of {images.length}
+              {t("snaps.hero.photoOf", {
+                current: safeIndex + 1,
+                total: images.length,
+              })}
             </Text>
             <Pressable
               onPress={() => setGalleryOpen(false)}
-              accessibilityLabel="Close gallery"
+              accessibilityLabel={t("snaps.hero.closeGallery")}
               className="h-10 w-10 items-center justify-center rounded-full bg-white/15"
             >
               <Ionicons name="close" size={22} color="#ffffff" />
@@ -194,7 +204,9 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
             renderItem={({ item, index, setImageDimensions }) => (
               <Image
                 source={{ uri: item }}
-                accessibilityLabel={`Photo ${index + 1}`}
+                accessibilityLabel={t("snaps.hero.photoA11y", {
+                  index: index + 1,
+                })}
                 className="h-full w-full"
                 resizeMode="contain"
                 onLoad={(event) => {

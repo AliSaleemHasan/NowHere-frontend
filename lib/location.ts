@@ -48,7 +48,7 @@ export const getUserLocation = async (
     if (status !== PermissionStatus.GRANTED) {
       return {
         success: false,
-        message: "Location permission is required.",
+        message: i18n.t("location.permissionRequired"),
       };
     }
 
@@ -64,7 +64,7 @@ export const getUserLocation = async (
     if (!location) {
       return {
         success: false,
-        message: "Could not get current location",
+        message: i18n.t("location.unavailable"),
       };
     }
 
@@ -75,7 +75,7 @@ export const getUserLocation = async (
     if (!isValidGeoPoint(point)) {
       return {
         success: false,
-        message: "Could not get a valid GPS location",
+        message: i18n.t("location.invalidGps"),
       };
     }
 
@@ -85,7 +85,7 @@ export const getUserLocation = async (
     };
   } catch (error: unknown) {
     const message =
-      error instanceof Error ? error.message : "Could not get current location";
+      error instanceof Error ? error.message : i18n.t("location.unavailable");
     return {
       success: false,
       message,
@@ -106,7 +106,7 @@ export async function requireSnapLocation(): Promise<GeoPoint> {
 
   throw new ApiError(
     (!fresh.success ? fresh.message : undefined) ||
-      "Location is required to share a snap. Enable GPS and try again.",
+      i18n.t("location.shareRequired"),
     400,
   );
 }

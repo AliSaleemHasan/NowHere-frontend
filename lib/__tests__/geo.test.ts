@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import { Linking, Platform } from "react-native";
 import {
   formatDistanceAway,
@@ -55,6 +56,12 @@ describe("formatDistanceAway", () => {
     expect(formatDistanceAway(240, "short")).toBe("240 m");
     expect(formatDistanceAway(1500, "short")).toBe("1.5 km");
     expect(formatDistanceAway(12500, "short")).toBe("13 km");
+  });
+
+  it("uses German copy after a locale change", async () => {
+    await i18n.changeLanguage("de");
+    expect(formatDistanceAway(8)).toBe("Genau hier");
+    expect(formatDistanceAway(240)).toBe("240 m entfernt");
   });
 });
 

@@ -196,24 +196,8 @@
     }
   },
   "profile": {
-    "title": "Profile",
-    "settingsTitle": "Settings",
-    "yourProfile": "Your profile",
-    "sessionMissingTitle": "Session not found",
-    "sessionMissingBody": "Please sign in again to view your profile.",
-    "finishing": "Finishing your profile…",
-    "admin": "Admin",
-    "member": "Member",
-    "bioFallback": "Share what’s around you — snaps nearby, just for now.",
-    "refreshError": "Could not refresh profile",
-    "visibilityTitle": "Visibility settings",
-    "visibilitySubtitle": "Radius, posting distance, lifetime",
-    "logout": "Log out",
-    "logoutConfirmTitle": "Log out of NowHere?",
-    "logoutConfirmBody": "You can sign back in at any time.",
     "mySnapsSubtitle": "See and delete snaps you’ve posted",
-    "savedSubtitle": "Snaps you want to find again",
-    "explorerFallback": "NowHere explorer"
+    "savedSubtitle": "Snaps you want to find again"
   },
   "snaps": {
     "actions": {
@@ -341,6 +325,61 @@
       "successBody": "The Found badge is gone.",
       "errorTitle": "Couldn’t reopen this snap",
       "errorFallback": "Please try again."
+    },
+    "hero": {
+      "viewFullScreen": "View photo full screen",
+      "noPhotos": "No photos on this snap",
+      "tapToExpand": "Tap to expand",
+      "photoCount": "{{current}} / {{total}}",
+      "photoOf": "{{current}} of {{total}}",
+      "closeGallery": "Close gallery",
+      "photoA11y": "Photo {{index}}"
+    },
+    "visibility": {
+      "expired": "No longer in your nearby window",
+      "lessThanHour": "Visible for less than an hour",
+      "hours_one": "Visible for about {{count}} hour",
+      "hours_other": "Visible for about {{count}} hours",
+      "days_one": "Visible for about {{count}} day",
+      "days_other": "Visible for about {{count}} days"
+    },
+    "capture": {
+      "next": "Next",
+      "addMore": "Add more",
+      "limitReached": "Limit reached",
+      "limitToast": "You can add up to {{count}} photos"
+    },
+    "compose": {
+      "title": "New Snap",
+      "add": "Add",
+      "description": "Description",
+      "placeholder": "What’s happening here?",
+      "tag": "Tag",
+      "tagHelp": "Helps people nearby know what they’re looking at.",
+      "sharingAt": "Sharing at {{lat}}, {{lng}}. One snap per area each day.",
+      "needLocation": "We’ll attach your current GPS when you share. Location is required.",
+      "submit": "Share snap",
+      "toastSuccessTitle": "Snap shared",
+      "toastSuccessBody": "People nearby can discover it now.",
+      "toastAlreadyTitle": "Already shared here today",
+      "toastAlreadyBody": "Your snap for this area is on the map. Move farther to post again.",
+      "toastErrorTitle": "Couldn’t share snap",
+      "toastErrorFallback": "Something went wrong. Please try again.",
+      "toastLocationTitle": "Location required",
+      "toastLocationFallback": "Enable GPS to share a snap from this spot.",
+      "errors": {
+        "descriptionRequired": "Add a short description",
+        "descriptionMax": "Keep it under 280 characters"
+      },
+      "discard": "Discard",
+      "discardTitle": "Discard this snap?",
+      "discardBody": "If you continue, your current snap and any changes will be lost.",
+      "discardConfirm": "Discard"
+    },
+    "add": {
+      "title": "Capture a snap",
+      "body": "Sign in to photograph what’s around you and share it with people nearby.",
+      "signIn": "Sign in to continue"
     }
   },
   "map": {
@@ -357,7 +396,13 @@
     "emptySeenBody": "Snaps you’ve already opened will show up here.",
     "signInTitle": "Sign in to see snaps nearby",
     "signInBody": "Nearby and opened feeds are available after you log in.",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "filterTitle": "Show snaps of type",
+    "filterClear": "Clear",
+    "filterNew": "New nearby",
+    "filterOpened": "Already opened",
+    "filterSearch": "Search",
+    "filterA11y": "Filter snaps"
   },
   "tabs": {
     "map": "Map",
@@ -386,7 +431,11 @@
     "permissionTitle": "Location permission",
     "permissionBody": "Location access is off. Enable it in Settings to continue.",
     "openSettings": "Open Settings",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "permissionRequired": "Location permission is required.",
+    "unavailable": "Could not get current location",
+    "invalidGps": "Could not get a valid GPS location",
+    "shareRequired": "Location is required to share a snap. Enable GPS and try again."
   },
   "privacy": {
     "title": "Privacy",
@@ -404,5 +453,58 @@
     "rightsBody": "From Settings you can export a JSON copy of your account data and delete your account. Deletion removes your profile, snaps, and stored photos. If a deletion is interrupted, the account stays disabled so you can retry.",
     "contactTitle": "Contact",
     "contactBody": "There is no company support desk. Contact the person who runs this compose stack."
+  },
+  "tags": {
+    "labels": {
+      "PROMOTION": "Promotion",
+      "PROOMOTION": "Promotion",
+      "INTERESTING": "Interesting",
+      "FINDINGS": "Findings",
+      "LOST": "Lost",
+      "HIDDEN_GEM": "Hidden gem",
+      "SOCIAL": "Social"
+    },
+    "descriptions": {
+      "PROMOTION": "A nearby offer, pop-up, or event.",
+      "PROOMOTION": "A nearby offer, pop-up, or event.",
+      "INTERESTING": "Someone flagged this as worth a look.",
+      "FINDINGS": "Something was found around this location.",
+      "LOST": "Someone lost something near here.",
+      "HIDDEN_GEM": "A local spot that is easy to miss.",
+      "SOCIAL": "A nearby moment from someone around you."
+    }
+  },
+  "time": {
+    "justNow": "Just now",
+    "now": "Now",
+    "minutesAgo_one": "{{count}} minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "minutesAgoShort": "{{count}}m ago",
+    "hoursAgo_one": "{{count}} hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "hoursAgoShort": "{{count}}h ago",
+    "daysAgo_one": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago",
+    "daysAgoShort": "{{count}}d ago"
+  },
+  "geo": {
+    "nearby": "Nearby",
+    "rightHere": "Right here",
+    "away": "{{value}} away",
+    "meters": "{{count}} m",
+    "kilometers": "{{value}} km",
+    "mapsPin": "NowHere snap"
+  },
+  "camera": {
+    "permissionTitle": "Camera Permission Needed",
+    "permissionBody": "NowHere needs access to your camera to take and post snaps.",
+    "allow": "Allow Camera"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Unable to connect to the server. Please check your internet connection."
+  },
+  "common": {
+    "tryAgain": "Try again"
   }
 }

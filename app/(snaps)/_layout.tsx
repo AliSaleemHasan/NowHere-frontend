@@ -2,9 +2,11 @@ import DiscardFormButton from "@/features/snaps/components/DiscardFormButton";
 import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Platform, Pressable } from "react-native";
 
 export default function SnapsLayout() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -12,7 +14,7 @@ export default function SnapsLayout() {
       <Stack.Screen
         name="[id]"
         options={{
-          title: "Snap",
+          title: t("snaps.details.screenTitle"),
           headerTitleStyle: { fontSize: 16, fontWeight: "600" },
           headerTitleAlign: "center",
           headerShadowVisible: false,
@@ -42,7 +44,7 @@ export default function SnapsLayout() {
       <Stack.Screen
         name="snap-inputs"
         options={{
-          title: "New Snap",
+          title: t("snaps.compose.title"),
           headerTitleStyle: { fontSize: 16, fontWeight: "600" },
           headerTitleAlign: "center",
           headerLeft: () => (

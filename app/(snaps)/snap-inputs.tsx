@@ -23,6 +23,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
@@ -31,14 +32,15 @@ const AddSnapSchema = z.object({
   description: z
     .string()
     .trim()
-    .min(1, "Add a short description")
-    .max(280, "Keep it under 280 characters"),
+    .min(1, "snaps.compose.errors.descriptionRequired")
+    .max(280, "snaps.compose.errors.descriptionMax"),
   tag: z.enum(SELECTABLE_TAGS),
 });
 
 type AddSnapData = z.infer<typeof AddSnapSchema>;
 
 export default function SnapInputs() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { handleSubmit, control, formState, watch } = useForm<AddSnapData>({
     defaultValues: {
@@ -71,8 +73,8 @@ export default function SnapInputs() {
 
       Toast.show({
         type: "success",
-        text1: "Snap shared",
-        text2: "People nearby can discover it now.",
+        text1: t("snaps.compose.toastSuccessTitle"),
+        text2: t("snaps.compose.toastSuccessBody"),
       });
       clearSnaps();
       router.replace("/");
@@ -80,7 +82,7 @@ export default function SnapInputs() {
     onError: (err: unknown) => {
       const message = getErrorMessage(
         err,
-        "Something went wrong. Please try again.",
+        t("snaps.compose.toastErrorFallback"),
       );
       const alreadyPosted = /already posted/i.test(message);
 
@@ -88,8 +90,8 @@ export default function SnapInputs() {
         invalidateSnapQueries(queryClient);
         Toast.show({
           type: "info",
-          text1: "Already shared here today",
-          text2: "Your snap for this area is on the map. Move farther to post again.",
+          text1: t("snaps.compose.toastAlreadyTitle"),
+          text2: t("snaps.compose.toastAlreadyBody"),
         });
         clearSnaps();
         router.replace("/");
@@ -98,7 +100,7 @@ export default function SnapInputs() {
 
       Toast.show({
         type: "error",
-        text1: "Couldn’t share snap",
+        text1: t("snaps.compose.toastErrorTitle"),
         text2: message,
       });
     },
@@ -118,10 +120,10 @@ export default function SnapInputs() {
     } catch (err: unknown) {
       Toast.show({
         type: "error",
-        text1: "Location required",
+        text1: t("snaps.compose.toastLocationTitle"),
         text2: getErrorMessage(
           err,
-          "Enable GPS to share a snap from this spot.",
+          t("snaps.compose.toastLocationFallback"),
         ),
       });
     } finally {
@@ -140,7 +142,9 @@ export default function SnapInputs() {
       <View className="flex-1 gap-5 p-5">
         <View>
           <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-base font-semibold text-primary">Photos</Text>
+            <Text className="text-base font-semibold text-primary">
+              {t("snaps.details.photos")}
+            </Text>
             <Text className="text-xs text-gray-500">
               {snaps.length}/{MAX_SNAP_IMAGES}
             </Text>
@@ -167,7 +171,9 @@ export default function SnapInputs() {
                   className="h-28 w-24 items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50"
                 >
                   <Ionicons name="camera-outline" size={22} color="#6b7280" />
-                  <Text className="mt-1 text-xs text-gray-500">Add</Text>
+                  <Text className="mt-1 text-xs text-gray-500">
+                    {t("snaps.compose.add")}
+                  </Text>
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -177,7 +183,7 @@ export default function SnapInputs() {
         <View className="gap-2">
           <View className="flex-row items-center justify-between">
             <Text className="text-base font-semibold text-primary">
-              Description
+              {t("snaps.compose.description")}
             </Text>
             <Text className="text-xs text-gray-400">
               {description.trim().length}/280
@@ -188,7 +194,7 @@ export default function SnapInputs() {
             name="description"
             className="min-h-28 w-full"
             autoCapitalize="sentences"
-            placeholder="What’s happening here?"
+            placeholder={t("snaps.compose.placeholder")}
             numberOfLines={6}
             multiline
             textAlignVertical="top"
@@ -197,9 +203,11 @@ export default function SnapInputs() {
         </View>
 
         <View className="gap-2">
-          <Text className="text-base font-semibold text-primary">Tag</Text>
+          <Text className="text-base font-semibold text-primary">
+            {t("snaps.compose.tag")}
+          </Text>
           <Text className="text-xs text-gray-500">
-            Helps people nearby know what they’re looking at.
+            {t("snaps.compose.tagHelp")}
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {SELECTABLE_TAGS.map((tag) => (
@@ -217,27 +225,31 @@ export default function SnapInputs() {
           <Ionicons name="location-outline" size={16} color="#6b7280" />
           <Text className="flex-1 text-xs text-gray-500">
             {hasLocation
-              ? `Sharing at ${location.coordinates[1].toFixed(5)}, ${location.coordinates[0].toFixed(5)}. One snap per area each day.`
-              : "We’ll attach your current GPS when you share. Location is required."}
+              ? t("snaps.compose.sharingAt", {
+                  lat: location.coordinates[1].toFixed(5),
+                  lng: location.coordinates[0].toFixed(5),
+                })
+              : t("snaps.compose.needLocation")}
           </Text>
         </View>
 
+        {formState.errors.description?.message ? (
+          <FormError message={t(formState.errors.description.message)} />
+        ) : null}
+
         {addSnapMutation.isError ? (
           <FormError
-            message={getErrorMessage(addSnapMutation.error)}
+            message={getErrorMessage(
+              addSnapMutation.error,
+              t("snaps.compose.toastErrorFallback"),
+            )}
             errors={getApiValidationErrors(addSnapMutation.error)}
           />
         ) : null}
 
         <FormButton
           onSubmit={handleSubmit(onSubmit)}
-          text={
-            isResolvingLocation
-              ? "Getting location…"
-              : addSnapMutation.isPending
-                ? "Sharing…"
-                : "Share snap"
-          }
+          text={t("snaps.compose.submit")}
           disabled={!canSubmit}
           isLoading={addSnapMutation.isPending || isResolvingLocation}
         />

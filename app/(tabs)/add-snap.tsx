@@ -2,9 +2,11 @@ import { useAuth } from "@/features/auth/context/auth-store";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function AddSnap() {
+  const { t } = useTranslation();
   const router = useRouter();
   const isLoggedIn = useAuth((state) => state.isLoggedIn);
 
@@ -22,16 +24,16 @@ export default function AddSnap() {
         <Ionicons name="camera" size={28} color="#ffffff" />
       </View>
       <Text className="mt-5 text-center text-2xl font-semibold text-primary">
-        Capture a snap
+        {t("snaps.add.title")}
       </Text>
       <Text className="mt-2 text-center text-sm leading-5 text-gray-500">
-        Sign in to photograph what’s around you and share it with people nearby.
+        {t("snaps.add.body")}
       </Text>
       <TouchableOpacity
         onPress={() => router.push("/(auth)/login")}
         className="mt-6 rounded-full bg-primary px-6 py-3"
       >
-        <Text className="font-semibold text-white">Sign in to continue</Text>
+        <Text className="font-semibold text-white">{t("snaps.add.signIn")}</Text>
       </TouchableOpacity>
     </View>
   );

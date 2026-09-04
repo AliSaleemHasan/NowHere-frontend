@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import { formatRelativeTime } from "../format-relative-time";
 
 const NOW = Date.parse("2026-09-03T12:00:00.000Z");
@@ -44,6 +45,16 @@ describe("formatRelativeTime", () => {
     );
     expect(formatRelativeTime("2026-09-02T12:00:00.000Z", NOW, "long")).toBe(
       "1 day ago",
+    );
+  });
+
+  it("uses German copy after a locale change", async () => {
+    await i18n.changeLanguage("de");
+    expect(formatRelativeTime("2026-09-03T11:59:40.000Z", NOW, "long")).toBe(
+      "Gerade eben",
+    );
+    expect(formatRelativeTime("2026-09-03T11:48:00.000Z", NOW, "long")).toBe(
+      "vor 12 Minuten",
     );
   });
 });

@@ -196,24 +196,8 @@
     }
   },
   "profile": {
-    "title": "Profil",
-    "settingsTitle": "Einstellungen",
-    "yourProfile": "Dein Profil",
-    "sessionMissingTitle": "Sitzung nicht gefunden",
-    "sessionMissingBody": "Bitte melde dich erneut an, um dein Profil zu sehen.",
-    "finishing": "Dein Profil wird eingerichtet…",
-    "admin": "Admin",
-    "member": "Mitglied",
-    "bioFallback": "Teile, was um dich herum passiert — Snaps in der Nähe, nur für den Moment.",
-    "refreshError": "Profil konnte nicht aktualisiert werden",
-    "visibilityTitle": "Sichtbarkeit",
-    "visibilitySubtitle": "Radius, Post-Abstand, Lebensdauer",
-    "logout": "Abmelden",
-    "logoutConfirmTitle": "Von NowHere abmelden?",
-    "logoutConfirmBody": "Du kannst dich jederzeit wieder anmelden.",
     "mySnapsSubtitle": "Snaps ansehen und löschen, die du geteilt hast",
-    "savedSubtitle": "Snaps, die du später wiederfinden willst",
-    "explorerFallback": "NowHere-Entdecker"
+    "savedSubtitle": "Snaps, die du später wiederfinden willst"
   },
   "snaps": {
     "actions": {
@@ -341,6 +325,61 @@
       "successBody": "Das Gefunden-Abzeichen ist weg.",
       "errorTitle": "Konnte nicht wieder geöffnet werden",
       "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "hero": {
+      "viewFullScreen": "Foto im Vollbild anzeigen",
+      "noPhotos": "Keine Fotos bei diesem Snap",
+      "tapToExpand": "Tippen zum Vergrößern",
+      "photoCount": "{{current}} / {{total}}",
+      "photoOf": "{{current}} von {{total}}",
+      "closeGallery": "Galerie schließen",
+      "photoA11y": "Foto {{index}}"
+    },
+    "visibility": {
+      "expired": "Nicht mehr in deinem Umkreis",
+      "lessThanHour": "Noch weniger als eine Stunde sichtbar",
+      "hours_one": "Noch etwa {{count}} Stunde sichtbar",
+      "hours_other": "Noch etwa {{count}} Stunden sichtbar",
+      "days_one": "Noch etwa {{count}} Tag sichtbar",
+      "days_other": "Noch etwa {{count}} Tage sichtbar"
+    },
+    "capture": {
+      "next": "Weiter",
+      "addMore": "Mehr hinzufügen",
+      "limitReached": "Limit erreicht",
+      "limitToast": "Du kannst bis zu {{count}} Fotos hinzufügen"
+    },
+    "compose": {
+      "title": "Neuer Snap",
+      "add": "Hinzufügen",
+      "description": "Beschreibung",
+      "placeholder": "Was passiert hier?",
+      "tag": "Tag",
+      "tagHelp": "Damit sehen Leute in der Nähe, worum es geht.",
+      "sharingAt": "Teilen bei {{lat}}, {{lng}}. Ein Snap pro Gebiet und Tag.",
+      "needLocation": "Beim Teilen hängen wir deinen aktuellen GPS-Standort an. Standort ist erforderlich.",
+      "submit": "Snap teilen",
+      "toastSuccessTitle": "Snap geteilt",
+      "toastSuccessBody": "Leute in der Nähe können ihn jetzt entdecken.",
+      "toastAlreadyTitle": "Hier heute schon geteilt",
+      "toastAlreadyBody": "Dein Snap für dieses Gebiet ist auf der Karte. Beweg dich weiter weg, um erneut zu posten.",
+      "toastErrorTitle": "Snap konnte nicht geteilt werden",
+      "toastErrorFallback": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+      "toastLocationTitle": "Standort erforderlich",
+      "toastLocationFallback": "Aktiviere GPS, um einen Snap von hier zu teilen.",
+      "errors": {
+        "descriptionRequired": "Schreib eine kurze Beschreibung",
+        "descriptionMax": "Maximal 280 Zeichen"
+      },
+      "discard": "Verwerfen",
+      "discardTitle": "Diesen Snap verwerfen?",
+      "discardBody": "Wenn du fortfährst, gehen der aktuelle Snap und alle Änderungen verloren.",
+      "discardConfirm": "Verwerfen"
+    },
+    "add": {
+      "title": "Einen Snap aufnehmen",
+      "body": "Melde dich an, um festzuhalten, was um dich herum passiert, und es mit Leuten in der Nähe zu teilen.",
+      "signIn": "Anmelden, um fortzufahren"
     }
   },
   "map": {
@@ -357,7 +396,13 @@
     "emptySeenBody": "Snaps, die du schon geöffnet hast, erscheinen hier.",
     "signInTitle": "Melde dich an, um Snaps in der Nähe zu sehen",
     "signInBody": "Die Feeds in der Nähe und bereits geöffnet sind nach dem Anmelden verfügbar.",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "filterTitle": "Snaps nach Typ",
+    "filterClear": "Zurücksetzen",
+    "filterNew": "Neu in der Nähe",
+    "filterOpened": "Bereits geöffnet",
+    "filterSearch": "Suchen",
+    "filterA11y": "Snaps filtern"
   },
   "tabs": {
     "map": "Karte",
@@ -386,7 +431,11 @@
     "permissionTitle": "Standortberechtigung",
     "permissionBody": "Der Standortzugriff ist aus. Aktiviere ihn in den Einstellungen, um weiterzumachen.",
     "openSettings": "Einstellungen öffnen",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "permissionRequired": "Standortberechtigung ist erforderlich.",
+    "unavailable": "Standort konnte nicht ermittelt werden",
+    "invalidGps": "Kein gültiger GPS-Standort",
+    "shareRequired": "Zum Teilen eines Snaps ist der Standort nötig. Aktiviere GPS und versuche es erneut."
   },
   "privacy": {
     "title": "Datenschutz",
@@ -404,5 +453,58 @@
     "rightsBody": "Unter Einstellungen kannst du eine JSON-Kopie deiner Kontodaten exportieren und dein Konto löschen. Die Löschung entfernt Profil, Snaps und gespeicherte Fotos. Wenn eine Löschung abbricht, bleibt das Konto deaktiviert, damit du es erneut versuchen kannst.",
     "contactTitle": "Kontakt",
     "contactBody": "Es gibt keinen Firmensupport. Wende dich an die Person, die diesen Compose-Stack betreibt."
+  },
+  "tags": {
+    "labels": {
+      "PROMOTION": "Aktion",
+      "PROOMOTION": "Aktion",
+      "INTERESTING": "Interessant",
+      "FINDINGS": "Fundstücke",
+      "LOST": "Verloren",
+      "HIDDEN_GEM": "Geheimtipp",
+      "SOCIAL": "Sozial"
+    },
+    "descriptions": {
+      "PROMOTION": "Ein Angebot, Pop-up oder Event in der Nähe.",
+      "PROOMOTION": "Ein Angebot, Pop-up oder Event in der Nähe.",
+      "INTERESTING": "Jemand hat das als sehenswert markiert.",
+      "FINDINGS": "Hier in der Nähe wurde etwas gefunden.",
+      "LOST": "Jemand hat hier in der Nähe etwas verloren.",
+      "HIDDEN_GEM": "Ein lokaler Ort, den man leicht übersieht.",
+      "SOCIAL": "Ein Moment von jemandem in deiner Nähe."
+    }
+  },
+  "time": {
+    "justNow": "Gerade eben",
+    "now": "Jetzt",
+    "minutesAgo_one": "vor {{count}} Minute",
+    "minutesAgo_other": "vor {{count}} Minuten",
+    "minutesAgoShort": "vor {{count}} Min.",
+    "hoursAgo_one": "vor {{count}} Stunde",
+    "hoursAgo_other": "vor {{count}} Stunden",
+    "hoursAgoShort": "vor {{count}} Std.",
+    "daysAgo_one": "vor {{count}} Tag",
+    "daysAgo_other": "vor {{count}} Tagen",
+    "daysAgoShort": "vor {{count}} T."
+  },
+  "geo": {
+    "nearby": "In der Nähe",
+    "rightHere": "Genau hier",
+    "away": "{{value}} entfernt",
+    "meters": "{{count}} m",
+    "kilometers": "{{value}} km",
+    "mapsPin": "NowHere-Snap"
+  },
+  "camera": {
+    "permissionTitle": "Kamerazugriff nötig",
+    "permissionBody": "NowHere braucht Zugriff auf deine Kamera, um Snaps aufzunehmen und zu teilen.",
+    "allow": "Kamera erlauben"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "network": "Keine Verbindung zum Server. Prüfe deine Internetverbindung."
+  },
+  "common": {
+    "tryAgain": "Erneut versuchen"
   }
 }

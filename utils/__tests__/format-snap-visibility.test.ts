@@ -1,3 +1,4 @@
+import { i18n } from "@/lib/i18n";
 import { formatRemainingVisibility } from "../format-snap-visibility";
 
 const NOW = Date.parse("2026-09-03T12:00:00.000Z");
@@ -23,5 +24,12 @@ describe("formatRemainingVisibility", () => {
     expect(
       formatRemainingVisibility("2026-08-01T00:00:00.000Z", 1, NOW),
     ).toBe("No longer in your nearby window");
+  });
+
+  it("uses German copy after a locale change", async () => {
+    await i18n.changeLanguage("de");
+    expect(formatRemainingVisibility(CREATED, 1, NOW)).toBe(
+      "Noch etwa 12 Stunden sichtbar",
+    );
   });
 });

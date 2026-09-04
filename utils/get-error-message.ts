@@ -1,8 +1,9 @@
 import { ApiError } from "@/lib/http/api-error";
+import { i18n } from "@/lib/i18n";
 
 export const getErrorMessage = (
   err: unknown,
-  fallback = "Something went wrong. Please try again.",
+  fallback = i18n.t("errors.generic"),
 ): string => {
   if (err instanceof ApiError) {
     if (err.statusCode === 429) {
@@ -11,7 +12,7 @@ export const getErrorMessage = (
     return err.message || fallback;
   }
   if (err instanceof TypeError) {
-    return "Unable to connect to the server. Please check your internet connection.";
+    return i18n.t("errors.network");
   }
   if (err instanceof Error && err.message.trim().length > 0) {
     return err.message;
