@@ -142,8 +142,6 @@ export class ApiError extends Error {
   }
 }
 
-export const extractErrorMessage = ApiError.extractMessage;
-
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
 }

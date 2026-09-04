@@ -9,6 +9,7 @@ import {
 import { TagCheckbox } from "@/features/snaps/components/TagsCheckBoxes";
 import { useLocation } from "@/features/snaps/context/location-store";
 import { useSnapDraft } from "@/features/snaps/context/snap-store";
+import { isApiError } from "@/lib/http/api-error";
 import { MAX_SNAP_IMAGES } from "@/lib/image-upload";
 import { requireSnapLocation } from "@/lib/location";
 import {
@@ -27,6 +28,8 @@ import { useTranslation } from "react-i18next";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
+
+const SNAP_ALREADY_IN_AREA_CODE = "SNAP_ALREADY_IN_AREA";
 
 const AddSnapSchema = z.object({
   description: z
@@ -80,13 +83,7 @@ export default function SnapInputs() {
       router.replace("/");
     },
     onError: (err: unknown) => {
-      const message = getErrorMessage(
-        err,
-        t("snaps.compose.toastErrorFallback"),
-      );
-      const alreadyPosted = /already posted/i.test(message);
-
-      if (alreadyPosted) {
+      if (isApiError(err) && err.code === SNAP_ALREADY_IN_AREA_CODE) {
         invalidateSnapQueries(queryClient);
         Toast.show({
           type: "info",
@@ -101,7 +98,7 @@ export default function SnapInputs() {
       Toast.show({
         type: "error",
         text1: t("snaps.compose.toastErrorTitle"),
-        text2: message,
+        text2: getErrorMessage(err, t("snaps.compose.toastErrorFallback")),
       });
     },
   });
