@@ -44,6 +44,8 @@
     "visibilityTitle": "Visibility settings",
     "visibilitySubtitle": "Radius, posting distance, lifetime",
     "logout": "Log out",
+    "logoutConfirmTitle": "Log out of NowHere?",
+    "logoutConfirmBody": "You can sign back in at any time.",
     "mySnapsSubtitle": "See and delete snaps you’ve posted",
     "explorerFallback": "NowHere explorer"
   },
@@ -87,6 +89,7 @@
       "statusProcessingTitle": "Still processing",
       "statusProcessingBody": "This snap is finishing up. Photos can appear in a moment.",
       "delete": "Delete",
+      "deleting": "Deleting…",
       "hide": "Hide",
       "unavailableTitle": "This snap isn’t available",
       "unavailableBody": "It may have expired nearby, or the link is no longer valid.",

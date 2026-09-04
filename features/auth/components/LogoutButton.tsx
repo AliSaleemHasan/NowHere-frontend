@@ -1,13 +1,22 @@
 import { useAuth } from "@/features/auth/context/auth-store";
+import { i18n } from "@/lib/i18n";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Alert, Pressable } from "react-native";
 
 export function confirmLogout(onLogout: () => void) {
-  Alert.alert("Log out of NowHere?", "You can sign back in at any time.", [
-    { text: "Cancel", style: "cancel" },
-    { text: "Log out", style: "destructive", onPress: onLogout },
-  ]);
+  Alert.alert(
+    i18n.t("profile.logoutConfirmTitle"),
+    i18n.t("profile.logoutConfirmBody"),
+    [
+      { text: i18n.t("snaps.actions.cancel"), style: "cancel" },
+      {
+        text: i18n.t("profile.logout"),
+        style: "destructive",
+        onPress: onLogout,
+      },
+    ],
+  );
 }
 
 export default function LogoutButton() {

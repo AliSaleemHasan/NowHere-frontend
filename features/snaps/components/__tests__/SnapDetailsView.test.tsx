@@ -200,4 +200,15 @@ describe("SnapDetailsView", () => {
     expect(queryByTestId("snap-delete")).toBeNull();
     expect(queryByTestId("snap-hide")).toBeNull();
   });
+
+  it("shows deleting copy while a delete is pending", () => {
+    const { getByLabelText, queryByText } = renderDetails({
+      isOwnSnap: true,
+      onDelete: jest.fn(),
+      isDeleting: true,
+    });
+
+    expect(getByLabelText("Deleting…")).toBeTruthy();
+    expect(queryByText("Delete")).toBeNull();
+  });
 });

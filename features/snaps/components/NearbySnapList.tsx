@@ -1,6 +1,6 @@
 import { haversineDistanceMeters } from "@/lib/geo";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { type ReactNode } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import {
   getSnapId,
@@ -14,12 +14,14 @@ type Props = {
   snaps: Snap[];
   viewerLocation?: SnapLocation | null;
   isLoading?: boolean;
+  empty?: ReactNode;
 };
 
 export default function NearbySnapList({
   snaps,
   viewerLocation,
   isLoading = false,
+  empty,
 }: Props) {
   const router = useRouter();
 
@@ -40,7 +42,10 @@ export default function NearbySnapList({
       className="flex-1 bg-gray-50"
       data={snaps}
       keyExtractor={(item) => getSnapId(item) ?? item.id}
-      contentContainerClassName="p-4 pb-28"
+      contentContainerClassName={
+        snaps.length === 0 ? "flex-grow justify-center px-5 pb-24 pt-28" : "p-4 pb-28"
+      }
+      ListEmptyComponent={empty ? <>{empty}</> : null}
       renderItem={({ item }) => {
         const id = getSnapId(item);
         if (!id) return null;

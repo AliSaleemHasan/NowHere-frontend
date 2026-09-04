@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -126,6 +127,10 @@ export default function SnapDetailsView({
     distanceMeters == null
       ? t("snaps.details.nearby")
       : formatDistanceAway(distanceMeters);
+  const distanceShort =
+    distanceMeters == null
+      ? t("snaps.details.nearby")
+      : formatDistanceAway(distanceMeters, "short");
   const caption = description.trim();
   const showImage = Boolean(authorImage) && !avatarFailed;
   const initials = initialsFromName(authorName);
@@ -238,7 +243,7 @@ export default function SnapDetailsView({
             <StatCell
               icon="navigate-outline"
               label={t("snaps.details.distance")}
-              value={distanceLabel.replace(" away", "")}
+              value={distanceShort}
               testID="snap-distance"
             />
             <View className="w-px bg-gray-100" />
@@ -356,7 +361,7 @@ export default function SnapDetailsView({
                   disabled={isDeleting}
                   accessibilityRole="button"
                   accessibilityLabel={t("snaps.details.hide")}
-                  className="flex-row items-center px-4 py-4"
+                  className={`flex-row items-center px-4 py-4 ${isDeleting ? "opacity-60" : ""}`}
                 >
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-100">
                     <Ionicons name="eye-off-outline" size={18} color="#0f0d23" />
@@ -373,14 +378,25 @@ export default function SnapDetailsView({
                   onPress={onDelete}
                   disabled={isDeleting}
                   accessibilityRole="button"
-                  accessibilityLabel={t("snaps.details.delete")}
-                  className="flex-row items-center px-4 py-4"
+                  accessibilityState={{ disabled: isDeleting }}
+                  accessibilityLabel={
+                    isDeleting
+                      ? t("snaps.details.deleting")
+                      : t("snaps.details.delete")
+                  }
+                  className={`flex-row items-center px-4 py-4 ${isDeleting ? "opacity-60" : ""}`}
                 >
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-red-50">
-                    <Ionicons name="trash-outline" size={18} color="#ef4444" />
+                    {isDeleting ? (
+                      <ActivityIndicator size="small" color="#ef4444" />
+                    ) : (
+                      <Ionicons name="trash-outline" size={18} color="#ef4444" />
+                    )}
                   </View>
                   <Text className="ml-3 flex-1 text-base font-medium text-error">
-                    {t("snaps.details.delete")}
+                    {isDeleting
+                      ? t("snaps.details.deleting")
+                      : t("snaps.details.delete")}
                   </Text>
                 </Pressable>
               ) : null}

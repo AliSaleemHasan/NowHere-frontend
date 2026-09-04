@@ -19,6 +19,56 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
+type FeedStatus = {
+  title: string;
+  body: string;
+  actionLabel?: string;
+  onAction?: () => void;
+};
+
+function NearbyFeedStatus({
+  title,
+  body,
+  actionLabel,
+  onAction,
+  overlay = false,
+}: FeedStatus & { overlay?: boolean }) {
+  const action = actionLabel && onAction ? (
+    <TouchableOpacity
+      onPress={onAction}
+      className={`mt-3 rounded-full bg-primary ${overlay ? "self-start px-4 py-2" : "self-center px-5 py-3"}`}
+    >
+      <Text
+        className={`font-semibold text-white ${overlay ? "text-xs" : ""}`}
+      >
+        {actionLabel}
+      </Text>
+    </TouchableOpacity>
+  ) : null;
+
+  if (overlay) {
+    return (
+      <View className="absolute bottom-6 left-5 right-5 rounded-2xl bg-white px-4 py-3 shadow-sm">
+        <Text className="text-sm font-medium text-primary">{title}</Text>
+        <Text className="mt-1 text-xs text-gray-500">{body}</Text>
+        {action}
+      </View>
+    );
+  }
+
+  return (
+    <View className="items-center px-2 py-6">
+      <Text className="text-center text-base font-semibold text-primary">
+        {title}
+      </Text>
+      <Text className="mt-2 text-center text-sm leading-5 text-gray-500">
+        {body}
+      </Text>
+      {action}
+    </View>
+  );
+}
+
 const NowHereMap = () => {
   const { t } = useTranslation();
   const query = useSnapSocket();
@@ -66,6 +116,31 @@ const NowHereMap = () => {
     ? t("map.emptySeenBody")
     : t("map.emptyUnseenBody");
 
+  let feedStatus: FeedStatus | null = null;
+  if (isLoggedIn && query.isError) {
+    feedStatus = {
+      title: t("map.loadErrorTitle"),
+      body: t("map.loadErrorBody"),
+      actionLabel: t("map.retry"),
+      onAction: () => {
+        void query.refetch();
+      },
+    };
+  } else if (isLoggedIn && !query.isLoading && visibleSnaps.length === 0) {
+    feedStatus = { title: emptyTitle, body: emptyBody };
+  } else if (!isLoggedIn) {
+    feedStatus = {
+      title: t("map.signInTitle"),
+      body: t("map.signInBody"),
+      actionLabel: t("map.signIn"),
+      onAction: () => router.push("/(auth)/login"),
+    };
+  }
+
+  const statusNode = feedStatus ? (
+    <NearbyFeedStatus {...feedStatus} overlay={viewMode === "map"} />
+  ) : null;
+
   return (
     <TagsFilter isLoggedIn={isLoggedIn}>
       {viewMode === "list" ? (
@@ -73,6 +148,7 @@ const NowHereMap = () => {
           snaps={visibleSnaps}
           viewerLocation={location}
           isLoading={isLoggedIn && query.isLoading}
+          empty={statusNode}
         />
       ) : (
         <UnifiedMap region={mapRegion} showUserLocation>
@@ -93,47 +169,7 @@ const NowHereMap = () => {
         </UnifiedMap>
       )}
       <MapListToggle mode={viewMode} onChange={setViewMode} />
-      {isLoggedIn && query.isError ? (
-        <View className="absolute bottom-6 left-5 right-5 rounded-2xl bg-white px-4 py-3 shadow-sm">
-          <Text className="text-sm font-medium text-primary">
-            {t("map.loadErrorTitle")}
-          </Text>
-          <Text className="mt-1 text-xs text-gray-500">
-            {t("map.loadErrorBody")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => query.refetch()}
-            className="mt-3 self-start rounded-full bg-primary px-4 py-2"
-          >
-            <Text className="text-xs font-semibold text-white">
-              {t("map.retry")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : isLoggedIn && !query.isLoading && visibleSnaps.length === 0 ? (
-        <View className="absolute bottom-6 left-5 right-5 rounded-2xl bg-white px-4 py-3 shadow-sm">
-          <Text className="text-sm font-medium text-primary">{emptyTitle}</Text>
-          <Text className="mt-1 text-xs text-gray-500">{emptyBody}</Text>
-        </View>
-      ) : null}
-      {!isLoggedIn ? (
-        <View className="absolute bottom-6 left-5 right-5 rounded-2xl bg-white px-4 py-3 shadow-sm">
-          <Text className="text-sm font-medium text-primary">
-            {t("map.signInTitle")}
-          </Text>
-          <Text className="mt-1 text-xs text-gray-500">
-            {t("map.signInBody")}
-          </Text>
-          <TouchableOpacity
-            onPress={() => router.push("/(auth)/login")}
-            className="mt-3 self-start rounded-full bg-primary px-4 py-2"
-          >
-            <Text className="text-xs font-semibold text-white">
-              {t("map.signIn")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
+      {viewMode === "map" ? statusNode : null}
     </TagsFilter>
   );
 };

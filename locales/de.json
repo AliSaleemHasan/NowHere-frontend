@@ -44,6 +44,8 @@
     "visibilityTitle": "Sichtbarkeit",
     "visibilitySubtitle": "Radius, Post-Abstand, Lebensdauer",
     "logout": "Abmelden",
+    "logoutConfirmTitle": "Von NowHere abmelden?",
+    "logoutConfirmBody": "Du kannst dich jederzeit wieder anmelden.",
     "mySnapsSubtitle": "Snaps ansehen und löschen, die du geteilt hast",
     "explorerFallback": "NowHere-Entdecker"
   },
@@ -87,6 +89,7 @@
       "statusProcessingTitle": "Wird noch verarbeitet",
       "statusProcessingBody": "Dieser Snap wird gerade fertiggestellt. Fotos können gleich erscheinen.",
       "delete": "Löschen",
+      "deleting": "Wird gelöscht…",
       "hide": "Ausblenden",
       "unavailableTitle": "Dieser Snap ist nicht verfügbar",
       "unavailableBody": "Er ist in der Nähe abgelaufen, oder der Link gilt nicht mehr.",

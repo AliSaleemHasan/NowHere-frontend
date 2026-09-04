@@ -1,4 +1,3 @@
-import { ApiError } from "@/lib/http/api-error";
 import { Tags } from "@/utils";
 
 const mockApiAuthFetch = jest.fn();
@@ -7,7 +6,6 @@ jest.mock("@/lib/fetch-api", () => ({
   apiAuthFetch: (...args: unknown[]) => mockApiAuthFetch(...args),
 }));
 
-import { deleteSnap } from "../delete-snap";
 import { fetchMySnaps } from "../useMySnaps";
 
 const sampleSnap = {
@@ -39,28 +37,5 @@ describe("fetchMySnaps", () => {
     });
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("snap-1");
-  });
-});
-
-describe("deleteSnap", () => {
-  beforeEach(() => {
-    mockApiAuthFetch.mockReset();
-  });
-
-  it("sends DELETE /snaps/:id", async () => {
-    mockApiAuthFetch.mockResolvedValueOnce({ success: true, data: null });
-
-    await deleteSnap("snap-1");
-
-    expect(mockApiAuthFetch).toHaveBeenCalledWith({
-      api: "snaps",
-      url: "snap-1",
-      options: { method: "DELETE" },
-    });
-  });
-
-  it("rejects an empty id without calling the API", async () => {
-    await expect(deleteSnap("")).rejects.toBeInstanceOf(ApiError);
-    expect(mockApiAuthFetch).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
 import { apiAuthFetch } from "@/lib/fetch-api";
+import { useIsFocused } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { normalizeSnap, type Snap } from "../types/snaps-api-type";
 import { snapQueryKeys } from "./snap-query";
@@ -16,9 +17,12 @@ export async function fetchMySnaps(): Promise<Snap[]> {
 }
 
 export function useMySnaps() {
+  const isFocused = useIsFocused();
   return useQuery({
     queryKey: snapQueryKeys.mine,
     throwOnError: false,
     queryFn: fetchMySnaps,
+    refetchOnWindowFocus: true,
+    enabled: isFocused,
   });
 }
