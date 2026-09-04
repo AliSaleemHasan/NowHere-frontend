@@ -51,7 +51,7 @@ export function LocationConsentView({
   const fetchLocation = useLocation((state) => state.fetchLocation);
 
   return (
-    <View className="w-full items-center gap-4">
+    <View className="w-full items-center gap-3">
       <LocationConsentCheckbox value={checked} onChange={setChecked} />
       <LocationRequired
         withErrorImage={withErrorImage}

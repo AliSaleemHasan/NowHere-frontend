@@ -12,7 +12,7 @@ export async function exportAccount(): Promise<UserExport> {
   });
 
   if (!response.data) {
-    throw new ApiError("Export failed", 500);
+    throw new ApiError("", 500);
   }
 
   return response.data;

@@ -34,9 +34,11 @@ describe("account export and delete API", () => {
     });
   });
 
-  it("rejects an empty export payload", async () => {
+  it("rejects an empty export payload without an English message", async () => {
     mockApiAuthFetch.mockResolvedValueOnce({ success: true, data: undefined });
-    await expect(exportAccount()).rejects.toBeInstanceOf(ApiError);
+    const error = await exportAccount().catch((err: unknown) => err);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ message: "", statusCode: 500 });
   });
 
   it("sends DELETE /users/me with the password", async () => {

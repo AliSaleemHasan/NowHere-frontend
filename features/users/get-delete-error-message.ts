@@ -1,7 +1,7 @@
 import { isApiError } from "@/lib/http/api-error";
 import { getErrorMessage } from "@/utils";
 
-export const ACCOUNT_DELETE_INCOMPLETE_CODE = "ACCOUNT_DELETE_INCOMPLETE";
+const ACCOUNT_DELETE_INCOMPLETE_CODE = "ACCOUNT_DELETE_INCOMPLETE";
 
 export function isAccountDeleteIncompleteError(error: unknown): boolean {
   return isApiError(error) && error.code === ACCOUNT_DELETE_INCOMPLETE_CODE;

@@ -21,7 +21,9 @@ const LocationRequired = (props: Props) => {
   };
 
   return (
-    <View className="flex flex-1 items-center justify-center">
+    <View
+      className={`w-full items-center ${props.withErrorImage ? "flex flex-1 justify-center" : ""}`}
+    >
       {props.withErrorImage && (
         <View className="relative h-44 w-44">
           <Image
@@ -31,7 +33,9 @@ const LocationRequired = (props: Props) => {
           />
         </View>
       )}
-      <View className="items-center gap-5 p-4">
+      <View
+        className={`items-center ${props.withErrorImage ? "gap-5 p-4" : "gap-3 pt-1"}`}
+      >
         <Text className="text-center text-sm">{t("location.grantBody")}</Text>
         <TouchableOpacity
           testID="grant-location-access"
