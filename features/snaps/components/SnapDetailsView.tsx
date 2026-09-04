@@ -12,6 +12,7 @@ import {
 } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Pressable,
@@ -40,6 +41,9 @@ export type SnapDetailsViewProps = {
   distanceMeters?: number | null;
   lifetimeDays?: number;
   status?: SnapStatus;
+  onDelete?: () => void;
+  onHide?: () => void;
+  isDeleting?: boolean;
 };
 
 const TAG_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -103,17 +107,25 @@ export default function SnapDetailsView({
   distanceMeters,
   lifetimeDays,
   status,
+  onDelete,
+  onHide,
+  isDeleting = false,
 }: SnapDetailsViewProps) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const showDelete = Boolean(isOwnSnap && onDelete);
+  const showActions = Boolean(onHide || showDelete);
 
   const color = tagColor(tag);
   const postedLong = formatRelativeTime(createdAt, Date.now(), "long");
   const postedShort = formatRelativeTime(createdAt, Date.now(), "short");
   const remaining = formatRemainingVisibility(createdAt, lifetimeDays);
   const distanceLabel =
-    distanceMeters == null ? "Nearby" : formatDistanceAway(distanceMeters);
+    distanceMeters == null
+      ? t("snaps.details.nearby")
+      : formatDistanceAway(distanceMeters);
   const caption = description.trim();
   const showImage = Boolean(authorImage) && !avatarFailed;
   const initials = initialsFromName(authorName);
@@ -123,18 +135,18 @@ export default function SnapDetailsView({
   const statusCopy = useMemo(() => {
     if (status === "FAILED") {
       return {
-        title: "Photos may be incomplete",
-        body: "This snap did not finish uploading. Some images might be missing.",
+        title: t("snaps.details.statusFailedTitle"),
+        body: t("snaps.details.statusFailedBody"),
       };
     }
     if (status === "PROCESSING" || status === "UPLOADING") {
       return {
-        title: "Still processing",
-        body: "This snap is finishing up. Photos can appear in a moment.",
+        title: t("snaps.details.statusProcessingTitle"),
+        body: t("snaps.details.statusProcessingBody"),
       };
     }
     return null;
-  }, [status]);
+  }, [status, t]);
 
   const handleOpenMaps = async () => {
     try {
@@ -142,8 +154,8 @@ export default function SnapDetailsView({
     } catch {
       Toast.show({
         type: "error",
-        text1: "Couldn’t open Maps",
-        text2: "Try again, or copy the coordinates from the location card.",
+        text1: t("snaps.details.mapsErrorTitle"),
+        text2: t("snaps.details.mapsErrorBody"),
       });
     }
   };
@@ -194,7 +206,7 @@ export default function SnapDetailsView({
                     className="flex-shrink text-lg font-semibold text-primary"
                     numberOfLines={1}
                   >
-                    {isAuthorLoading ? "Loading explorer…" : authorName}
+                    {isAuthorLoading ? t("snaps.details.loadingAuthor") : authorName}
                   </Text>
                   {isOwnSnap ? (
                     <View
@@ -202,7 +214,7 @@ export default function SnapDetailsView({
                       className="ml-2 rounded-full bg-secondary px-2 py-0.5"
                     >
                       <Text className="text-[10px] font-bold uppercase text-primary">
-                        You
+                        {t("snaps.details.you")}
                       </Text>
                     </View>
                   ) : null}
@@ -213,7 +225,9 @@ export default function SnapDetailsView({
                   </Text>
                 ) : (
                   <Text className="mt-0.5 text-xs text-gray-400">
-                    {isOwnSnap ? "Your moment from this spot." : "Shared nearby, just for now."}
+                    {isOwnSnap
+                      ? t("snaps.details.ownFallbackBio")
+                      : t("snaps.details.otherFallbackBio")}
                   </Text>
                 )}
               </View>
@@ -223,21 +237,21 @@ export default function SnapDetailsView({
           <View className="mt-3 flex-row rounded-3xl bg-white py-4 shadow-sm">
             <StatCell
               icon="navigate-outline"
-              label="Distance"
+              label={t("snaps.details.distance")}
               value={distanceLabel.replace(" away", "")}
               testID="snap-distance"
             />
             <View className="w-px bg-gray-100" />
             <StatCell
               icon="time-outline"
-              label="Posted"
-              value={postedShort ?? "Recently"}
+              label={t("snaps.details.posted")}
+              value={postedShort ?? t("snaps.details.recently")}
               testID="snap-posted"
             />
             <View className="w-px bg-gray-100" />
             <StatCell
               icon="images-outline"
-              label="Photos"
+              label={t("snaps.details.photos")}
               value={String(images.length)}
               testID="snap-photo-stat"
             />
@@ -256,13 +270,13 @@ export default function SnapDetailsView({
 
           <View className="mt-3 rounded-3xl bg-white px-4 py-4 shadow-sm">
             <Text className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-              Caption
+              {t("snaps.details.caption")}
             </Text>
             <Text
               testID="snap-description"
               className={`mt-2 text-base leading-6 ${caption ? "text-primary" : "text-gray-400"}`}
             >
-              {caption || "No caption — just the scene."}
+              {caption || t("snaps.details.noCaption")}
             </Text>
           </View>
 
@@ -306,12 +320,12 @@ export default function SnapDetailsView({
               testID="snap-open-maps"
               onPress={handleOpenMaps}
               accessibilityRole="button"
-              accessibilityLabel="Open this location in Maps"
+              accessibilityLabel={t("snaps.details.openMapsA11y")}
               className="mx-4 mb-4 mt-3 flex-row items-center justify-center rounded-full bg-primary py-3"
             >
               <Ionicons name="map-outline" size={16} color="#ffffff" />
               <Text className="ml-2 text-sm font-semibold text-white">
-                Open in Maps
+                {t("snaps.details.openMaps")}
               </Text>
             </Pressable>
           </View>
@@ -332,6 +346,46 @@ export default function SnapDetailsView({
               </Text>
             </View>
           </View>
+
+          {showActions ? (
+            <View className="mt-3 overflow-hidden rounded-3xl bg-white shadow-sm">
+              {onHide ? (
+                <Pressable
+                  testID="snap-hide"
+                  onPress={onHide}
+                  disabled={isDeleting}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("snaps.details.hide")}
+                  className="flex-row items-center px-4 py-4"
+                >
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                    <Ionicons name="eye-off-outline" size={18} color="#0f0d23" />
+                  </View>
+                  <Text className="ml-3 flex-1 text-base font-medium text-primary">
+                    {t("snaps.details.hide")}
+                  </Text>
+                </Pressable>
+              ) : null}
+              {onHide && showDelete ? <View className="h-px bg-gray-100" /> : null}
+              {showDelete ? (
+                <Pressable
+                  testID="snap-delete"
+                  onPress={onDelete}
+                  disabled={isDeleting}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("snaps.details.delete")}
+                  className="flex-row items-center px-4 py-4"
+                >
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-red-50">
+                    <Ionicons name="trash-outline" size={18} color="#ef4444" />
+                  </View>
+                  <Text className="ml-3 flex-1 text-base font-medium text-error">
+                    {t("snaps.details.delete")}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </View>

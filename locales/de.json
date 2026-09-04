@@ -29,5 +29,98 @@
         "passwordMismatch": "Passwörter stimmen nicht überein"
       }
     }
+  },
+  "profile": {
+    "title": "Profil",
+    "settingsTitle": "Einstellungen",
+    "yourProfile": "Dein Profil",
+    "sessionMissingTitle": "Sitzung nicht gefunden",
+    "sessionMissingBody": "Bitte melde dich erneut an, um dein Profil zu sehen.",
+    "finishing": "Dein Profil wird eingerichtet…",
+    "admin": "Admin",
+    "member": "Mitglied",
+    "bioFallback": "Teile, was um dich herum passiert — Snaps in der Nähe, nur für den Moment.",
+    "refreshError": "Profil konnte nicht aktualisiert werden",
+    "visibilityTitle": "Sichtbarkeit",
+    "visibilitySubtitle": "Radius, Post-Abstand, Lebensdauer",
+    "logout": "Abmelden",
+    "mySnapsSubtitle": "Snaps ansehen und löschen, die du geteilt hast",
+    "explorerFallback": "NowHere-Entdecker"
+  },
+  "snaps": {
+    "actions": {
+      "cancel": "Abbrechen"
+    },
+    "mySnaps": {
+      "title": "Meine Snaps",
+      "loading": "Deine Snaps werden geladen…",
+      "emptyTitle": "Noch keine Snaps",
+      "emptyBody": "Teile einen Moment über die Kamera.",
+      "errorTitle": "Deine Snaps konnten nicht geladen werden",
+      "errorBody": "Zieh zum Aktualisieren oder versuch es gleich noch einmal.",
+      "retry": "Erneut versuchen"
+    },
+    "list": {
+      "noCaption": "Kein Text",
+      "openA11y": "Snap öffnen"
+    },
+    "details": {
+      "screenTitle": "Snap",
+      "you": "Du",
+      "anonymous": "Anonym",
+      "loadingAuthor": "Profil wird geladen…",
+      "ownFallbackBio": "Dein Moment an diesem Ort.",
+      "otherFallbackBio": "In der Nähe geteilt, nur für jetzt.",
+      "distance": "Entfernung",
+      "nearby": "In der Nähe",
+      "posted": "Geteilt",
+      "recently": "Kürzlich",
+      "photos": "Fotos",
+      "caption": "Beschreibung",
+      "noCaption": "Keine Beschreibung — nur die Szene.",
+      "openMaps": "In Karten öffnen",
+      "openMapsA11y": "Diesen Ort in Karten öffnen",
+      "mapsErrorTitle": "Karten konnten nicht geöffnet werden",
+      "mapsErrorBody": "Versuch es noch einmal oder kopiere die Koordinaten aus der Standortkarte.",
+      "statusFailedTitle": "Fotos möglicherweise unvollständig",
+      "statusFailedBody": "Dieser Snap wurde nicht fertig hochgeladen. Einige Bilder könnten fehlen.",
+      "statusProcessingTitle": "Wird noch verarbeitet",
+      "statusProcessingBody": "Dieser Snap wird gerade fertiggestellt. Fotos können gleich erscheinen.",
+      "delete": "Löschen",
+      "hide": "Ausblenden",
+      "unavailableTitle": "Dieser Snap ist nicht verfügbar",
+      "unavailableBody": "Er ist in der Nähe abgelaufen, oder der Link gilt nicht mehr.",
+      "loading": "Snap wird geöffnet…"
+    },
+    "delete": {
+      "confirmTitle": "Diesen Snap löschen?",
+      "confirmBody": "Der Snap und seine Fotos werden entfernt. Das lässt sich nicht rückgängig machen.",
+      "successTitle": "Snap gelöscht",
+      "successBody": "Er ist von der Karte und aus deinen Snaps verschwunden.",
+      "errorTitle": "Snap konnte nicht gelöscht werden",
+      "errorFallback": "Bitte versuch es noch einmal."
+    },
+    "hide": {
+      "confirmTitle": "Diesen Snap ausblenden?",
+      "confirmBody": "Du siehst ihn nicht mehr auf der Karte oder in der Liste in der Nähe.",
+      "successTitle": "Snap ausgeblendet",
+      "successBody": "Er taucht in deiner Umgebung nicht mehr auf."
+    }
+  },
+  "map": {
+    "toggleMap": "Karte",
+    "toggleList": "Liste",
+    "toggleA11y": "Karten- oder Listenansicht",
+    "locating": "Standort wird ermittelt…",
+    "loadErrorTitle": "Snaps in der Nähe konnten nicht geladen werden",
+    "loadErrorBody": "Komm auf diesen Tab zurück oder versuch es erneut. Dein Snap ist gespeichert, wenn du ihn schon geteilt hast.",
+    "retry": "Erneut versuchen",
+    "emptyUnseenTitle": "Keine neuen Snaps in der Nähe",
+    "emptyUnseenBody": "Neue Snaps, die du noch nicht geöffnet hast, erscheinen hier. Unter „Bereits geöffnet“ siehst du Snaps, die du schon angesehen hast.",
+    "emptySeenTitle": "Keine geöffneten Snaps in der Nähe",
+    "emptySeenBody": "Snaps, die du schon geöffnet hast, erscheinen hier.",
+    "signInTitle": "Melde dich an, um Snaps in der Nähe zu sehen",
+    "signInBody": "Die Feeds in der Nähe und bereits geöffnet sind nach dem Anmelden verfügbar.",
+    "signIn": "Anmelden"
   }
 }

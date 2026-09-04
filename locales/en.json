@@ -29,5 +29,98 @@
         "passwordMismatch": "Passwords don't match"
       }
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "settingsTitle": "Settings",
+    "yourProfile": "Your profile",
+    "sessionMissingTitle": "Session not found",
+    "sessionMissingBody": "Please sign in again to view your profile.",
+    "finishing": "Finishing your profile…",
+    "admin": "Admin",
+    "member": "Member",
+    "bioFallback": "Share what’s around you — snaps nearby, just for now.",
+    "refreshError": "Could not refresh profile",
+    "visibilityTitle": "Visibility settings",
+    "visibilitySubtitle": "Radius, posting distance, lifetime",
+    "logout": "Log out",
+    "mySnapsSubtitle": "See and delete snaps you’ve posted",
+    "explorerFallback": "NowHere explorer"
+  },
+  "snaps": {
+    "actions": {
+      "cancel": "Cancel"
+    },
+    "mySnaps": {
+      "title": "My snaps",
+      "loading": "Loading your snaps…",
+      "emptyTitle": "No snaps yet",
+      "emptyBody": "Share a moment from the camera tab.",
+      "errorTitle": "Couldn’t load your snaps",
+      "errorBody": "Pull to retry, or try again in a moment.",
+      "retry": "Try again"
+    },
+    "list": {
+      "noCaption": "No caption",
+      "openA11y": "Open snap"
+    },
+    "details": {
+      "screenTitle": "Snap",
+      "you": "You",
+      "anonymous": "Anonymous",
+      "loadingAuthor": "Loading explorer…",
+      "ownFallbackBio": "Your moment from this spot.",
+      "otherFallbackBio": "Shared nearby, just for now.",
+      "distance": "Distance",
+      "nearby": "Nearby",
+      "posted": "Posted",
+      "recently": "Recently",
+      "photos": "Photos",
+      "caption": "Caption",
+      "noCaption": "No caption — just the scene.",
+      "openMaps": "Open in Maps",
+      "openMapsA11y": "Open this location in Maps",
+      "mapsErrorTitle": "Couldn’t open Maps",
+      "mapsErrorBody": "Try again, or copy the coordinates from the location card.",
+      "statusFailedTitle": "Photos may be incomplete",
+      "statusFailedBody": "This snap did not finish uploading. Some images might be missing.",
+      "statusProcessingTitle": "Still processing",
+      "statusProcessingBody": "This snap is finishing up. Photos can appear in a moment.",
+      "delete": "Delete",
+      "hide": "Hide",
+      "unavailableTitle": "This snap isn’t available",
+      "unavailableBody": "It may have expired nearby, or the link is no longer valid.",
+      "loading": "Opening this snap…"
+    },
+    "delete": {
+      "confirmTitle": "Delete this snap?",
+      "confirmBody": "This removes the snap and its photos. This cannot be undone.",
+      "successTitle": "Snap deleted",
+      "successBody": "It’s gone from the map and your snaps.",
+      "errorTitle": "Couldn’t delete this snap",
+      "errorFallback": "Please try again."
+    },
+    "hide": {
+      "confirmTitle": "Hide this snap?",
+      "confirmBody": "You won’t see it on the map or nearby list.",
+      "successTitle": "Snap hidden",
+      "successBody": "It won’t show up around you anymore."
+    }
+  },
+  "map": {
+    "toggleMap": "Map",
+    "toggleList": "List",
+    "toggleA11y": "Map or list view",
+    "locating": "Locating...",
+    "loadErrorTitle": "Couldn’t load nearby snaps",
+    "loadErrorBody": "Pull back to this tab or retry. Your snap is still saved if you already shared.",
+    "retry": "Retry",
+    "emptyUnseenTitle": "No unseen snaps nearby",
+    "emptyUnseenBody": "New snaps you haven’t opened yet show up here. Switch to “Already opened” for snaps you’ve viewed.",
+    "emptySeenTitle": "No opened snaps nearby",
+    "emptySeenBody": "Snaps you’ve already opened will show up here.",
+    "signInTitle": "Sign in to see snaps nearby",
+    "signInBody": "Nearby and opened feeds are available after you log in.",
+    "signIn": "Sign in"
   }
 }

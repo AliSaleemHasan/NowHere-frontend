@@ -1,6 +1,8 @@
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
+import { I18nextProvider } from "react-i18next";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { i18n } from "@/lib/i18n";
 import { openMapsAt } from "@/lib/geo";
 import SnapDetailsView, { SnapDetailsViewProps } from "../SnapDetailsView";
 
@@ -98,17 +100,20 @@ const defaults: SnapDetailsViewProps = {
 
 function renderDetails(props: Partial<SnapDetailsViewProps> = {}) {
   return render(
-    <SafeAreaProvider initialMetrics={insets}>
-      <SnapDetailsView {...defaults} {...props} />
-    </SafeAreaProvider>,
+    <I18nextProvider i18n={i18n}>
+      <SafeAreaProvider initialMetrics={insets}>
+        <SnapDetailsView {...defaults} {...props} />
+      </SafeAreaProvider>
+    </I18nextProvider>,
   );
 }
 
 describe("SnapDetailsView", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.useFakeTimers();
     jest.setSystemTime(now);
     jest.clearAllMocks();
+    await i18n.changeLanguage("en");
   });
 
   afterEach(() => {
@@ -164,5 +169,35 @@ describe("SnapDetailsView", () => {
     const { getAllByLabelText, getByTestId } = renderDetails();
     fireEvent.press(getAllByLabelText("View photo full screen")[0]);
     expect(getByTestId("snap-gallery")).toBeTruthy();
+  });
+
+  it("shows delete only when the snap is the viewer’s", () => {
+    const onDelete = jest.fn();
+    const onHide = jest.fn();
+
+    const other = renderDetails({
+      isOwnSnap: false,
+      onDelete,
+      onHide,
+    });
+    expect(other.queryByTestId("snap-delete")).toBeNull();
+    expect(other.getByTestId("snap-hide")).toBeTruthy();
+
+    const own = renderDetails({
+      isOwnSnap: true,
+      onDelete,
+      onHide,
+    });
+    expect(own.getByTestId("snap-delete")).toBeTruthy();
+    expect(own.getByTestId("snap-hide")).toBeTruthy();
+
+    fireEvent.press(own.getByTestId("snap-delete"));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides delete when isOwnSnap is true but no delete handler is passed", () => {
+    const { queryByTestId } = renderDetails({ isOwnSnap: true });
+    expect(queryByTestId("snap-delete")).toBeNull();
+    expect(queryByTestId("snap-hide")).toBeNull();
   });
 });
