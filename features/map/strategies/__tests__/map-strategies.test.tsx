@@ -57,9 +57,20 @@ describe("Map Strategy Pattern", () => {
       expect(marker).toBeTruthy();
       expect(marker.props.coordinate).toEqual(mockMarkerProps.coordinate);
       expect(marker.props.pinColor).toBe(mockMarkerProps.pinColor);
+      expect(getByTestId("map-pin-mark")).toBeTruthy();
 
       fireEvent.press(marker);
       expect(mockMarkerProps.onPress).toHaveBeenCalledTimes(1);
+    });
+
+    test("renders a FOUND badge on the custom pin when provided", () => {
+      const { getByTestId, getByText } = render(
+        strategy.renderMarker({ ...mockMarkerProps, badge: "Found" }),
+      );
+
+      expect(getByTestId("map-pin-mark")).toBeTruthy();
+      expect(getByTestId("map-marker-badge")).toBeTruthy();
+      expect(getByText("Found")).toBeTruthy();
     });
   });
 
@@ -111,11 +122,14 @@ describe("Map Strategy Pattern", () => {
       expect(mockMarkerProps.onPress).toHaveBeenCalledTimes(1);
     });
 
-    test("renders a FOUND badge on the pin when provided", () => {
+    test("renders a FOUND badge overlaid on a fixed-size pin", () => {
       const { getByTestId, getByText } = render(
         strategy.renderMarker({ ...mockMarkerProps, badge: "Found" }),
       );
 
+      const pin = getByTestId("map-pin-mark");
+      expect(pin.props.className).toMatch(/h-8/);
+      expect(pin.props.className).toMatch(/w-8/);
       expect(getByTestId("map-marker-badge")).toBeTruthy();
       expect(getByText("Found")).toBeTruthy();
     });

@@ -270,4 +270,23 @@ describe("SnapDetailsView", () => {
     const saved = renderDetails({ onToggleSave, isSaved: true });
     expect(saved.getByText("Saved")).toBeTruthy();
   });
+
+  it("shows Saving… while saving and Removing… while unsaving, never Saving… on unsave", () => {
+    const saving = renderDetails({
+      onToggleSave: jest.fn(),
+      isSaved: true,
+      isSaving: true,
+    });
+    expect(saving.getByText("Saving…")).toBeTruthy();
+    expect(saving.queryByText("Removing…")).toBeNull();
+    saving.unmount();
+
+    const unsaving = renderDetails({
+      onToggleSave: jest.fn(),
+      isSaved: false,
+      isUnsaving: true,
+    });
+    expect(unsaving.getByText("Removing…")).toBeTruthy();
+    expect(unsaving.queryByText("Saving…")).toBeNull();
+  });
 });

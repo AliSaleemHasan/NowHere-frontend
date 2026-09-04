@@ -1,5 +1,9 @@
 import { ApiError } from "@/lib/http/api-error";
-import { isSnapBookmarked } from "../../types/bookmark-api-type";
+import {
+  isSnapBookmarked,
+  withBookmarkAdded,
+  withBookmarkRemoved,
+} from "../../types/bookmark-api-type";
 
 const mockApiAuthFetch = jest.fn();
 
@@ -93,5 +97,30 @@ describe("bookmarks API", () => {
     const bookmarks = [{ userId: "u1", snapId: "snap-1" }];
     expect(isSnapBookmarked(bookmarks, "snap-1")).toBe(true);
     expect(isSnapBookmarked(bookmarks, "snap-2")).toBe(false);
+  });
+
+  it("appends a bookmark without duplicating", () => {
+    const next = withBookmarkAdded([{ userId: "u1", snapId: "a" }], {
+      userId: "u1",
+      snapId: "b",
+    });
+    expect(next.map((item) => item.snapId)).toEqual(["b", "a"]);
+    expect(
+      withBookmarkAdded(next, { userId: "u1", snapId: "b" }).map(
+        (item) => item.snapId,
+      ),
+    ).toEqual(["b", "a"]);
+  });
+
+  it("removes a bookmark from the list", () => {
+    expect(
+      withBookmarkRemoved(
+        [
+          { userId: "u1", snapId: "a" },
+          { userId: "u1", snapId: "b" },
+        ],
+        "a",
+      ),
+    ).toEqual([{ userId: "u1", snapId: "b" }]);
   });
 });

@@ -33,7 +33,12 @@ import { userQueryKeys } from "@/features/users/api/user-query";
 import { useUser } from "@/features/users/api/useUser";
 import { useUserSettings } from "@/features/users/api/useUserSettings";
 import { useUserStore } from "@/features/users/context/user-store";
-import { isSnapBookmarked } from "@/features/users/types/bookmark-api-type";
+import {
+  isSnapBookmarked,
+  withBookmarkAdded,
+  withBookmarkRemoved,
+  type SnapBookmark,
+} from "@/features/users/types/bookmark-api-type";
 import { haversineDistanceMeters } from "@/lib/geo";
 import { formatUserDisplayName } from "@/types/api";
 import { displayTag, getErrorMessage } from "@/utils";
@@ -120,41 +125,76 @@ const SnapDetails = () => {
 
   const saveMutation = useMutation({
     mutationFn: addBookmark,
+    onMutate: async (snapId) => {
+      await queryClient.cancelQueries({ queryKey: userQueryKeys.bookmarks });
+      const previous = queryClient.getQueryData<SnapBookmark[]>(
+        userQueryKeys.bookmarks,
+      );
+      queryClient.setQueryData(
+        userQueryKeys.bookmarks,
+        withBookmarkAdded(previous, {
+          userId: viewerId ?? "",
+          snapId,
+        }),
+      );
+      return { previous };
+    },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
-      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
       Toast.show({
         type: "success",
         text1: t("snaps.bookmark.saveSuccessTitle"),
         text2: t("snaps.bookmark.saveSuccessBody"),
       });
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, _snapId, context) => {
+      if (context) {
+        queryClient.setQueryData(userQueryKeys.bookmarks, context.previous);
+      }
       Toast.show({
         type: "error",
         text1: t("snaps.bookmark.errorTitle"),
         text2: getErrorMessage(err, t("snaps.bookmark.errorFallback")),
       });
     },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
+      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
+    },
   });
 
   const unsaveMutation = useMutation({
     mutationFn: removeBookmark,
+    onMutate: async (snapId) => {
+      await queryClient.cancelQueries({ queryKey: userQueryKeys.bookmarks });
+      const previous = queryClient.getQueryData<SnapBookmark[]>(
+        userQueryKeys.bookmarks,
+      );
+      queryClient.setQueryData(
+        userQueryKeys.bookmarks,
+        withBookmarkRemoved(previous, snapId),
+      );
+      return { previous };
+    },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
-      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
       Toast.show({
         type: "success",
         text1: t("snaps.bookmark.unsaveSuccessTitle"),
         text2: t("snaps.bookmark.unsaveSuccessBody"),
       });
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, _snapId, context) => {
+      if (context) {
+        queryClient.setQueryData(userQueryKeys.bookmarks, context.previous);
+      }
       Toast.show({
         type: "error",
         text1: t("snaps.bookmark.errorTitle"),
         text2: getErrorMessage(err, t("snaps.bookmark.errorFallback")),
       });
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: userQueryKeys.bookmarks });
+      void queryClient.invalidateQueries({ queryKey: snapQueryKeys.bookmarked });
     },
   });
 
@@ -267,20 +307,14 @@ const SnapDetails = () => {
     ]);
   }, [hideSnap, params.id, queryClient, router, t]);
 
-  const isSaved = saveMutation.isPending
-    ? true
-    : unsaveMutation.isPending
-      ? false
-      : persistedSaved;
-
   const handleToggleSave = useCallback(() => {
     if (!params.id) return;
-    if (isSaved) {
+    if (persistedSaved) {
       unsaveMutation.mutate(params.id);
     } else {
       saveMutation.mutate(params.id);
     }
-  }, [isSaved, params.id, saveMutation, unsaveMutation]);
+  }, [persistedSaved, params.id, saveMutation, unsaveMutation]);
 
   const handleReopen = useCallback(() => {
     Alert.alert(t("snaps.reopen.confirmTitle"), t("snaps.reopen.confirmBody"), [
@@ -339,9 +373,10 @@ const SnapDetails = () => {
         status={snap.status}
         resolution={snap.resolution}
         resolutionNote={snap.resolutionNote}
-        isSaved={isSaved}
+        isSaved={persistedSaved}
         isDeleting={deleteMutation.isPending}
-        isSaving={saveMutation.isPending || unsaveMutation.isPending}
+        isSaving={saveMutation.isPending}
+        isUnsaving={unsaveMutation.isPending}
         isReporting={reportMutation.isPending}
         isResolving={foundMutation.isPending || reopenMutation.isPending}
         onToggleSave={handleToggleSave}

@@ -54,6 +54,7 @@ export type SnapDetailsViewProps = {
   onHide?: () => void;
   isDeleting?: boolean;
   isSaving?: boolean;
+  isUnsaving?: boolean;
   isReporting?: boolean;
   isResolving?: boolean;
 };
@@ -176,6 +177,7 @@ export default function SnapDetailsView({
   onHide,
   isDeleting = false,
   isSaving = false,
+  isUnsaving = false,
   isReporting = false,
   isResolving = false,
 }: SnapDetailsViewProps) {
@@ -184,7 +186,8 @@ export default function SnapDetailsView({
   const { width, height } = useWindowDimensions();
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showDelete = Boolean(isOwnSnap && onDelete);
-  const actionsLocked = isDeleting || isSaving || isReporting || isResolving;
+  const actionsLocked =
+    isDeleting || isSaving || isUnsaving || isReporting || isResolving;
   const showActions = Boolean(
     onToggleSave || onReport || onFound || onReopen || onHide || showDelete,
   );
@@ -447,19 +450,23 @@ export default function SnapDetailsView({
               {onToggleSave ? (
                 <ActionRow
                   testID="snap-save"
-                  icon={isSaved ? "bookmark" : "bookmark-outline"}
+                  icon={
+                    isSaved || isUnsaving ? "bookmark" : "bookmark-outline"
+                  }
                   iconColor="#0f0d23"
                   iconBg="#f3f4f6"
                   label={
-                    isSaving
-                      ? t("snaps.details.saving")
-                      : isSaved
-                        ? t("snaps.details.saved")
-                        : t("snaps.details.save")
+                    isUnsaving
+                      ? t("snaps.details.unsaving")
+                      : isSaving
+                        ? t("snaps.details.saving")
+                        : isSaved
+                          ? t("snaps.details.saved")
+                          : t("snaps.details.save")
                   }
                   onPress={onToggleSave}
                   disabled={actionsLocked}
-                  loading={isSaving}
+                  loading={isSaving || isUnsaving}
                 />
               ) : null}
               {onToggleSave && onReport ? (

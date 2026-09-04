@@ -1,11 +1,11 @@
-import React from "react";
-import { Text, View } from "react-native";
+import MapPinMark from "../components/MapPinMark";
 import {
   MapView,
   Camera,
   PointAnnotation,
   UserLocation,
 } from "@maplibre/maplibre-react-native";
+import React from "react";
 import { IMapStrategy, UnifiedMapViewProps, UnifiedMarkerProps } from "./types";
 
 export const DEFAULT_MAPLIBRE_STYLE_URL =
@@ -53,26 +53,7 @@ export class MapLibreStrategy implements IMapStrategy {
         title={props.title}
         onSelected={props.onPress}
       >
-        <View className="items-center" collapsable={false}>
-          <View
-            className="h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md"
-            style={
-              props.pinColor
-                ? { backgroundColor: props.pinColor }
-                : { backgroundColor: "#FF3B30" }
-            }
-          />
-          {props.badge ? (
-            <View
-              testID="map-marker-badge"
-              className="mt-0.5 rounded-full bg-emerald-600 px-1.5 py-0.5"
-            >
-              <Text className="text-[8px] font-bold uppercase text-white">
-                {props.badge}
-              </Text>
-            </View>
-          ) : null}
-        </View>
+        <MapPinMark pinColor={props.pinColor} badge={props.badge} />
       </PointAnnotation>
     );
   }
