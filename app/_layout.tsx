@@ -40,7 +40,7 @@ export default function RootLayout() {
   }
   return (
     <I18nextProvider i18n={i18n}>
-      <KeyboardProvider>
+      <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
         <QueryClientProvider client={queryClient}>
           <LocationDependentContent />
         </QueryClientProvider>

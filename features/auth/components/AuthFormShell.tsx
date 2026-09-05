@@ -12,7 +12,7 @@ export function AuthFormShell({ title, subtitle, children }: Props) {
   const { t } = useTranslation();
 
   return (
-    <View className="w-full flex-1 items-center justify-center px-6 py-10">
+    <View className="w-full flex-1 items-center px-6 pb-10 pt-12">
       <Image
         accessibilityRole="image"
         accessibilityLabel={t("auth.brandA11y")}

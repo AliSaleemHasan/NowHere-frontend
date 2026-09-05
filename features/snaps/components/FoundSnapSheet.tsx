@@ -1,15 +1,8 @@
 import FormButton from "@/components/FormButton";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MAX_RESOLUTION_NOTE } from "../types/snaps-api-type";
 
@@ -48,8 +41,9 @@ export default function FoundSnapSheet({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
+        behavior="padding"
+        keyboardVerticalOffset={24}
       >
         <View className="flex-1 justify-end bg-black/40">
           <Pressable

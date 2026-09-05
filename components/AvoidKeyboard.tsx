@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
+import { StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeScreen, type Edge } from "./SafeScreen";
+
+const styles = StyleSheet.create({
+  scroll: { flex: 1 },
+  content: { flexGrow: 1, paddingBottom: 24 },
+});
 
 const AvoidKeyboard = ({
   children,
@@ -11,10 +17,13 @@ const AvoidKeyboard = ({
 }) => {
   const scroll = (
     <KeyboardAwareScrollView
-      className="flex-1 bg-white"
-      contentContainerClassName="grow"
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
-      bottomOffset={40}
+      keyboardDismissMode="interactive"
+      bottomOffset={48}
+      extraKeyboardSpace={24}
+      showsVerticalScrollIndicator={false}
     >
       {children}
     </KeyboardAwareScrollView>

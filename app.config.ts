@@ -50,6 +50,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       },
     },
     android: {
+      softwareKeyboardLayoutMode: "resize",
       config: {
         googleMaps: {
           apiKey: process.env.GOOGLE_API_KEY,
