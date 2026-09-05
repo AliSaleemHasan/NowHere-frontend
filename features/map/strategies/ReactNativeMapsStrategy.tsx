@@ -35,7 +35,11 @@ export class ReactNativeMapsStrategy implements IMapStrategy {
         pinColor={props.pinColor}
         onPress={props.onPress}
       >
-        <MapPinMark pinColor={props.pinColor} badge={props.badge} />
+        <MapPinMark
+          pinColor={props.pinColor}
+          tag={props.tag}
+          badge={props.badge}
+        />
       </Marker>
     );
   }

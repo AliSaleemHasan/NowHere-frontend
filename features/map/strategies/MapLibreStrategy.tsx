@@ -53,7 +53,11 @@ export class MapLibreStrategy implements IMapStrategy {
         title={props.title}
         onSelected={props.onPress}
       >
-        <MapPinMark pinColor={props.pinColor} badge={props.badge} />
+        <MapPinMark
+          pinColor={props.pinColor}
+          tag={props.tag}
+          badge={props.badge}
+        />
       </PointAnnotation>
     );
   }

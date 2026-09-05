@@ -30,6 +30,7 @@ const MapMarker = ({ id, tag, lat, lng, resolution }: Props) => {
       id={markerId}
       title={tag}
       pinColor={tagColor(tag)}
+      tag={tag}
       badge={
         isFoundResolution(resolution) ? t("snaps.resolution.found") : undefined
       }

@@ -1,5 +1,7 @@
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import TagIcon from "@/components/TagIcon";
 import { formatDistanceAway } from "@/lib/geo";
+import { publicObjectUrl } from "@/lib/storage-url";
 import { displayTag, formatRelativeTime, tagColor } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -8,12 +10,6 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { isFoundResolution } from "../lib/snap-safety-actions";
 import { getSnapId, type Snap } from "../types/snaps-api-type";
 import FoundBadge from "./FoundBadge";
-
-function publicImageUri(value: string): string | undefined {
-  return value.startsWith("http://") || value.startsWith("https://")
-    ? value
-    : undefined;
-}
 
 type Props = {
   snap: Snap;
@@ -30,7 +26,7 @@ export default function SnapListRow({ snap, onPress, distanceMeters }: Props) {
   const distance =
     distanceMeters == null ? null : formatDistanceAway(distanceMeters);
   const thumbnail = snap.snaps
-    .map(publicImageUri)
+    .map(publicObjectUrl)
     .find((uri): uri is string => Boolean(uri));
 
   return (
@@ -55,8 +51,9 @@ export default function SnapListRow({ snap, onPress, distanceMeters }: Props) {
       </View>
       <View className="ml-3 flex-1">
         <View className="flex-row items-center">
+          <TagIcon tag={snap.tag} size={14} color={color} />
           <Text
-            className="flex-shrink text-base font-medium text-primary"
+            className="ml-1.5 flex-shrink text-base font-medium text-primary"
             numberOfLines={1}
           >
             {displayTag(snap.tag)}

@@ -1,12 +1,14 @@
+import TagIcon from "@/components/TagIcon";
 import React from "react";
 import { Text, View } from "react-native";
 
 type Props = {
   pinColor?: string;
+  tag?: string;
   badge?: string;
 };
 
-export default function MapPinMark({ pinColor, badge }: Props) {
+export default function MapPinMark({ pinColor, tag, badge }: Props) {
   return (
     <View
       testID="map-pin-mark"
@@ -16,7 +18,9 @@ export default function MapPinMark({ pinColor, badge }: Props) {
       <View
         className="h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-md"
         style={{ backgroundColor: pinColor ?? "#FF3B30" }}
-      />
+      >
+        {tag ? <TagIcon tag={tag} size={16} color="#ffffff" /> : null}
+      </View>
       {badge ? (
         <View
           testID="map-marker-badge"

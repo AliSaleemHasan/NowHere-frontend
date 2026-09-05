@@ -3,6 +3,8 @@ import {
   formatLatLng,
   openMapsAt,
 } from "@/lib/geo";
+import TagIcon from "@/components/TagIcon";
+import { publicObjectUrl } from "@/lib/storage-url";
 import {
   displayTag,
   formatRelativeTime,
@@ -57,16 +59,6 @@ export type SnapDetailsViewProps = {
   isUnsaving?: boolean;
   isReporting?: boolean;
   isResolving?: boolean;
-};
-
-const TAG_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  SOCIAL: "people-outline",
-  INTERESTING: "sparkles-outline",
-  HIDDEN_GEM: "diamond-outline",
-  FINDINGS: "search-outline",
-  LOST: "help-circle-outline",
-  PROMOTION: "megaphone-outline",
-  PROOMOTION: "megaphone-outline",
 };
 
 function initialsFromName(name: string): string {
@@ -206,10 +198,10 @@ export default function SnapDetailsView({
       ? t("snaps.details.nearby")
       : formatDistanceAway(distanceMeters, "short");
   const caption = description.trim();
-  const showImage = Boolean(authorImage) && !avatarFailed;
+  const authorPhoto = publicObjectUrl(authorImage);
+  const showImage = Boolean(authorPhoto) && !avatarFailed;
   const initials = initialsFromName(authorName);
   const heroHeight = Math.min(Math.max(height * 0.42, 280), 460);
-  const tagIcon = TAG_ICONS[tag] ?? "pricetag-outline";
 
   const statusCopy = useMemo(() => {
     if (status === "FAILED") {
@@ -268,7 +260,7 @@ export default function SnapDetailsView({
                   <View className="h-full w-full animate-pulse bg-gray-200" />
                 ) : showImage ? (
                   <Image
-                    source={{ uri: authorImage }}
+                    source={{ uri: authorPhoto }}
                     className="h-full w-full"
                     onError={() => setAvatarFailed(true)}
                   />
@@ -433,7 +425,7 @@ export default function SnapDetailsView({
               className="h-10 w-10 items-center justify-center rounded-full"
               style={{ backgroundColor: `${color}22` }}
             >
-              <Ionicons name={tagIcon} size={18} color={color} />
+              <TagIcon tag={tag} size={18} color={color} />
             </View>
             <View className="ml-3 flex-1">
               <Text className="text-sm font-semibold text-primary">

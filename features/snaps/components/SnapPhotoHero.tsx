@@ -1,4 +1,5 @@
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import TagIcon from "@/components/TagIcon";
 import { displayTag, tagColor } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -109,7 +110,8 @@ export default function SnapPhotoHero({ images, tag, width, height }: Props) {
             className="flex-row items-center rounded-full px-3 py-1.5"
             style={{ backgroundColor: color }}
           >
-            <Text className="text-xs font-bold uppercase tracking-wide text-white">
+            <TagIcon tag={tag} size={12} color="#ffffff" />
+            <Text className="ml-1.5 text-xs font-bold uppercase tracking-wide text-white">
               {displayTag(tag)}
             </Text>
           </View>

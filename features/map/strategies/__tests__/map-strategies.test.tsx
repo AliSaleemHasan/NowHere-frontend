@@ -122,6 +122,15 @@ describe("Map Strategy Pattern", () => {
       expect(mockMarkerProps.onPress).toHaveBeenCalledTimes(1);
     });
 
+    test("renders the tag glyph inside the pin when a tag is provided", () => {
+      const { getByTestId } = render(
+        strategy.renderMarker({ ...mockMarkerProps, tag: "HIDDEN_GEM" }),
+      );
+
+      expect(getByTestId("map-pin-mark")).toBeTruthy();
+      expect(getByTestId("tag-icon")).toBeTruthy();
+    });
+
     test("renders a FOUND badge overlaid on a fixed-size pin", () => {
       const { getByTestId, getByText } = render(
         strategy.renderMarker({ ...mockMarkerProps, badge: "Found" }),

@@ -1,6 +1,13 @@
 import CustomCheckbox from "@/components/Checkbox";
 import FormButton from "@/components/FormButton";
-import { displayTag, parseTagsParam, SELECTABLE_TAGS, Tags } from "@/utils";
+import TagIcon from "@/components/TagIcon";
+import {
+  displayTag,
+  parseTagsParam,
+  SELECTABLE_TAGS,
+  tagColor,
+  Tags,
+} from "@/utils";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -93,6 +100,15 @@ const TagsFilter = ({
               <CustomCheckbox
                 isSelected={searchTags.includes(tag)}
                 label={displayTag(tag)}
+                icon={
+                  <TagIcon
+                    tag={tag}
+                    size={14}
+                    color={
+                      searchTags.includes(tag) ? "#ffffff" : tagColor(tag)
+                    }
+                  />
+                }
                 key={tag}
                 buttonProps={{
                   onPress: () =>
