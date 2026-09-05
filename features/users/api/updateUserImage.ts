@@ -1,39 +1,27 @@
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { ApiError } from "@/lib/http/api-error";
 import {
-  appendNativeFile,
-  blobFromUri,
-  contentTypeFromFilename,
-  filenameFromUri,
   MAX_PROFILE_IMAGE_BYTES,
+  uploadSingleImage,
 } from "@/lib/image-upload";
+import { publicObjectUrl } from "@/lib/storage-url";
 import type { GetUserResponse } from "@/types/api";
 
 export async function updateUserImage(
   photoUri: string,
 ): Promise<GetUserResponse> {
-  const filename = filenameFromUri(photoUri, "profile");
-  const type = contentTypeFromFilename(filename);
-  const blob = await blobFromUri(photoUri);
-
-  if (blob.size > MAX_PROFILE_IMAGE_BYTES) {
-    throw new ApiError("Profile photos must be 5MB or smaller.", 400);
-  }
-
-  const payload = new FormData();
-  appendNativeFile(payload, "photo", {
+  const key = await uploadSingleImage({
     uri: photoUri,
-    name: filename,
-    type,
+    prefix: "profile",
+    maxBytes: MAX_PROFILE_IMAGE_BYTES,
   });
 
   const response = await apiAuthFetch<GetUserResponse>({
     url: "image",
     api: "users",
-    contentType: "files",
     options: {
       method: "PUT",
-      body: payload,
+      body: { key },
     },
   });
 
@@ -44,5 +32,9 @@ export async function updateUserImage(
     );
   }
 
-  return response.data;
+  return {
+    ...response.data,
+    userImage:
+      publicObjectUrl(response.data.userImage) ?? response.data.userImage,
+  };
 }

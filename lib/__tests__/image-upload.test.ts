@@ -1,6 +1,11 @@
+jest.mock("@/lib/fetch-api", () => ({
+  apiAuthFetch: jest.fn(),
+}));
+
 import {
   contentTypeFromFilename,
   filenameFromUri,
+  normalizePresignedUploads,
 } from "../image-upload";
 
 describe("image upload helpers", () => {
@@ -16,5 +21,20 @@ describe("image upload helpers", () => {
 
   it("extracts a filename from a file uri", () => {
     expect(filenameFromUri("file:///tmp/snaps/coffee.png")).toBe("coffee.png");
+  });
+
+  it("normalizes batch and single presign responses", () => {
+    expect(
+      normalizePresignedUploads({
+        uploads: [{ uploadUrl: "https://a", key: "profile/u/a.jpg" }],
+      }),
+    ).toEqual([{ uploadUrl: "https://a", key: "profile/u/a.jpg" }]);
+    expect(
+      normalizePresignedUploads({
+        uploadUrl: "https://b",
+        key: "snaps/u/b.jpg",
+      }),
+    ).toEqual([{ uploadUrl: "https://b", key: "snaps/u/b.jpg" }]);
+    expect(normalizePresignedUploads(undefined)).toEqual([]);
   });
 });

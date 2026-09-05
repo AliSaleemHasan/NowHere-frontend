@@ -61,3 +61,11 @@ export function isLocalFileUri(uri: string): boolean {
     uri.startsWith("assets-library:")
   );
 }
+
+export function publicObjectUrl(value?: string | null): string | undefined {
+  if (!value) return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return rewriteStorageUploadUrl(value);
+  }
+  return undefined;
+}

@@ -1,4 +1,5 @@
 import {
+  publicObjectUrl,
   publicStorageOrigin,
   rewriteStorageUploadUrl,
 } from "../storage-url";
@@ -33,5 +34,14 @@ describe("storage URL rewriting", () => {
     const signed =
       "http://192.168.1.69:9000/mysnapsbucket/snaps/a.jpg?X-Amz-Signature=abc";
     expect(rewriteStorageUploadUrl(signed)).toBe(signed);
+  });
+
+  it("only rewrites http(s) object URLs, not storage keys", () => {
+    expect(publicObjectUrl("profile/u1/a.jpg")).toBeUndefined();
+    expect(
+      publicObjectUrl(
+        "http://minio-local:9000/mysnapsbucket/profile/u1/a.jpg",
+      ),
+    ).toBe("http://192.168.1.69:9000/mysnapsbucket/profile/u1/a.jpg");
   });
 });

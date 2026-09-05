@@ -1,3 +1,4 @@
+import { apiAuthFetch } from "./fetch-api";
 import { ApiError } from "./http/api-error";
 import { isLocalFileUri, rewriteStorageUploadUrl } from "./storage-url";
 
@@ -15,11 +16,21 @@ export type StoragePrefix = "snaps" | "profile";
 export const MAX_SNAP_IMAGES = 4;
 export const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 
-export type ReactNativeFilePart = {
-  uri: string;
-  name: string;
-  type: string;
+export type PresignFile = {
+  filename: string;
+  contentType: AllowedImageContentType;
 };
+
+export type PresignedUploadItem = {
+  uploadUrl: string;
+  key: string;
+};
+
+type PresignedUploadBatchResponse = {
+  uploads: PresignedUploadItem[];
+};
+
+type PresignedUploadSingleResponse = PresignedUploadItem;
 
 export function filenameFromUri(
   uri: string,
@@ -39,12 +50,38 @@ export function contentTypeFromFilename(
   return "image/jpeg";
 }
 
-export function appendNativeFile(
-  form: FormData,
-  field: string,
-  file: ReactNativeFilePart,
-): void {
-  form.append(field, file as unknown as Blob);
+export function normalizePresignedUploads(
+  data: PresignedUploadBatchResponse | PresignedUploadSingleResponse | undefined,
+): PresignedUploadItem[] {
+  if (!data) return [];
+  if ("uploads" in data && Array.isArray(data.uploads)) {
+    return data.uploads;
+  }
+  if ("uploadUrl" in data && "key" in data && data.uploadUrl && data.key) {
+    return [{ uploadUrl: data.uploadUrl, key: data.key }];
+  }
+  return [];
+}
+
+export async function presignUploads(params: {
+  prefix: StoragePrefix;
+  files: PresignFile[];
+}): Promise<PresignedUploadItem[]> {
+  const response = await apiAuthFetch<
+    PresignedUploadBatchResponse | PresignedUploadSingleResponse
+  >({
+    api: "storage",
+    url: "presigned-upload",
+    options: {
+      method: "POST",
+      body: {
+        prefix: params.prefix,
+        files: params.files,
+      },
+    },
+  });
+
+  return normalizePresignedUploads(response.data);
 }
 
 function readLocalUriAsBlob(uri: string): Promise<Blob> {
@@ -132,4 +169,50 @@ export async function putFileToPresignedUrl(
       detail,
     );
   }
+}
+
+export async function uploadSingleImage(params: {
+  uri: string;
+  prefix: StoragePrefix;
+  maxBytes?: number;
+}): Promise<string> {
+  const filename = filenameFromUri(
+    params.uri,
+    params.prefix === "profile" ? "profile" : "photo",
+  );
+  const contentType = contentTypeFromFilename(filename);
+  const blob = await blobFromUri(params.uri);
+
+  if (params.maxBytes != null && blob.size > params.maxBytes) {
+    throw new ApiError(
+      params.prefix === "profile"
+        ? "Profile photos must be 5MB or smaller."
+        : "That photo is too large to upload.",
+      400,
+    );
+  }
+
+  let uploads: PresignedUploadItem[];
+  try {
+    uploads = await presignUploads({
+      prefix: params.prefix,
+      files: [{ filename, contentType }],
+    });
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError(
+      "Could not start the photo upload. Check that the API gateway is reachable.",
+      0,
+      undefined,
+      error,
+    );
+  }
+
+  const upload = uploads[0];
+  if (!upload?.uploadUrl || !upload.key) {
+    throw new ApiError("Failed to obtain upload authorization for the photo", 500);
+  }
+
+  await putFileToPresignedUrl(upload.uploadUrl, params.uri, contentType);
+  return upload.key;
 }

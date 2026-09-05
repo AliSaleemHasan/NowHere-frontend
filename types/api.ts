@@ -14,7 +14,7 @@ export interface ApiProblemDetails {
   code?: string;
 }
 
-export type HeaderContentType = "json" | "files" | "text" | "html";
+export type HeaderContentType = "json" | "text" | "html";
 
 export type UserRole = "USER" | "ADMIN";
 

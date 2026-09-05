@@ -1,11 +1,19 @@
 import { AppCamera } from "@/components/camera";
 import { patchUser } from "@/features/users/context/user-store";
+import { publicObjectUrl } from "@/lib/storage-url";
 import { getErrorMessage } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 import { updateUserImage } from "../api/updateUserImage";
 import { userQueryKeys } from "../api/user-query";
@@ -21,14 +29,18 @@ export default function ProfileImage({ userId, image, size = 112 }: Props) {
   const queryClient = useQueryClient();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [localPreview, setLocalPreview] = useState<string | undefined>();
 
   const updateImageMutation = useMutation({
     mutationFn: updateUserImage,
   });
 
+  const displayUri = localPreview || publicObjectUrl(image);
+
   const handleUploadPhoto = async (photoUri: string) => {
     setIsCameraOpen(false);
     setIsPreviewOpen(false);
+    setLocalPreview(photoUri);
 
     updateImageMutation.mutate(photoUri, {
       onSuccess: (payload) => {
@@ -40,12 +52,14 @@ export default function ProfileImage({ userId, image, size = 112 }: Props) {
           });
         }
         queryClient.invalidateQueries({ queryKey: userQueryKeys.detail(userId) });
+        setLocalPreview(undefined);
         Toast.show({
           type: "success",
           text1: t("users.profile.photo.updated"),
         });
       },
       onError: (err: unknown) => {
+        setLocalPreview(undefined);
         Toast.show({
           type: "error",
           text1: t("users.profile.photo.updateError"),
@@ -60,16 +74,23 @@ export default function ProfileImage({ userId, image, size = 112 }: Props) {
       <View style={{ width: size, height: size }} className="relative">
         <TouchableOpacity
           onPress={() => setIsPreviewOpen(true)}
-          className="h-full w-full overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-sm"
+          className="relative h-full w-full overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-sm"
           accessibilityLabel={t("users.profile.photo.viewA11y")}
         >
           <Image
             source={
-              image ? { uri: image } : require("@/assets/images/icon.png")
+              displayUri
+                ? { uri: displayUri }
+                : require("@/assets/images/icon.png")
             }
             resizeMode="cover"
             className="h-full w-full"
           />
+          {updateImageMutation.isPending ? (
+            <View className="absolute inset-0 items-center justify-center bg-black/35">
+              <ActivityIndicator color="#ffffff" />
+            </View>
+          ) : null}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -91,7 +112,9 @@ export default function ProfileImage({ userId, image, size = 112 }: Props) {
         <View className="flex-1 items-center justify-center bg-black/80 px-6">
           <Image
             source={
-              image ? { uri: image } : require("@/assets/images/icon.png")
+              displayUri
+                ? { uri: displayUri }
+                : require("@/assets/images/icon.png")
             }
             className="h-72 w-72 rounded-full"
             resizeMode="cover"

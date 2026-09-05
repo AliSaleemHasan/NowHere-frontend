@@ -6,6 +6,7 @@ import { confirmLogout } from "@/features/auth/components/LogoutButton";
 import { useUser } from "@/features/users/api/useUser";
 import ProfileImage from "@/features/users/components/ProfileImage";
 import { patchUser, useUserStore } from "@/features/users/context/user-store";
+import { publicObjectUrl } from "@/lib/storage-url";
 import { formatUserDisplayName } from "@/types/api";
 import { getErrorMessage } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -102,8 +103,9 @@ export default function Profile() {
 
   const profileData = userInfo.data;
   const user = profileData?.user ?? storedUser;
-  const profileImageUrl =
-    profileData?.userImage || user?.userImage || user?.image;
+  const profileImageUrl = publicObjectUrl(
+    profileData?.userImage || user?.userImage || user?.image,
+  );
   const name = formatUserDisplayName(user, t("users.profile.fallbackName"));
   const settingUp = userInfo.isFetching && !user?.firstName;
 

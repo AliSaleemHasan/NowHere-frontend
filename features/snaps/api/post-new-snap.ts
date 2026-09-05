@@ -2,7 +2,10 @@ import {
   contentTypeFromFilename,
   filenameFromUri,
   MAX_SNAP_IMAGES,
+  presignUploads,
   putFileToPresignedUrl,
+  type PresignFile,
+  type PresignedUploadItem,
 } from "@/lib/image-upload";
 import { apiAuthFetch } from "@/lib/fetch-api";
 import { ApiError } from "@/lib/http/api-error";
@@ -12,51 +15,12 @@ import {
   type Snap,
   type SnapLocation,
 } from "../types/snaps-api-type";
-import type {
-  PresignFile,
-  PresignedUploadBatchResponse,
-  PresignedUploadItem,
-  PresignedUploadSingleResponse,
-} from "../types/storage-api-type";
 
 export interface CreateSnapInput {
   description: string;
   tag: Tags;
   location: SnapLocation;
   snaps: string[];
-}
-
-function normalizeUploads(
-  data: PresignedUploadBatchResponse | PresignedUploadSingleResponse | undefined,
-): PresignedUploadItem[] {
-  if (!data) return [];
-  if ("uploads" in data && Array.isArray(data.uploads)) {
-    return data.uploads;
-  }
-  if ("uploadUrl" in data && "key" in data && data.uploadUrl && data.key) {
-    return [{ uploadUrl: data.uploadUrl, key: data.key }];
-  }
-  return [];
-}
-
-export async function presignSnapUploads(
-  files: PresignFile[],
-): Promise<PresignedUploadItem[]> {
-  const response = await apiAuthFetch<
-    PresignedUploadBatchResponse | PresignedUploadSingleResponse
-  >({
-    api: "storage",
-    url: "presigned-upload",
-    options: {
-      method: "POST",
-      body: {
-        prefix: "snaps",
-        files,
-      },
-    },
-  });
-
-  return normalizeUploads(response.data);
 }
 
 function requireCreateLocation(location: SnapLocation): SnapLocation {
@@ -125,7 +89,7 @@ export async function createSnapWithDirectUpload(
 
   let uploads: PresignedUploadItem[];
   try {
-    uploads = await presignSnapUploads(filesMeta);
+    uploads = await presignUploads({ prefix: "snaps", files: filesMeta });
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError(
